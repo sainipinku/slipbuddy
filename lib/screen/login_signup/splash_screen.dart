@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:page_transition/page_transition.dart';
+import 'package:slipbuddy/screen/welcome/welcome.dart';
 import 'login.dart';
 
 
@@ -18,9 +20,13 @@ class _SplashScreenState extends State<SplashScreen> {
 
   _navigateToLogin() async {
     await Future.delayed(const Duration(seconds: 3), () {}); // Simulate a delay
-    Navigator.pushReplacement(
+    Navigator.pushAndRemoveUntil(
       context,
-      MaterialPageRoute(builder: (context) => LoginPage()), // Navigate to login screen
+      PageTransition(
+          type: PageTransitionType.rightToLeft,
+          child: Welcome(),
+          ctx: context),
+          (route) => false,
     );
   }
 
@@ -32,7 +38,7 @@ class _SplashScreenState extends State<SplashScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             // Add your logo or any widget you want to show on the splash screen
-            Image.asset('assets/images/splash.png',fit: BoxFit.cover,height: 150.h,width: 150.w,),
+            Image.asset('assets/images/slip_buddy_logo.png',fit: BoxFit.cover,width: 350.w,),
             CircularProgressIndicator(), // Optional: show a progress indicator
           ],
         ),

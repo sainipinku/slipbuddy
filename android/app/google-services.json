@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "785939521100",
+    "project_id": "slipbuddy-fba3e",
+    "storage_bucket": "slipbuddy-fba3e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:785939521100:android:0d8c1c9b0f31875767dee9",
+        "android_client_info": {
+          "package_name": "com.gs.slipbuddy"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "785939521100-0fl406butu165kn4ortbqvkbddhtr9nt.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.gs.slipbuddy",
+            "certificate_hash": "586dd2c62c7cfe62b3c0652a3e0088ff137a08a0"
+          }
+        },
+        {
+          "client_id": "785939521100-gema7r4d4b7c3i197idn25pov04ep4hm.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDX-su1LxLzi3VpBKLJEB2FDyMzwv_6dBE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "785939521100-gema7r4d4b7c3i197idn25pov04ep4hm.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "785939521100-it786f089o7o86hgbu9n9vpv8jnahp8l.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.gs.slipbuddy"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

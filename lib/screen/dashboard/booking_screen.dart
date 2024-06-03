@@ -4,12 +4,7 @@ class BookingScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Booking'),
-      ),
-      body: Center(
-        child: Text('Booking screen content goes here'),
-      ),
+      body: Center(child: Text('Booking',style: TextStyle(color: Colors.black,fontSize: 35),)),
     );
   }
 }

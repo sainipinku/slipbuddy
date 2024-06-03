@@ -6,32 +6,32 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:slipbuddy/constants/api_manager.dart';
 import 'package:slipbuddy/constants/config.dart';
 
-part 'login_state.dart';
-class LoginCubit extends Cubit<LoginState> {
+part 'otp_state.dart';
+class OtpCubit extends Cubit<OtpState> {
 
-  LoginCubit () : super (LoginInitial());
+  OtpCubit () : super (OtpInitial());
 
   ApiManager apiManager = ApiManager();
 
-  getOtp(Map map) async {
-    emit(LoginLoading());
+  verifyOtp(Map map) async {
+    emit(OtpLoading());
     try {
       var response = await apiManager.postRequest(
-          map, Config.baseUrl + Routes.getOtp);
+          map, Config.baseUrl + Routes.verifyOtp);
       debugPrint("response${response.body}");
       if (response.statusCode == 200) {
-        emit(LoginSuccess());
+        emit(OtpSuccess());
       } else if (response.statusCode == 403) {
-        emit(LoginOnHold());
+        emit(OtpOnHold());
       } else {
-        emit(LoginFailed());
+        emit(OtpFailed());
       }
     } on SocketException {
-      emit(LoginInternetError());
+      emit(OtpInternetError());
     } on TimeoutException {
-      emit(LoginTimeout());
+      emit(OtpTimeout());
     } catch (e) {
-      emit(LoginFailed());
+      emit(OtpFailed());
     }
   }
 

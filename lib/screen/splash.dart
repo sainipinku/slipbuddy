@@ -38,8 +38,8 @@ class _SplashState extends State<Splash> {
         children: [
           Center(
             child: Image.asset(
-              "assets/images/appLogo.png",
-              width: 150.w,
+              "assets/images/slip_buddy_logo.png",
+              width: 250.w,
             ),
           ),
         ],
