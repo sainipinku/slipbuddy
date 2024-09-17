@@ -1,6 +1,4 @@
 import 'dart:async';
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -10,7 +8,7 @@ import 'package:slipbuddy/Widgets/snack_bar_widget.dart';
 import 'package:slipbuddy/constants/app_theme.dart';
 import 'package:slipbuddy/constants/my_styles.dart';
 import 'package:slipbuddy/controller/otp_auth/otp_cubit.dart';
-import 'package:slipbuddy/screen/dashboard/dashboard_screen.dart';
+import 'package:slipbuddy/screen/dashboard/home_screen.dart';
 
 
 class Otp extends StatefulWidget {
@@ -171,7 +169,7 @@ class _OtpState extends State<Otp> {
               context,
               PageTransition(
                   type: PageTransitionType.rightToLeft,
-                  child: DoctorDashboardScreen(),
+                  child: HomeScreen(),
                   ctx: context),
             );
           } else if (state is OtpResendSuccess) {

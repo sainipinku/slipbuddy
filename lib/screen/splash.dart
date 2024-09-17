@@ -1,9 +1,12 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:page_transition/page_transition.dart';
-import 'package:slipbuddy/screen/login_signup/login.dart';
+import 'package:slipbuddy/screen/auth/login.dart';
+import 'package:slipbuddy/screen/dashboard/home_screen.dart';
+
 
 
 class Splash extends StatefulWidget {
@@ -21,11 +24,16 @@ class _SplashState extends State<Splash> {
         context,
         PageTransition(
             type: PageTransitionType.rightToLeft,
-            child: LoginPage(),
+            child: Login(),
             ctx: context),
             (route) => false,
       );
     });
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+      statusBarColor: Colors.blue, // Set your desired status bar color here
+      statusBarBrightness: Brightness.light, // For iOS: set the status bar text color to light
+      statusBarIconBrightness: Brightness.light, // For Android: set the status bar icons to light
+    ));
     super.initState();
   }
   @override

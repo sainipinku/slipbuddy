@@ -6,7 +6,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:slipbuddy/bloc_provider/bloc_provider.dart';
 import 'package:slipbuddy/constants/app_theme.dart';
 import 'package:slipbuddy/firebase_options.dart';
-import 'package:slipbuddy/screen/login_signup/splash_screen.dart';
+import 'package:slipbuddy/screen/dashboard/home_screen.dart';
+import 'package:slipbuddy/screen/splash.dart';
+
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setPreferredOrientations([
@@ -16,6 +18,11 @@ void main() async{
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+    statusBarColor: AppTheme.primaryColor, // Set your desired status bar color here
+    statusBarBrightness: Brightness.dark, // For iOS: set the status bar text color to light
+    statusBarIconBrightness: Brightness.dark, // For Android: set the status bar icons to light
+  ));
   runApp(const MyApp());
 }
 
@@ -37,9 +44,10 @@ class MyApp extends StatelessWidget {
               title: 'Flutter Demo',
               theme: ThemeData(
                 useMaterial3: false,
-                backgroundColor: AppTheme.whiteColor
+                backgroundColor: AppTheme.whiteColor,
+                appBarTheme: AppBarTheme(color: AppTheme.primaryColor)
               ),
-              home:  SplashScreen(),
+              home: Splash(),
             );
           }),
     );

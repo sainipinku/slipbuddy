@@ -10,8 +10,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:slipbuddy/Widgets/snack_bar_widget.dart';
-import 'package:slipbuddy/bloc/event.dart';
-import 'package:slipbuddy/bloc/login_bloc.dart';
+
 import 'package:slipbuddy/constants/app_theme.dart';
 import 'package:slipbuddy/constants/my_styles.dart';
 import 'package:slipbuddy/controller/login_auth/login_cubit.dart';

@@ -5,7 +5,7 @@ import 'package:slipbuddy/constants/app_theme.dart';
 import 'package:slipbuddy/constants/common_ui.dart';
 import 'package:slipbuddy/constants/my_styles.dart';
 import 'package:slipbuddy/screen/auth/login.dart';
-import 'package:slipbuddy/screen/login_signup/login.dart';
+
 
 class Welcome extends StatefulWidget {
   const Welcome({super.key});
