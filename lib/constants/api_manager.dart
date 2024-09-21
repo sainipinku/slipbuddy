@@ -71,7 +71,40 @@ class ApiManager {
       return null;
     }
   }
+  postWithoutRequest(String url) async {
+    var token = await UserSecureStorage.fetchToken();
+    http.Response? response;
 
+    if (token == null) {
+      response = await http.post(
+        Uri.parse(url.trim()),
+        headers: {
+          'Content-type': 'application/json',
+          'Accept': 'application/json',
+        },
+      );
+    } else {
+      response = await http.post(
+        Uri.parse(url.trim()),
+        headers: {
+          "Authorization": "Bearer $token",
+          'Content-type': 'application/json',
+          'Accept': 'application/json',
+        },
+      );
+    }
+
+    print(response.body);
+    print(response.statusCode);
+
+    if (response.statusCode == 200 ||
+        response.statusCode == 401 ||
+        response.statusCode == 403) {
+      return response;
+    } else {
+      return null;
+    }
+  }
   multiRequestRoute(
       String userName, String mobileNumber, image, String url) async {
     final request = http.MultipartRequest('POST', Uri.parse(url));

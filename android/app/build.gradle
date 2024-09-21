@@ -27,7 +27,7 @@ if (flutterVersionName == null) {
 
 android {
     namespace "com.gs.slipbuddy"
-    compileSdk flutter.compileSdkVersion=33
+    compileSdk flutter.compileSdkVersion
     ndkVersion flutter.ndkVersion
 
     compileOptions {
@@ -49,8 +49,8 @@ android {
         // You can update the following values to match your application needs.
         // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-gradle-build-configuration.
         multiDexEnabled true
-        minSdkVersion flutter.minSdkVersion=23
-        targetSdkVersion flutter.targetSdkVersion=33
+        minSdkVersion flutter.minSdkVersion
+        targetSdkVersion flutter.targetSdkVersion
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
     }

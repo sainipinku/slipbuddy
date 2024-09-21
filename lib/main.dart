@@ -8,6 +8,7 @@ import 'package:slipbuddy/constants/app_theme.dart';
 import 'package:slipbuddy/firebase_options.dart';
 import 'package:slipbuddy/screen/dashboard/home_screen.dart';
 import 'package:slipbuddy/screen/splash.dart';
+import 'package:slipbuddy/screen/users/dashboard.dart';
 
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
@@ -19,7 +20,7 @@ void main() async{
     options: DefaultFirebaseOptions.currentPlatform,
   );
   SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-    statusBarColor: AppTheme.primaryColor, // Set your desired status bar color here
+    statusBarColor: AppTheme.statusBar, // Set your desired status bar color here
     statusBarBrightness: Brightness.dark, // For iOS: set the status bar text color to light
     statusBarIconBrightness: Brightness.dark, // For Android: set the status bar icons to light
   ));
@@ -44,10 +45,9 @@ class MyApp extends StatelessWidget {
               title: 'Flutter Demo',
               theme: ThemeData(
                 useMaterial3: false,
-                backgroundColor: AppTheme.whiteColor,
                 appBarTheme: AppBarTheme(color: AppTheme.primaryColor)
               ),
-              home: Splash(),
+              home: Dashboard(),
             );
           }),
     );
