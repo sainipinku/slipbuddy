@@ -192,7 +192,7 @@ class _LoginState extends State<Login> {
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       Text(
-                        'SLIP BUDDY',
+                        'Slip Buddy',
                         style: MyStyles.black35Medium,
                       ),
                       SizedBox(height: 30.h,),

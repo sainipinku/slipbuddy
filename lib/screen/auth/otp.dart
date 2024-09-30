@@ -9,6 +9,7 @@ import 'package:slipbuddy/constants/app_theme.dart';
 import 'package:slipbuddy/constants/my_styles.dart';
 import 'package:slipbuddy/controller/otp_auth/otp_cubit.dart';
 import 'package:slipbuddy/screen/dashboard/home_screen.dart';
+import 'package:slipbuddy/screen/users/dashboard.dart';
 
 
 class Otp extends StatefulWidget {
@@ -169,7 +170,7 @@ class _OtpState extends State<Otp> {
               context,
               PageTransition(
                   type: PageTransitionType.rightToLeft,
-                  child: HomeScreen(),
+                  child: Dashboard(),
                   ctx: context),
             );
           } else if (state is OtpResendSuccess) {
@@ -214,7 +215,7 @@ class _OtpState extends State<Otp> {
                 children: [
                   SizedBox(height: 20.h,),
                   Text(
-                    'SLIP BUDDY',
+                    'Slip Buddy',
                     style: MyStyles.black35Medium,
                   ),
                   SizedBox(height: 40.h,),

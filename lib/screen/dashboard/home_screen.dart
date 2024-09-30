@@ -1,3 +1,4 @@
+/*
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -133,163 +134,159 @@ class HomeContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<DoctorCubit, DoctorState>(
-      builder: (context, state) {
-        return SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: CarouselSlider(
-                  options: CarouselOptions(
-                    height: 180.0,
-                    autoPlay: true,
-                    enlargeCenterPage: true,
-                  ),
-                  items: bannerImages.map((image) {
-                    return Builder(
-                      builder: (BuildContext context) {
-                        return Container(
-                          width: MediaQuery.of(context).size.width,
-                          margin: EdgeInsets.symmetric(horizontal: 5.0),
-                          decoration: BoxDecoration(
-                            color: Colors.blueGrey,
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(10),
-                            child: Image.network(
-                              image,
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                        );
-                      },
-                    );
-                  }).toList(),
-                ),
+    return SingleChildScrollView(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: CarouselSlider(
+              options: CarouselOptions(
+                height: 180.0,
+                autoPlay: true,
+                enlargeCenterPage: true,
               ),
-              Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      "Specialities",
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                    ),
-                    TextButton(
-                      onPressed: () {
-                        // Handle view all doctors action
-                      },
-                      child: Text("View All"),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppTheme.primaryColor, // Set the same color as app bar
+              items: bannerImages.map((image) {
+                return Builder(
+                  builder: (BuildContext context) {
+                    return Container(
+                      width: MediaQuery.of(context).size.width,
+                      margin: EdgeInsets.symmetric(horizontal: 5.0),
+                      decoration: BoxDecoration(
+                        color: Colors.blueGrey,
+                        borderRadius: BorderRadius.circular(10),
                       ),
-                    ),
-                  ],
-                ),
-              ),
-              SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Row(
-                  children: state.specialities
-                      .map((speciality) => Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                    child: Column(
-                      children: [
-                        CircleAvatar(
-                          radius: 30,
-                          backgroundColor: AppTheme.primaryColor,
-                          child: Text(speciality[0]),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(10),
+                        child: Image.network(
+                          image,
+                          fit: BoxFit.cover,
                         ),
-                        SizedBox(height: 5),
-                        Text(speciality),
-                      ],
-                    ),
-                  ))
-                      .toList(),
+                      ),
+                    );
+                  },
+                );
+              }).toList(),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  "Specialities",
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(12.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                TextButton(
+                  onPressed: () {
+                    // Handle view all doctors action
+                  },
+                  child: Text("View All"),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppTheme.primaryColor, // Set the same color as app bar
+                  ),
+                ),
+              ],
+            ),
+          ),
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              children: state.specialities
+                  .map((speciality) => Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: Column(
                   children: [
-                    Text(
-                      "Find Doctors",
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    CircleAvatar(
+                      radius: 30,
+                      backgroundColor: AppTheme.primaryColor,
+                      child: Text(speciality[0]),
                     ),
-                    TextButton(
-                      onPressed: () {
-                        // Handle view all doctors action
-                      },
-                      child: Text("View All"),
-                    ),
+                    SizedBox(height: 5),
+                    Text(speciality),
                   ],
                 ),
-              ),
-              ...state.doctors.map((doctor) => Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Card(
-                  child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Column(
-                      children: [
-                        ListTile(
-                          leading: CircleAvatar(
-                            backgroundImage: NetworkImage(doctor.imageUrl),
-                          ),
-                          title: Text(doctor.name),
-                          subtitle: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+              ))
+                  .toList(),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(12.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  "Find Doctors",
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+                TextButton(
+                  onPressed: () {
+                    // Handle view all doctors action
+                  },
+                  child: Text("View All"),
+                ),
+              ],
+            ),
+          ),
+          ...state.doctors.map((doctor) => Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Card(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  children: [
+                    ListTile(
+                      leading: CircleAvatar(
+                        backgroundImage: NetworkImage(doctor.imageUrl),
+                      ),
+                      title: Text(doctor.name),
+                      subtitle: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(doctor.education),
+                          SizedBox(height: 5),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text(doctor.education),
+                              Text(doctor.speciality),
                               SizedBox(height: 5),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(doctor.speciality),
-                                  SizedBox(height: 5),
-                                  Text(doctor.experience),
-                                  SizedBox(height: 5),
-                                ],
-                              ),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Icon(Icons.star, color: Colors.yellow),
-                                  SizedBox(width: 5),
-                                  Text(doctor.rating.toString()),
-                                  Text(" (${doctor.reviews})"),
-                                  SizedBox(height: 5),
-                                  Text(doctor.location),
-                                ],
-                              ),
+                              Text(doctor.experience),
                               SizedBox(height: 5),
-                              Text(doctor.feeRange),
                             ],
                           ),
-                        ),
-                        SizedBox(height: 20),
-                        ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: AppTheme.primaryColor,
-                            minimumSize: Size.fromHeight(40), // fromHeight use double.infinity as width and 40 is the height
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Icon(Icons.star, color: Colors.yellow),
+                              SizedBox(width: 5),
+                              Text(doctor.rating.toString()),
+                              Text(" (${doctor.reviews})"),
+                              SizedBox(height: 5),
+                              Text(doctor.location),
+                            ],
                           ),
-                          onPressed: () {},
-                          child: Text('Book Appointment'),
-                        )
-                      ],
+                          SizedBox(height: 5),
+                          Text(doctor.feeRange),
+                        ],
+                      ),
                     ),
-                  ),
+                    SizedBox(height: 20),
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppTheme.primaryColor,
+                        minimumSize: Size.fromHeight(40), // fromHeight use double.infinity as width and 40 is the height
+                      ),
+                      onPressed: () {},
+                      child: Text('Book Appointment'),
+                    )
+                  ],
                 ),
-              )),
-            ],
-          ),
-        );
-      },
+              ),
+            ),
+          )),
+        ],
+      ),
     );
   }
-}
+}*/

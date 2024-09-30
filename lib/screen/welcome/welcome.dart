@@ -15,6 +15,12 @@ class Welcome extends StatefulWidget {
 }
 
 class _WelcomeState extends State<Welcome> {
+  static const TextStyle black35Medium = TextStyle(
+    fontSize: 35,
+    color: Colors.black,
+    fontWeight: FontWeight.w700,
+    fontStyle: FontStyle.italic,  // Add italic style here
+  );
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -60,26 +66,26 @@ class _WelcomeState extends State<Welcome> {
                   "assets/images/slip_buddy_logo.png",
                   width: 350.w,
                 ),
-                SizedBox(height: 50.h,),
+                SizedBox(height: 10.h,),
                 Text(
-                  'SLIP BUDDY!',
-                  style: MyStyles.black35Medium,
+                  'Slip Buddy',
+                  style: black35Medium,
                 ),
                 Text(
                   'Care made easy',
                   style: MyStyles.black20Medium,
                 ),
-                SizedBox(height: 20.h,),
+                SizedBox(height: 120.h,),
                 Text(
-                  'Welcome to SLIP BUDDY!',
-                  style: MyStyles.black16Light,
+                  'Welcome to Slip Buddy',
+                  style: MyStyles.black20Medium,
                 ),
                 Text(
                   'Simplify your healthcare journey with'
                       'easy appointment booking, real-time'
                       'updates, and personalized care management.',
                   textAlign: TextAlign.center,
-                  style: MyStyles.black14Light,
+                  style: MyStyles.black16Light,
                 ),
                 SizedBox(height: 20),
                 button(color: AppTheme.blackColor,text: 'Get Start',button: () {

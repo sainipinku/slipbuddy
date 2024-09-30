@@ -4,8 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:page_transition/page_transition.dart';
+import 'package:slipbuddy/constants/app_theme.dart';
 import 'package:slipbuddy/screen/auth/login.dart';
 import 'package:slipbuddy/screen/dashboard/home_screen.dart';
+import 'package:slipbuddy/screen/welcome/welcome.dart';
 
 
 
@@ -24,13 +26,13 @@ class _SplashState extends State<Splash> {
         context,
         PageTransition(
             type: PageTransitionType.rightToLeft,
-            child: Login(),
+            child: Welcome(),
             ctx: context),
             (route) => false,
       );
     });
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-      statusBarColor: Colors.blue, // Set your desired status bar color here
+      statusBarColor: AppTheme.statusBar, // Set your desired status bar color here
       statusBarBrightness: Brightness.light, // For iOS: set the status bar text color to light
       statusBarIconBrightness: Brightness.light, // For Android: set the status bar icons to light
     ));

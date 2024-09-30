@@ -47,7 +47,7 @@ class MyApp extends StatelessWidget {
                 useMaterial3: false,
                 appBarTheme: AppBarTheme(color: AppTheme.primaryColor)
               ),
-              home: Dashboard(),
+              home: Splash(),
             );
           }),
     );

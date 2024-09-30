@@ -1,3 +1,4 @@
+/*
 import 'package:bloc/bloc.dart';
 
 import 'docter_state.dart';
@@ -22,3 +23,4 @@ class DoctorCubit extends Cubit<DoctorState> {
     ],
   ));
 }
+*/

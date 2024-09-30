@@ -1,5 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:slipbuddy/controller/department/department_cubit.dart';
+import 'package:slipbuddy/controller/doctor/doctor_cubit.dart';
 import 'package:slipbuddy/controller/home/doctor_cubit.dart';
 import 'package:slipbuddy/controller/login_auth/login_cubit.dart';
 import 'package:slipbuddy/controller/otp_auth/otp_cubit.dart';
