@@ -7,4 +7,6 @@ class Routes {
     static String verifyOtp = "VerifyOTP";
     static String departmentList = "department_list";
     static String doctorList = "getdoctorhospital";
+    static String slotsList = "getavailableslot";
+    static String dateSlotsList = "getslot";
 }

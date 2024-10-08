@@ -46,6 +46,7 @@ dependencies:
   carousel_slider: ^5.0.0
   banner_image: ^1.0.7
   smooth_page_indicator: ^1.2.0+3
+  intl: ^0.19.0
 
 
     # The following adds the Cupertino Icons font to your application.

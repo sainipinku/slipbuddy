@@ -9,5 +9,6 @@ class AppTheme {
   static const primaryColor = Color(0xFF2cd7d6);
   static const secondaryColor = Color(0xFFfb7733);
   static  Color whiteColor = const Color(0xFFFFFFFF);
-  static  Color statusBar = const Color(0xff0000e1);
+  static  Color statusBar = const Color(0xff03084c);
+  static  Color shudleColor = const Color(0xff427998);
 }

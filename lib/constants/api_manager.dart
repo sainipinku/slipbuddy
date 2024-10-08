@@ -53,7 +53,7 @@ class ApiManager {
           }
       );
     } else {
-      response = await http.post(Uri.parse(url.trim()), body: body, headers: {
+      response = await http.post(Uri.parse(url.trim()), body: jsonEncode(body), headers: {
         "Authorization": "Bearer $token",
         'Content-type': 'application/json',
         'Accept': 'application/json',

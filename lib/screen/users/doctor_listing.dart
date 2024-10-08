@@ -30,29 +30,7 @@ class _DoctorListingState extends State<DoctorListing> {
     initCubit();
     super.initState();
   }
-  final List<Doctor> doctors = [
-    Doctor(
-      doctorName: 'Dr. Ashok Kumar Sharma',
-      experience: '15 years experience',
-      rating: 4.3,
-      hospital: 'Priyush Neuro And Superspeciality Hospital',
-      location: 'Mansarovar',
-      fee: 350,
-      availableAt: '12:00 PM, tomorrow',
-      imagePath: 'assets/doctor1.png',
-    ),
-    Doctor(
-      doctorName: 'Dr. Namit Nitharwal',
-      experience: '15 years experience',
-      rating: 4.5,
-      hospital: 'XYZ Hospital',
-      location: 'Mansarovar',
-      fee: 300,
-      availableAt: '10:00 AM, tomorrow',
-      imagePath: 'assets/doctor2.png',
-    ),
-    // Add more doctor entries here...
-  ];
+
   @override
   Widget build(BuildContext context) {
     return  Scaffold(
@@ -138,6 +116,7 @@ class _DoctorListingState extends State<DoctorListing> {
                   return Column(
                     children: [
                       DoctorCard(
+                        doctorId: doctor.id!,
                         doctorName: doctor.fullName!,
                         experience: doctor.experience!,
                         rating: 4.5,
@@ -177,6 +156,7 @@ class SearchBar extends StatelessWidget {
 }
 
 class DoctorCard extends StatelessWidget {
+  final int doctorId;
   final String doctorName;
   final String experience;
   final double rating;
@@ -187,6 +167,7 @@ class DoctorCard extends StatelessWidget {
   final String imagePath;
 
   DoctorCard({
+    required this.doctorId,
     required this.doctorName,
     required this.experience,
     required this.rating,
@@ -271,7 +252,7 @@ class DoctorCard extends StatelessWidget {
                       context,
                       PageTransition(
                           type: PageTransitionType.rightToLeft,
-                          child: ClinicVisitScreen(),
+                          child: ClinicVisitScreen(doctorId: doctorId,profile: imagePath,name: doctorName,location: location,),
                           ctx: context),
                     );
                   },

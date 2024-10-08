@@ -7,6 +7,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:slipbuddy/Widgets/snack_bar_widget.dart';
@@ -42,7 +43,12 @@ class _LoginState extends State<Login> {
     initCubit();
     super.initState();
   }
-
+  static  TextStyle black35Medium = GoogleFonts.poppins(
+    textStyle: TextStyle(fontSize: 35,
+      color: Colors.black,
+      fontWeight: FontWeight.w700,
+      fontStyle: FontStyle.italic,),
+  );
   Future<void> _handleGoogleSignIn(BuildContext context) async {
     try {
       final GoogleSignIn googleSignIn = GoogleSignIn();
@@ -80,7 +86,7 @@ class _LoginState extends State<Login> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
+  /*    appBar: AppBar(
         backgroundColor: AppTheme.whiteColor,
         elevation: 0,
         title: Center(
@@ -109,7 +115,7 @@ class _LoginState extends State<Login> {
             ),
           ),
         ),
-      ),
+      ),*/
       body: BlocListener<LoginCubit, LoginState>(
         listener: (context, state) {
           if (state is LoginLoading) {
@@ -193,12 +199,20 @@ class _LoginState extends State<Login> {
                     children: [
                       Text(
                         'Slip Buddy',
-                        style: MyStyles.black35Medium,
+                    style: GoogleFonts.poppins(
+                      textStyle: TextStyle(fontSize: 16,
+                        color: Colors.black,
+                        fontWeight: FontWeight.w700,),
+                    ),
                       ),
                       SizedBox(height: 30.h,),
                       Text(
-                        'Login to your account',
-                        style: MyStyles.black25Medium,
+                        'Continue with Google',
+                        style: GoogleFonts.poppins(
+                          textStyle: TextStyle(fontSize: 16,
+                            color: Colors.black,
+                            fontWeight: FontWeight.w700,),
+                        ),
                       ),
                       SizedBox(height: 30.h,),
                       Container(
@@ -238,8 +252,12 @@ class _LoginState extends State<Login> {
                               Padding(
                                 padding: const EdgeInsets.only(left: 15.0),
                                 child: Text(
-                                  'Login to your account',
-                                  style: MyStyles.black20Medium,
+                                  'Continue with Google',
+                                  style: GoogleFonts.poppins(
+                                    textStyle: TextStyle(fontSize: 16,
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.w700,),
+                                  ),
                                 ),
                               ),
                             ],
@@ -257,7 +275,11 @@ class _LoginState extends State<Login> {
                             padding: const EdgeInsets.symmetric(horizontal: 8.0),
                             child: Text(
                               'or continue with mobile number',
-                              style: MyStyles.black16Light,
+                              style: GoogleFonts.poppins(
+                                textStyle: TextStyle(fontSize: 16,
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.w700,),
+                              ),
                             ),
                           ),
                           Container(color: Colors.black,height: 1,width: 50.w,)
@@ -331,11 +353,15 @@ class _LoginState extends State<Login> {
                         child: Container(
                           height: 60.h,
                           width: MediaQuery.of(context).size.width,
-                          color: Colors.blue,
+                          color: AppTheme.statusBar,
                           child: Center(
                             child: Text(
                               'Login with OTP',
-                              style: MyStyles.white22ExtraBold,
+                              style: GoogleFonts.poppins(
+                                textStyle: TextStyle(fontSize: 16,
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.w700,),
+                              ),
                             ),
                           ),
                         ),
@@ -345,7 +371,11 @@ class _LoginState extends State<Login> {
                         padding: const EdgeInsets.symmetric(horizontal: 8.0),
                         child: Text(
                           'By Logging in you agree to the following',
-                          style: MyStyles.black16Light,
+                          style: GoogleFonts.poppins(
+                            textStyle: TextStyle(fontSize: 16,
+                              color: Colors.black,
+                              fontWeight: FontWeight.w700,),
+                          ),
                         ),
                       ),
                       RichText(

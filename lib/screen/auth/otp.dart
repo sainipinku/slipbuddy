@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:slipbuddy/Widgets/snack_bar_widget.dart';
@@ -75,6 +76,12 @@ class _OtpState extends State<Otp> {
     super.dispose();
 
   }
+  static  TextStyle black35Medium = GoogleFonts.poppins(
+    textStyle: TextStyle(fontSize: 35,
+      color: Colors.black,
+      fontWeight: FontWeight.w700,
+      fontStyle: FontStyle.italic,),
+  );
   @override
   Widget build(BuildContext context) {
     final MaterialStateProperty<Color?> trackColor =
@@ -107,8 +114,9 @@ class _OtpState extends State<Otp> {
         return null;
       },
     );
+
     return  Scaffold(
-      appBar: AppBar(
+     /* appBar: AppBar(
         backgroundColor: AppTheme.whiteColor,
         elevation: 0,
         title: Center(
@@ -137,7 +145,7 @@ class _OtpState extends State<Otp> {
             ),
           ),
         ),
-      ),
+      ),*/
       body: BlocListener<OtpCubit, OtpState>(
         listener: (context, state) {
           if (state is OtpLoading) {
@@ -216,23 +224,35 @@ class _OtpState extends State<Otp> {
                   SizedBox(height: 20.h,),
                   Text(
                     'Slip Buddy',
-                    style: MyStyles.black35Medium,
+                    style: GoogleFonts.poppins(
+                      textStyle: TextStyle(fontSize: 16,
+                        color: Colors.black,
+                        fontWeight: FontWeight.w700,),
+                    ),
                   ),
                   SizedBox(height: 40.h,),
                   Text(
                     'Verify mobile number',
-                    style: MyStyles.black25bold,
+                    style: GoogleFonts.poppins(
+                      textStyle: TextStyle(fontSize: 16,
+                        color: Colors.black,
+                        fontWeight: FontWeight.w700,),
+                    ),
                   ),
                   SizedBox(height: 10.h,),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 8.0),
                     child: Text(
                       'We have sent the OTP to +91 ${widget.phone}',
-                      style: MyStyles.blu14bold,
+                      style: GoogleFonts.poppins(
+                        textStyle: TextStyle(fontSize: 16,
+                          color: Colors.black,
+                          fontWeight: FontWeight.w700,),
+                      ),
                     ),
                   ),
                   Container(
-                      margin: EdgeInsets.symmetric(horizontal: 20,vertical: 30),
+                      margin: EdgeInsets.symmetric(horizontal: 10,vertical: 30),
                       color: Colors.transparent,
                       child: PinCodeTextField(
                         appContext: context,
@@ -240,17 +260,18 @@ class _OtpState extends State<Otp> {
                         length: 6,
                         controller: _pinPutController,
                         pinTheme: PinTheme(
-                            shape: PinCodeFieldShape.box,
-                            borderRadius: BorderRadius.circular(25),
-                            fieldHeight: 50,
-                            fieldWidth: 50,
-                            borderWidth: 0.5,
-                            activeFillColor: Colors.grey,
-                            inactiveColor: AppTheme.whiteColor,
-                            inactiveFillColor: Colors.grey,
-                            selectedFillColor: Colors.grey,
-                            selectedColor: AppTheme.bgColor,
-                            activeColor: AppTheme.blackColor),
+                          shape: PinCodeFieldShape.box,
+                          borderRadius: BorderRadius.circular(15), // increase this value for more rounded corners
+                          fieldHeight: 50,
+                          fieldWidth: 50,
+                          borderWidth: 0.1,
+                          activeFillColor: Colors.grey,
+                          inactiveColor: Colors.black,
+                          inactiveFillColor: Colors.white,
+                          selectedFillColor: Colors.grey,
+                          selectedColor: AppTheme.bgColor,
+                          activeColor: AppTheme.blackColor,
+                        ),
                         cursorColor: AppTheme.blackColor,
                         enableActiveFill: true,
                         // controller: provider.pinPutController,
@@ -294,7 +315,7 @@ class _OtpState extends State<Otp> {
                     child: Container(
                       height: 60.h,
                       width: MediaQuery.of(context).size.width,
-                      color: Colors.blue,
+                      color: AppTheme.statusBar,
                       child: Center(
                         child: Text(
                           'Verify & Login',

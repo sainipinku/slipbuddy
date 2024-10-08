@@ -198,7 +198,12 @@ class _DashboardState extends State<Dashboard> {
                   child: TextField(
                     decoration: InputDecoration(
                       prefixIcon: Icon(Icons.search),
-                      hintText: 'Search for clinic...',
+                      hintText: 'Search for hospital and clinics/doctors/Symptoms/Specialities',
+                      hintStyle: TextStyle(
+                        color: Colors.black, // Change the color of the hint text
+                        fontSize: 16, // Adjust the font size of the hint text
+                        fontStyle: FontStyle.italic, // Make the hint text italic (optional)
+                      ),
                       filled: true,
                       fillColor: Colors.white,
                       border: OutlineInputBorder(
@@ -220,56 +225,63 @@ class _DashboardState extends State<Dashboard> {
           child: SingleChildScrollView(
             child: Column(
               children: [
-                SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.20,
-                  child: PageView.builder(
-                    controller: _pageController,
-                    itemCount: bannerImages.length,
-                    itemBuilder: (context, index) {
-                      return Container(
-                        margin: EdgeInsets.symmetric(horizontal: 5.0),
-                        decoration: BoxDecoration(
-                          color: Colors.blueGrey,
-                          borderRadius: BorderRadius.circular(10),
+                Stack(
+                  alignment: Alignment.bottomCenter,
+                  children: [
+                    SizedBox(
+                      height: MediaQuery.of(context).size.height * 0.16,
+                      child: PageView.builder(
+                        controller: _pageController,
+                        itemCount: bannerImages.length,
+                        itemBuilder: (context, index) {
+                          return Container(
+                            margin: EdgeInsets.symmetric(horizontal: 5.0),
+                            decoration: BoxDecoration(
+                              color: AppTheme.statusBar,
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(10),
+                              child: Image.asset(
+                                bannerImages[index],
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          );
+                        },
+                        onPageChanged: (index) {
+                          setState(() {
+                            _currentPage = index;
+                          });
+                        },
+                      ),
+                    ),
+                    Positioned(
+                      bottom: 5, // You can adjust this value to move dots closer or further from the image
+                      child: SmoothPageIndicator(
+                        controller: _pageController, // PageController
+                        count: bannerImages.length,  // Number of pages
+                        effect: WormEffect(
+                          dotHeight: 8,  // Reduced dot size
+                          dotWidth: 8,   // Reduced dot size
+                          spacing: 6,    // Reduced spacing between dots
+                          dotColor: Colors.grey,
+                          activeDotColor: AppTheme.statusBar, // Customize active dot color
                         ),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(10),
-                          child: Image.asset(
-                            bannerImages[index],
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                      );
-                    },
-                    onPageChanged: (index) {
-                      setState(() {
-                        _currentPage = index;
-                      });
-                    },
-                  ),
+                      ),
+                    ),
+                  ],
                 ),
-                SizedBox(height: 10),
-                // SmoothPageIndicator for Dots
-                SmoothPageIndicator(
-                  controller: _pageController, // PageController
-                  count: bannerImages.length,  // Number of pages
-                  effect: WormEffect(
-                    dotHeight: 12,
-                    dotWidth: 12,
-                    spacing: 8,
-                    dotColor: Colors.grey,
-                    activeDotColor: Colors.blue, // Customize active dot color
-                  ),
-                ),
+
                 SizedBox(height: 20),
                 ActionCard(
-                  title: 'Scheduled your clinic visit? ',
+                  title: 'Schedule Your In-Clinic Visit',
                   desc: 'Book your appointment today and get expert medical care at your convenience. Whether it a routine check-up or a specialized consultation, our experienced doctors are here to help. Don wait—secure your spot now for hassle-free healthcare!',
                   image: 'assets/images/demo_1.jpg', // Use your asset path here
                 ),
                 SizedBox(height: MediaQuery.of(context).size.height * 0.03), // Responsive spacing
                 Text(
-                  "Find a Doctor for your Health Problem",
+                  "Connect with top doctors in minutes.",
                   style: TextStyle(fontSize: MediaQuery.of(context).size.height * 0.03, color: Colors.black), // Responsive font size
                 ),
                 SizedBox(height: MediaQuery.of(context).size.height * 0.02), // Responsive spacing
@@ -504,7 +516,7 @@ class ActionCard extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10),
-        color: Colors.blue,
+        color: AppTheme.shudleColor,
       ),
       padding: EdgeInsets.all(8),
       child: Row(
