@@ -23,11 +23,9 @@ Widget button ({required Color color,required String text,required VoidCallback 
                 borderRadius: BorderRadius.circular(borderRadius ?? 25.0)),
           ),
           child: Text('GET STARTED',style: GoogleFonts.roboto(
-            textStyle:  TextStyle(
-              color: AppTheme.whiteColor,
-              fontSize: 12,
-              fontWeight: FontWeight.w500, // regular
-            ),
+            color: AppTheme.whiteColor,
+            fontSize: 12,
+            fontWeight: FontWeight.w500,
           ),),
         ),
       ),

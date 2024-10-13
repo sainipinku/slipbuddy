@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:slipbuddy/constants/app_theme.dart';
 
 class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String title;
@@ -38,4 +41,37 @@ class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Size get preferredSize => Size.fromHeight(kToolbarHeight);
+}
+Widget commonButton({
+  required Color color,
+  required String text,
+  required VoidCallback button,
+  double? borderRadius,
+}) {
+  return GestureDetector(
+    onTap: () {
+      // Custom tap logic
+    },
+    child: SizedBox(
+      height: 45.h,
+      width: double.infinity, // Set to full width
+      child: ElevatedButton(
+        onPressed: button,
+        style: ElevatedButton.styleFrom(
+          backgroundColor: color,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(borderRadius ?? 25.0),
+          ),
+        ),
+        child: Text(
+          text,
+          style: GoogleFonts.roboto(
+            color: AppTheme.whiteColor,
+            fontSize: 16,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+      ),
+    ),
+  );
 }

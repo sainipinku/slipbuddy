@@ -2,12 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:slipbuddy/Widgets/snack_bar_widget.dart';
 import 'package:slipbuddy/constants/app_theme.dart';
+import 'package:slipbuddy/constants/common_ui.dart';
 import 'package:slipbuddy/constants/helpers.dart';
 import 'package:slipbuddy/controller/slots/date_cubit.dart';
 import 'package:slipbuddy/controller/slots/slots_cubit.dart';
 import 'package:slipbuddy/models/SlotsModel.dart';
+import 'package:slipbuddy/screen/users/appoitment.dart';
 
 class ClinicVisitScreen extends StatefulWidget {
   final int doctorId;
@@ -314,6 +317,12 @@ class _ClinicVisitScreenState extends State<ClinicVisitScreen> {
               ,
               Spacer(),
               // Bottom ad and button
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10.0,vertical: 10.0),
+                child: button(color: AppTheme.statusBar, text: 'CONSULT NOW', button: () {
+
+                },borderRadius: 5.0),
+              ),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
@@ -338,8 +347,8 @@ class _ClinicVisitScreenState extends State<ClinicVisitScreen> {
     );
   }
 }
-
-class TimeSlotSection extends StatelessWidget {
+int ind = -1;
+class TimeSlotSection extends StatefulWidget {
   final String label;
   final List<String> slots;
   final IconData icon;
@@ -352,29 +361,48 @@ class TimeSlotSection extends StatelessWidget {
   }) : super(key: key);
 
   @override
+  State<TimeSlotSection> createState() => _TimeSlotSectionState();
+}
+
+class _TimeSlotSectionState extends State<TimeSlotSection> {
+  @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
           children: [
-            Icon(icon, size: 20),
+            Icon(widget.icon, size: 20),
             SizedBox(width: 10),
-            Text('$label ${slots.length} slots', style: TextStyle(fontSize: 16)),
+            Text('${widget.label} ${widget.slots.length} slots', style: TextStyle(fontSize: 16)),
           ],
         ),
         SizedBox(height: 10),
         Wrap(
           spacing: 10,
           runSpacing: 10,
-          children: List.generate(slots.length, (index) {
-            return Container(
-              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.blueAccent),
-                borderRadius: BorderRadius.circular(10),
+          children: List.generate(widget.slots.length, (index) {
+            return GestureDetector(
+              onTap: (){
+                setState(() {
+                  ind = index;
+                });
+                Navigator.push(
+                  context,
+                  PageTransition(
+                      type: PageTransitionType.rightToLeft,
+                      child: AppointmentScreen(),
+                      ctx: context),
+                );
+              },
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                decoration: BoxDecoration(
+                  border: ind == index ? Border.all( color: Colors.green) : Border.all( color: Colors.blueAccent),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Text(Helpers.formatTime(widget.slots[index]), style: TextStyle(color:  ind == index ?  Colors.green :Colors.blueAccent)),
               ),
-              child: Text(Helpers.formatTime(slots[index]), style: TextStyle(color: Colors.blueAccent)),
             );
           }),
         ),
