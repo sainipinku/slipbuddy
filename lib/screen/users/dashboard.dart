@@ -6,6 +6,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:slipbuddy/Widgets/loading_logo_wiget.dart';
 import 'package:slipbuddy/Widgets/snack_bar_widget.dart';
 import 'package:slipbuddy/bottom_diloag/category_bottom_dilaog.dart';
@@ -153,32 +154,54 @@ class _DashboardState extends State<Dashboard> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     // Location Icon on the Left Side
-                    IconButton(
-                      icon: Icon(Icons.menu), // The menu icon or other custom icon
-                      onPressed: () {
+                    GestureDetector(
+                      onTap: (){
                         _key.currentState!.openDrawer();
                         // Action when menu icon is clicked
                         print("Menu button clicked");
                       },
+                      child: CircleAvatar(
+                        radius: 25, // Adjust the radius as needed
+                        backgroundImage: NetworkImage('https://via.placeholder.com/25x25.png?text=Banner+2'), // Replace with your image URL
+                        // Alternatively, use AssetImage for local images
+                        // backgroundImage: AssetImage('assets/images/profile.png'),
+                        child: Text(
+                          'AB', // Initials can be shown in case the image fails to load
+                          style: TextStyle(color: Colors.white, fontSize: 16),
+                        ),
+                      ),
                     ),
                     // Dropdown for city selection
-                    DropdownButton<String>(
-                      dropdownColor: Colors.blue[100],
-                      value: selectedCity,
-                      icon: Icon(Icons.arrow_drop_down, color: Colors.white),
-                      underline: SizedBox(),
-                      style: TextStyle(color: Colors.white, fontSize: 16),
-                      items: cities.map<DropdownMenuItem<String>>((String value) {
-                        return DropdownMenuItem<String>(
-                          value: value,
-                          child: Text(value),
-                        );
-                      }).toList(),
-                      onChanged: (String? newValue) {
-                        setState(() {
-                          selectedCity = newValue!;
-                        });
-                      },
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        IconButton(
+                          icon: Icon(Icons.location_on,size: 25,color: Colors.white,), // Location icon
+                          onPressed: () {
+                            // Action when location icon is clicked
+                            print("Location icon clicked");
+                          },
+                        ),
+                        DropdownButton<String>(
+                          dropdownColor: Colors.blue[100],
+                          value: selectedCity,
+                          icon: Icon(Icons.arrow_drop_down, color: Colors.white),
+                          underline: SizedBox(),
+                          style: TextStyle(color: Colors.white, fontSize: 16),
+                          items: cities.map<DropdownMenuItem<String>>((String value) {
+                            return DropdownMenuItem<String>(
+                              value: value,
+                              child: Text(value),
+                            );
+                          }).toList(),
+                          onChanged: (String? newValue) {
+                            setState(() {
+                              selectedCity = newValue!;
+                            });
+                          },
+                        ),
+                      ],
                     ),
                     // Profile button or any widget on the right side
                     IconButton(
@@ -196,13 +219,15 @@ class _DashboardState extends State<Dashboard> {
                 Container(
                   margin: EdgeInsets.only(top: 10),
                   child: TextField(
+                    maxLines: 2, // Set to 2 to allow for two lines of text
+                    minLines: 1, // Set to 1 to make the field shrink if less text is input
                     decoration: InputDecoration(
                       prefixIcon: Icon(Icons.search),
                       hintText: 'Search for hospital and clinics/doctors/Symptoms/Specialities',
-                      hintStyle: TextStyle(
+                      hintStyle: GoogleFonts.poppins(
                         color: Colors.black, // Change the color of the hint text
-                        fontSize: 16, // Adjust the font size of the hint text
-                        fontStyle: FontStyle.italic, // Make the hint text italic (optional)
+                        fontSize: 14, // Adjust the font size of the hint text
+                        fontWeight: FontWeight.w500 // Make the hint text italic (optional)
                       ),
                       filled: true,
                       fillColor: Colors.white,
@@ -277,7 +302,7 @@ class _DashboardState extends State<Dashboard> {
                 ActionCard(
                   title: 'Schedule Your In-Clinic Visit',
                   desc: 'Book your appointment today and get expert medical care at your convenience. Whether it a routine check-up or a specialized consultation, our experienced doctors are here to help. Don wait—secure your spot now for hassle-free healthcare!',
-                  image: 'assets/images/demo_1.jpg', // Use your asset path here
+                  image: 'assets/images/doctor.jpg', // Use your asset path here
                 ),
                 SizedBox(height: MediaQuery.of(context).size.height * 0.03), // Responsive spacing
                 Text(
@@ -541,13 +566,6 @@ class ActionCard extends StatelessWidget {
               children: [
                 Text(title,maxLines: 2,overflow: TextOverflow.ellipsis, textAlign: TextAlign.start,style: TextStyle(fontSize: 18,color: Colors.white),),
                 Text(desc,maxLines: 4,overflow: TextOverflow.ellipsis, textAlign: TextAlign.start,style: TextStyle(fontSize: 14,color: Colors.white),),
-                Align(
-                  alignment: Alignment.bottomRight,
-                  child: CircleAvatar(
-                    radius: 20,
-                    child: Icon(Icons.arrow_right, size: 30),
-                  ),
-                )
               ],
             ),
           )

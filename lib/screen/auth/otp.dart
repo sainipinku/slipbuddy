@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -77,10 +78,10 @@ class _OtpState extends State<Otp> {
 
   }
   static  TextStyle black35Medium = GoogleFonts.poppins(
-    textStyle: TextStyle(fontSize: 35,
+      fontSize: 35,
       color: Colors.black,
       fontWeight: FontWeight.w700,
-      fontStyle: FontStyle.italic,),
+      fontStyle: FontStyle.italic
   );
   @override
   Widget build(BuildContext context) {
@@ -116,36 +117,7 @@ class _OtpState extends State<Otp> {
     );
 
     return  Scaffold(
-     /* appBar: AppBar(
-        backgroundColor: AppTheme.whiteColor,
-        elevation: 0,
-        title: Center(
-          child: Container(
-            height: 20.h,
-            width: 120.w,
-            child: Stack(
-              children: [
-                Container(
-                  height: 20.h,
-                  width: 120.w,
-                  decoration: BoxDecoration(
-                      color: Colors.black12,
-                      borderRadius: BorderRadius.all(Radius.circular(10.0))
-                  ),
-                ),
-                Container(
-                  height: 20.h,
-                  width: 80.w,
-                  decoration: BoxDecoration(
-                      color: Colors.black,
-                      borderRadius: BorderRadius.all(Radius.circular(10.0))
-                  ),
-                )
-              ],
-            ),
-          ),
-        ),
-      ),*/
+
       body: BlocListener<OtpCubit, OtpState>(
         listener: (context, state) {
           if (state is OtpLoading) {
@@ -224,40 +196,62 @@ class _OtpState extends State<Otp> {
                   SizedBox(height: 20.h,),
                   Text(
                     'Slip Buddy',
-                    style: GoogleFonts.poppins(
-                      textStyle: TextStyle(fontSize: 16,
-                        color: Colors.black,
-                        fontWeight: FontWeight.w700,),
-                    ),
+                    style: black35Medium,
                   ),
                   SizedBox(height: 40.h,),
                   Text(
                     'Verify mobile number',
-                    style: GoogleFonts.poppins(
-                      textStyle: TextStyle(fontSize: 16,
-                        color: Colors.black,
-                        fontWeight: FontWeight.w700,),
+                    style: GoogleFonts.openSans(
+                      fontSize: 30,
+                      color: Colors.black,
+                      fontWeight: FontWeight.w700,
                     ),
                   ),
                   SizedBox(height: 10.h,),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                    child: Text(
-                      'We have sent the OTP to +91 ${widget.phone}',
-                      style: GoogleFonts.poppins(
-                        textStyle: TextStyle(fontSize: 16,
-                          color: Colors.black,
-                          fontWeight: FontWeight.w700,),
+                    child: RichText(
+                      text: TextSpan(
+                        children: [
+                          TextSpan(
+                            text: 'We have sent the OTP to +91 ${widget.phone} ',
+                            style: GoogleFonts.openSans(
+                              fontSize: 14,
+                              color: Colors.black,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                          WidgetSpan(
+                            child: Icon(
+                              Icons.edit, // Edit icon
+                              size: 18, // Adjust icon size
+                              color: Colors.black,
+                            ),
+                          ),
+                          TextSpan(
+                            text: ' Edit',
+                            style: GoogleFonts.openSans(
+                              fontSize: 14,
+                              color: Colors.black,
+                              fontWeight: FontWeight.w500,
+                            ),
+                            // Adding gesture detector to the clickable part
+                            recognizer: TapGestureRecognizer()
+                              ..onTap = () {
+                                // Handle the tap action here
+                              },
+                          ),
+                        ],
                       ),
                     ),
                   ),
                   Container(
-                      margin: EdgeInsets.symmetric(horizontal: 10,vertical: 30),
+                      margin: EdgeInsets.symmetric(horizontal: 10,vertical: 20),
                       color: Colors.transparent,
                       child: PinCodeTextField(
                         appContext: context,
                         textStyle: MyStyles.black14Light,
-                        length: 6,
+                        length: 4,
                         controller: _pinPutController,
                         pinTheme: PinTheme(
                           shape: PinCodeFieldShape.box,
@@ -295,7 +289,7 @@ class _OtpState extends State<Otp> {
                       }
                     },
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 8.0),
+                      padding: const EdgeInsets.only(bottom: 15.0),
                       child: Text(
                         resend == false ?
                         "${"Resend OTP in "+ formatedTime(timeInSecond: widget.time)} Seconds" : "Resend OTP",
@@ -330,6 +324,7 @@ class _OtpState extends State<Otp> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
+                        Image.asset('assets/images/whtimg.png',height: 20,width: 20,),
                         Text(
                           'Stay information with regular updates on \nWhatsApp!',
                           style: MyStyles.black14Light,

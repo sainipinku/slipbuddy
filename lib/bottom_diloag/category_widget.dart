@@ -22,7 +22,7 @@ class _CategoryWidgetState extends State<CategoryWidget> {
     return BlocBuilder<DepartmentCubit, DepartmentState>(
       builder: (context, state) {
         if (state is DepartmentLoaded) {
-          int itemCount = state.DepartmentList.length > 6 ? 7 : state.DepartmentList.length; // Show 6 items plus "More" button if applicable
+          int itemCount = state.DepartmentList.length; // Show 6 items plus "More" button if applicable
 
           return Container(
             height: MediaQuery.of(context).size.height * 0.90,

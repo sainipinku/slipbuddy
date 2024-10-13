@@ -17,10 +17,10 @@ class Welcome extends StatefulWidget {
 
 class _WelcomeState extends State<Welcome> {
   static  TextStyle black35Medium = GoogleFonts.poppins(
-    textStyle: TextStyle(fontSize: 35,
-      color: Colors.black,
-      fontWeight: FontWeight.w700,
-      fontStyle: FontStyle.italic,),
+    fontSize: 35,
+    color: Colors.black,
+    fontWeight: FontWeight.w700,
+    fontStyle: FontStyle.italic,
   );
   @override
   Widget build(BuildContext context) {
@@ -49,9 +49,9 @@ class _WelcomeState extends State<Welcome> {
                     Text(
                       'Care made easy',
                       style: GoogleFonts.poppins(
-                        textStyle: TextStyle(fontSize: 16,
-                          color: Colors.black,
-                          fontWeight: FontWeight.w700,),
+                        fontSize: 16,
+                        color: Colors.black,
+                        fontWeight: FontWeight.w700,
                       ),
                     ),
                   ],
@@ -63,9 +63,9 @@ class _WelcomeState extends State<Welcome> {
                     Text(
                       'Welcome to Slip Buddy',
                       style: GoogleFonts.poppins(
-                        textStyle: TextStyle(fontSize: 18,
-                          color: Colors.black,
-                          fontWeight: FontWeight.w700,),
+                        fontSize: 18,
+                        color: Colors.black,
+                        fontWeight: FontWeight.w700,
                       ),
                     ),
                     SizedBox(height: 20),
@@ -75,9 +75,9 @@ class _WelcomeState extends State<Welcome> {
                           'updates, and personalized care management.',
                       textAlign: TextAlign.center,
                       style: GoogleFonts.poppins(
-                        textStyle: TextStyle(fontSize: 14,
-                          color: Colors.black,
-                          fontWeight: FontWeight.w400,),
+                        fontSize: 14,
+                        color: Colors.black,
+                        fontWeight: FontWeight.w400,
                       ),
                     ),
                     SizedBox(height: 20),
