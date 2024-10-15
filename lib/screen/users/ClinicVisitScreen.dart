@@ -34,9 +34,10 @@ class _ClinicVisitScreenState extends State<ClinicVisitScreen> {
     dateCubit = context.read<DateCubit>();
     slotsCubit.fetchSlots(body);
     dateCubit.fetchDateSlots(body1);
+  //  date = Helpers.dateformat(currentDate);
     print("----------------------------------------------------");
   }
-
+ String date = '15 Dec';
   @override
   void initState() {
     initCubit();
@@ -232,6 +233,7 @@ class _ClinicVisitScreenState extends State<ClinicVisitScreen> {
                           onTap: () {
                             setState(() {
                               selectedIndex = index;
+                              date = Helpers.dateformat(slots[index].date!);
                             });
                             var body = {"doctorid" : widget.doctorId,"date":Helpers.dateformat1(slots[index].date!)};
                             slotsCubit.fetchSlots(body);
@@ -264,7 +266,7 @@ class _ClinicVisitScreenState extends State<ClinicVisitScreen> {
 
               }),
               SizedBox(height: 20),
-              Text('Thu, 3 Oct', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+              Text(date, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
               SizedBox(height: 10),
               BlocBuilder<SlotsCubit, SlotsState>(builder: (context,state){
                 if (state is SlotsLoaded) {
@@ -317,12 +319,7 @@ class _ClinicVisitScreenState extends State<ClinicVisitScreen> {
               ,
               Spacer(),
               // Bottom ad and button
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10.0,vertical: 10.0),
-                child: button(color: AppTheme.statusBar, text: 'CONSULT NOW', button: () {
 
-                },borderRadius: 5.0),
-              ),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
