@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:slipbuddy/Widgets/CommonAppBar.dart';
 import 'package:slipbuddy/Widgets/snack_bar_widget.dart';
@@ -125,6 +126,7 @@ class _DoctorListingState extends State<DoctorListing> {
                         fee: doctor.fees!.toString(),
                         availableAt: '10:00 AM, tomorrow',
                         imagePath: doctor.profilePic!, // Dynamic image path
+                          HospitalID : doctor.HospitalID!,
                       ),
                       SizedBox(height: 10),
                     ],
@@ -165,6 +167,7 @@ class DoctorCard extends StatelessWidget {
   final String fee;
   final String availableAt;
   final String imagePath;
+  final int HospitalID;
 
   DoctorCard({
     required this.doctorId,
@@ -176,6 +179,7 @@ class DoctorCard extends StatelessWidget {
     required this.fee,
     required this.availableAt,
     required this.imagePath,
+    required this.HospitalID,
   });
 
   @override
@@ -197,7 +201,6 @@ class DoctorCard extends StatelessWidget {
                       FadeInImage(
                         image: NetworkImage(imagePath),
                         fit: BoxFit.cover,
-
                         placeholder:
                         const AssetImage(
                             "assets/images/google.png"),
@@ -244,7 +247,14 @@ class DoctorCard extends StatelessWidget {
               children: [
                 ElevatedButton(
                   onPressed: () {},
-                  child: Text('Contact Hospital'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppTheme.statusBar
+                  ),
+                  child: Text('Contact Hospital',style: GoogleFonts.poppins(
+                    fontSize: 14,
+                    color: Colors.white,
+                    fontWeight: FontWeight.w400,
+                  ),),
                 ),
                 ElevatedButton(
                   onPressed: () {
@@ -252,11 +262,18 @@ class DoctorCard extends StatelessWidget {
                       context,
                       PageTransition(
                           type: PageTransitionType.rightToLeft,
-                          child: ClinicVisitScreen(doctorId: doctorId,profile: imagePath,name: doctorName,location: location,),
+                          child: ClinicVisitScreen(doctorId: doctorId,HospitalID: HospitalID,profile: imagePath,name: doctorName,location: location,),
                           ctx: context),
                     );
                   },
-                  child: Text('Book Clinic Visit'),
+                  style: ElevatedButton.styleFrom(
+                      backgroundColor: AppTheme.statusBar
+                  ),
+                  child: Text('Book Clinic Visit',style:  GoogleFonts.roboto(
+                    color: AppTheme.whiteColor,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                  ),),
                 ),
               ],
             ),

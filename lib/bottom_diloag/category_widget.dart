@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:slipbuddy/Widgets/CrossIconWidget.dart';
 import 'package:slipbuddy/controller/department/department_cubit.dart';
+import 'package:slipbuddy/screen/users/doctor_listing.dart';
 
 class CategoryWidget extends StatefulWidget {
   const CategoryWidget({super.key});
@@ -50,6 +51,14 @@ class _CategoryWidgetState extends State<CategoryWidget> {
                       final category = state.DepartmentList[index];
                       return GestureDetector(
                         onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => DoctorListing(
+                                id: category.iD.toString(),
+                              ),
+                            ),
+                          );
                           // Handle item tap
                           print('${category.deptName} clicked');
                           // Navigate to another screen or perform an action

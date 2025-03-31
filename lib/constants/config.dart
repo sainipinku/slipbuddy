@@ -1,5 +1,5 @@
 class Config {
-  static String baseUrl = "https://slipbuddy.in/api/basic/";
+  static String baseUrl = "https://slipbuddy.com/api/basic/";
 }
 
 class Routes {
@@ -9,4 +9,6 @@ class Routes {
     static String doctorList = "getdoctorhospital";
     static String slotsList = "getavailableslot";
     static String dateSlotsList = "getslot";
+    static String getAppointment = "getAppointment";
+    static String AppointRegister = "Appoint_Register";
 }

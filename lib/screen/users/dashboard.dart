@@ -2,11 +2,13 @@
 
 import 'dart:async';
 
+import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:slipbuddy/Widgets/loading_logo_wiget.dart';
 import 'package:slipbuddy/Widgets/snack_bar_widget.dart';
 import 'package:slipbuddy/bottom_diloag/category_bottom_dilaog.dart';
@@ -25,6 +27,8 @@ class Dashboard extends StatefulWidget {
 }
 
 class _DashboardState extends State<Dashboard> {
+  final TextEditingController search = TextEditingController();
+  bool isSearchEmpty = true;
   String selectedCity = 'Murlipura'; // Default city
   final List<String> cities = ['Murlipura', 'Jaipur', 'Delhi', 'Mumbai'];
   late DepartmentCubit departmentCubit;
@@ -60,19 +64,28 @@ class _DashboardState extends State<Dashboard> {
 
   @override
   void dispose() {
+    search.dispose(); // Dispose of the controller when done
     _timer?.cancel();
     _pageController.dispose();
     super.dispose();
   }
 
-  initCubit() {
+  initCubit() async{
     departmentCubit = context.read<DepartmentCubit>();
     departmentCubit.fetchDepartment();
-    print("----------------------------------------------------");
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String userToken = prefs.getString('user_id') ?? '';
+    print("----------------------------------------------------$userToken");
   }
 
   @override
   void initState() {
+    // Add listener to TextField controller
+    search.addListener(() {
+      setState(() {
+        isSearchEmpty = search.text.isEmpty; // Check if the TextField is empty
+      });
+    });
     _autoScrollPages();
     initCubit();
     super.initState();
@@ -84,7 +97,7 @@ class _DashboardState extends State<Dashboard> {
         BlocListener<DepartmentCubit, DepartmentState>(
           listener: (context, state) {
             if (state is DepartmentLoading) {
-              showDialog(
+           /*   showDialog(
                   barrierDismissible: false,
                   context: context,
                   builder: (_ctx) {
@@ -106,7 +119,7 @@ class _DashboardState extends State<Dashboard> {
                         ),
                       ),
                     );
-                  });
+                  });*/
             } else if (state is DepartmentLoaded) {
              // Navigator.of(context).pop();
               final _snackBar = snackBar(
@@ -192,7 +205,7 @@ class _DashboardState extends State<Dashboard> {
                           items: cities.map<DropdownMenuItem<String>>((String value) {
                             return DropdownMenuItem<String>(
                               value: value,
-                              child: Text(value),
+                              child: Text(value,style: TextStyle(fontSize: 22,fontWeight: FontWeight.w500),),
                             );
                           }).toList(),
                           onChanged: (String? newValue) {
@@ -216,29 +229,101 @@ class _DashboardState extends State<Dashboard> {
                 ),
                 SizedBox(height: 10),
                 // Search field below the city dropdown
-                Container(
-                  margin: EdgeInsets.only(top: 10),
-                  child: TextField(
-                    maxLines: 2, // Set to 2 to allow for two lines of text
-                    minLines: 1, // Set to 1 to make the field shrink if less text is input
-                    decoration: InputDecoration(
-                      prefixIcon: Icon(Icons.search),
-                      hintText: 'Search for hospital and clinics/doctors/Symptoms/Specialities',
-                      hintStyle: GoogleFonts.poppins(
-                        color: Colors.black, // Change the color of the hint text
-                        fontSize: 14, // Adjust the font size of the hint text
-                        fontWeight: FontWeight.w500 // Make the hint text italic (optional)
+                Stack(
+                  children: [
+                    // Search TextField
+                    Container(
+                      margin: EdgeInsets.only(top: 10),
+                      child: TextField(
+                        maxLines: 2,
+                        minLines: 1,
+                        controller: search,
+                        decoration: InputDecoration(
+                          prefixIcon: Icon(Icons.search),
+                          hintText: '',
+                          hintStyle: GoogleFonts.poppins(
+                            color: Colors.black,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                          ),
+                          filled: true,
+                          fillColor: Colors.white,
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(25),
+                            borderSide: BorderSide.none,
+                          ),
+                          contentPadding: EdgeInsets.symmetric(vertical: 0),
+                        ),
                       ),
-                      filled: true,
-                      fillColor: Colors.white,
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(15),
-                        borderSide: BorderSide.none,
-                      ),
-                      contentPadding: EdgeInsets.symmetric(vertical: 0),
                     ),
-                  ),
+
+                    // Animated text below TextField
+                    if (isSearchEmpty)
+                      Positioned(
+                        top: 25,
+                        left: 48,
+                        child: Container(
+                          width: 300,
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Text(
+                                'Search for ', // Static text
+                                style: TextStyle(
+                                  fontSize: 16.0,
+                                  color: Colors.grey,
+                                ),
+                              ),
+                              Expanded(
+                                child: AnimatedTextKit(
+                                  animatedTexts: [
+                                    TypewriterAnimatedText(
+                                      'hospital and clinics',
+                                      textStyle: TextStyle(
+                                        fontSize: 14.0,
+                                        color: Colors.grey,
+                                      ),
+                                      speed: Duration(milliseconds: 100),
+                                    ),
+                                    TypewriterAnimatedText(
+                                      'doctors',
+                                      textStyle: TextStyle(
+                                        fontSize: 14.0,
+                                        color: Colors.grey,
+                                      ),
+                                      speed: Duration(milliseconds: 100),
+                                    ),
+                                    TypewriterAnimatedText(
+                                      'Symptoms',
+                                      textStyle: TextStyle(
+                                        fontSize: 14.0,
+                                        color: Colors.grey,
+                                      ),
+                                      speed: Duration(milliseconds: 100),
+                                    ),
+                                    TypewriterAnimatedText(
+                                      'Specialities',
+                                      textStyle: TextStyle(
+                                        fontSize: 14.0,
+                                        color: Colors.grey,
+                                      ),
+                                      speed: Duration(milliseconds: 100),
+                                    ),
+                                  ],
+                                  totalRepeatCount: 20000,
+                                  pause: Duration(milliseconds: 100),
+                                  displayFullTextOnTap: true,
+                                  stopPauseOnTap: true,
+                                  isRepeatingAnimation: true,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                  ],
                 ),
+
               ],
             ),
           ),
@@ -301,13 +386,13 @@ class _DashboardState extends State<Dashboard> {
                 SizedBox(height: 20),
                 ActionCard(
                   title: 'Schedule Your In-Clinic Visit',
-                  desc: 'Book your appointment today and get expert medical care at your convenience. Whether it a routine check-up or a specialized consultation, our experienced doctors are here to help. Don wait—secure your spot now for hassle-free healthcare!',
+                  desc: 'Experience personalized care with ease. Schedule your in-clinic visit now and get expert medical attention when you need it most.',
                   image: 'assets/images/doctor.jpg', // Use your asset path here
                 ),
                 SizedBox(height: MediaQuery.of(context).size.height * 0.03), // Responsive spacing
                 Text(
                   "Connect with top doctors in minutes.",
-                  style: TextStyle(fontSize: MediaQuery.of(context).size.height * 0.03, color: Colors.black), // Responsive font size
+                  style: TextStyle(fontSize: 22, color: Colors.black), // Responsive font size
                 ),
                 SizedBox(height: MediaQuery.of(context).size.height * 0.02), // Responsive spacing
           Container(
@@ -387,14 +472,14 @@ class _DashboardState extends State<Dashboard> {
                                 width: MediaQuery.of(context).size.width * 0.18,  // Responsive width
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(10),
-                                  color: Colors.blue[50],
+                                  color: AppTheme.statusBar,
                                 ),
                                 child: Center(
                                   child: Text(
                                     '${state.DepartmentList.length}+',
                                     style: TextStyle(
                                       fontSize: MediaQuery.of(context).size.height * 0.03, // Responsive font size
-                                      color: Colors.blueAccent,
+                                      color: Colors.white,
                                     ),
                                   ),
                                 ),
@@ -425,7 +510,7 @@ class _DashboardState extends State<Dashboard> {
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 8.0),
                       child: Text(
-                        "Find a Doctor for your Health Problem",
+                        "Consultation with Doctor Done",
                         style: TextStyle(fontSize: MediaQuery.of(context).size.height * 0.02, color: Colors.black), // Responsive font size
                       ),
                     ),
@@ -541,7 +626,7 @@ class ActionCard extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10),
-        color: AppTheme.shudleColor,
+        color: AppTheme.statusBar,
       ),
       padding: EdgeInsets.all(8),
       child: Row(
@@ -558,14 +643,15 @@ class ActionCard extends StatelessWidget {
               ),
             ),
           ) ,// Use the appropriate asset image here
-          SizedBox(width: 20),
+          SizedBox(width: 10),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                Text(title,maxLines: 2,overflow: TextOverflow.ellipsis, textAlign: TextAlign.start,style: TextStyle(fontSize: 18,color: Colors.white),),
-                Text(desc,maxLines: 4,overflow: TextOverflow.ellipsis, textAlign: TextAlign.start,style: TextStyle(fontSize: 14,color: Colors.white),),
+                Text(title,maxLines: 2,overflow: TextOverflow.ellipsis, textAlign: TextAlign.start,style: TextStyle(fontSize: 18,color: Colors.white,fontWeight: FontWeight.w700),),
+                SizedBox(height: 5,),
+                Text(desc,maxLines: 5,overflow: TextOverflow.ellipsis, textAlign: TextAlign.justify,style: TextStyle(fontSize: 14,color: Colors.white,fontWeight: FontWeight.w500),),
               ],
             ),
           )

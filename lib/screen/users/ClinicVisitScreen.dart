@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:slipbuddy/Widgets/snack_bar_widget.dart';
@@ -14,10 +15,11 @@ import 'package:slipbuddy/screen/users/appoitment.dart';
 
 class ClinicVisitScreen extends StatefulWidget {
   final int doctorId;
+  final int HospitalID;
   final String profile;
   final String name;
   final String location;
-  const ClinicVisitScreen({super.key,required this.doctorId,required this.profile,required this.name,required this.location});
+  const ClinicVisitScreen({super.key,required this.doctorId,required this.HospitalID,required this.profile,required this.name,required this.location});
   @override
   _ClinicVisitScreenState createState() => _ClinicVisitScreenState();
 }
@@ -37,22 +39,17 @@ class _ClinicVisitScreenState extends State<ClinicVisitScreen> {
   //  date = Helpers.dateformat(currentDate);
     print("----------------------------------------------------");
   }
- String date = '15 Dec';
+ String date = '12/15/2024 12:00:00 AM';
+  // Helper function to get month name
   @override
   void initState() {
+    DateTime now = DateTime.now();
+    date = DateFormat('MM/dd/yyyy hh:mm:ss a').format(now); // Formats as "15 Dec"
+    print("Current Date: $date"); // Output: "Current Date: 15 Dec"
     initCubit();
     super.initState();
   }
   int selectedIndex = 1; // Default selected date index
-  final List<String> availableDates = [
-    'Wed, 2 Oct',
-    'Thu, 3 Oct',
-    'Fri, 4 Oct',
-  ];
-
-  final List<String> morningSlots = ['10:00 AM', '10:30 AM', '11:00 AM', '11:30 AM'];
-  final List<String> afternoonSlots = ['12:00 PM', '12:30 PM'];
-  final List<String> eveningSlots = ['04:00 PM', '04:30 PM', '05:00 PM', '05:30 PM'];
 
   @override
   Widget build(BuildContext context) {
@@ -214,129 +211,151 @@ class _ClinicVisitScreenState extends State<ClinicVisitScreen> {
               },
             ),
           ],
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text('Clinic Visit Slots', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-              SizedBox(height: 10),
-              BlocBuilder<DateCubit, DateState>(builder: (context,state){
-                if(state is DateSlotsLoaded) {
-                  int itemCount = state.dateSlotsList.length;
-                  var slots = state.dateSlotsList;
-                  return Container(
-                    height: 55, // Adjust height based on your need
-                    child: ListView.builder(
-                      scrollDirection: Axis.horizontal,
-                      itemCount: itemCount,
-                      itemBuilder: (context, index) {
-                        return GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              selectedIndex = index;
-                              date = Helpers.dateformat(slots[index].date!);
-                            });
-                            var body = {"doctorid" : widget.doctorId,"date":Helpers.dateformat1(slots[index].date!)};
-                            slotsCubit.fetchSlots(body);
-                          },
-                          child: Container(
-                            width: 120, // Adjust width based on your need
-                            margin: EdgeInsets.only(right: 10), // Add some spacing between items
-                            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                            decoration: BoxDecoration(
-                              color: selectedIndex == index ? Colors.blue[100] : Colors.white,
-                              border: Border.all(color: Colors.grey[300]!),
-                              borderRadius: BorderRadius.circular(10),
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('Clinic Visit Slots', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                SizedBox(height: 10),
+                BlocBuilder<DateCubit, DateState>(builder: (context,state){
+                  if(state is DateSlotsLoaded) {
+                    int itemCount = state.dateSlotsList.length;
+                    var slots = state.dateSlotsList;
+                    return Container(
+                      height: 55, // Adjust height based on your need
+                      child: ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: itemCount,
+                        itemBuilder: (context, index) {
+                          return GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                selectedIndex = index;
+                                date = slots[index].date!;
+                              });
+                              var body = {"doctorid" : widget.doctorId,"date":Helpers.dateformat1(slots[index].date!)};
+                              slotsCubit.fetchSlots(body);
+                            },
+                            child: Container(
+                              width: 120, // Adjust width based on your need
+                              margin: EdgeInsets.only(right: 10), // Add some spacing between items
+                              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                              decoration: BoxDecoration(
+                                color: selectedIndex == index ? Colors.blue[100] : Colors.white,
+                                border: Border.all(color: Colors.grey[300]!),
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(Helpers.dateformat(slots[index].date!), style: TextStyle(fontSize: 14)),
+                                  SizedBox(height: 2),
+                                  Text(slots[index].status!, style: TextStyle(fontSize: 12, color: slots[index].status! == 'Available' ? Colors.green : Colors.grey)),
+                                ],
+                              ),
                             ),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text(Helpers.dateformat(slots[index].date!), style: TextStyle(fontSize: 14)),
-                                SizedBox(height: 2),
-                                Text(slots[index].status!, style: TextStyle(fontSize: 12, color: slots[index].status! == 'Available' ? Colors.green : Colors.grey)),
-                              ],
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-                  );
-                }else {
-                  return const Center(child: Text('No Announcement Found'));
-                }
-
-              }),
-              SizedBox(height: 20),
-              Text(date, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-              SizedBox(height: 10),
-              BlocBuilder<SlotsCubit, SlotsState>(builder: (context,state){
-                if (state is SlotsLoaded) {
-                  int itemCount = state.SlotsList.length;
-                  var slots = state.SlotsList;
-                  print('slot data---------$slots');
-                  // Arrays to store slots based on the period
-                  List<String> morningSlots = [];
-                  List<String> noonSlots = [];
-                  List<String> eveningSlots = [];
-
-                  // Loop through the list and categorize based on the 'Period' field
-                  for (var slot in slots) {
-                    if (slot.period == "Morning") {
-                      morningSlots.add(slot.slotTime!);
-                    } else if (slot.period == "Noon") {
-                      noonSlots.add(slot.slotTime!);
-                    } else if (slot.period == "Evening") {
-                      eveningSlots.add(slot.slotTime!);
-                    }
+                          );
+                        },
+                      ),
+                    );
+                  }else {
+                    return const Center(child: Text('No Announcement Found'));
                   }
 
-                  // Print the categorized arrays
-                  print("Morning Slots: $morningSlots");
-                  print("Noon Slots: $noonSlots");
-                  print("Evening Slots: $eveningSlots");
-                  return Column(
-                    children: [
-                      TimeSlotSection(
-                        label: 'Morning',
-                        slots: morningSlots,
-                        icon: Icons.wb_sunny,
-                      ),
-                      TimeSlotSection(
-                        label: 'Afternoon',
-                        slots: noonSlots,
-                        icon: Icons.wb_cloudy,
-                      ),
-                      TimeSlotSection(
-                        label: 'Evening',
-                        slots: eveningSlots,
-                        icon: Icons.nights_stay,
-                      ),
-                    ],
-                  );
-                }else {
-                  return const Center(child: Text('No Announcement Found'));
-                }
-              })
-              ,
-              Spacer(),
-              // Bottom ad and button
+                }),
+                SizedBox(height: 10),
+                Text(Helpers.dateformat(date), style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                SizedBox(height: 10),
+                BlocBuilder<SlotsCubit, SlotsState>(builder: (context,state){
+                  if (state is SlotsLoaded) {
+                    int itemCount = state.SlotsList.length;
+                    var slots = state.SlotsList;
+                    print('slot data---------$slots');
+                    // Arrays to store slots based on the period
+                    List<String> morningSlots = [];
+                    List<String> noonSlots = [];
+                    List<String> eveningSlots = [];
 
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  ElevatedButton(
-                    onPressed: () {
-                      // Add action to consult now
-                    },
-                    child: Text('CONSULT NOW'),
-                    style: ElevatedButton.styleFrom(
-                      padding: EdgeInsets.symmetric(vertical: 16),
-                      backgroundColor: Colors.green,
-                      textStyle: TextStyle(fontSize: 16),
+                    // Loop through the list and categorize based on the 'Period' field
+                    for (var slot in slots) {
+                      if (slot.period == "Morning") {
+                        morningSlots.add(slot.slotTime!);
+                      } else if (slot.period == "Noon") {
+                        noonSlots.add(slot.slotTime!);
+                      } else if (slot.period == "Evening") {
+                        eveningSlots.add(slot.slotTime!);
+                      }
+                    }
+
+                    // Print the categorized arrays
+                    print("Morning Slots: $morningSlots");
+                    print("Noon Slots: $noonSlots");
+                    print("Evening Slots: $eveningSlots");
+                    return Column(
+                      children: [
+                        TimeSlotSection(
+                          label: 'Morning',
+                          slots: morningSlots,
+                          icon: Icons.wb_sunny,
+                          date: date,
+                          doctorId: widget.doctorId,
+                          HospitalID: widget.HospitalID,
+                          profile: widget.profile,
+                          name: widget.name,
+                          location: widget.location,
+                        ),
+                        TimeSlotSection(
+                          label: 'Afternoon',
+                          slots: noonSlots,
+                          icon: Icons.wb_cloudy,
+                          date: date,
+                          doctorId: widget.doctorId,
+                          HospitalID: widget.HospitalID,
+                          profile: widget.profile,
+                          name: widget.name,
+                          location: widget.location,
+                        ),
+                        TimeSlotSection(
+                          label: 'Evening',
+                          slots: eveningSlots,
+                          icon: Icons.nights_stay,
+                          date: date,
+                          doctorId: widget.doctorId,
+                          HospitalID: widget.HospitalID,
+                          profile: widget.profile,
+                          name: widget.name,
+                          location: widget.location,
+                        ),
+                      ],
+                    );
+                  }else {
+                    return const Center(child: Text('No Announcement Found'));
+                  }
+                }),
+                // Bottom ad and button
+
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    ElevatedButton(
+                      onPressed: () {
+                        // Add action to consult now
+                      },
+                      child: Text('CONSULT NOW'),
+                      style: ElevatedButton.styleFrom(
+                        padding: EdgeInsets.symmetric(vertical: 16),
+                        backgroundColor: AppTheme.statusBar,
+                        textStyle:  GoogleFonts.roboto(
+                          color: AppTheme.whiteColor,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
                     ),
-                  ),
-                ],
-              ),
-            ],
+                  ],
+                ),
+              ],
+            ),
           ),
         )
         ,
@@ -347,14 +366,25 @@ class _ClinicVisitScreenState extends State<ClinicVisitScreen> {
 int ind = -1;
 class TimeSlotSection extends StatefulWidget {
   final String label;
+  final String date;
   final List<String> slots;
   final IconData icon;
-
+  final int doctorId;
+  final int HospitalID;
+  final String profile;
+  final String name;
+  final String location;
   const TimeSlotSection({
     Key? key,
+    required this.date,
     required this.label,
     required this.slots,
     required this.icon,
+    required this.doctorId,
+    required this.HospitalID,
+    required this.profile,
+    required this.name,
+    required this.location,
   }) : super(key: key);
 
   @override
@@ -388,7 +418,7 @@ class _TimeSlotSectionState extends State<TimeSlotSection> {
                   context,
                   PageTransition(
                       type: PageTransitionType.rightToLeft,
-                      child: AppointmentScreen(),
+                      child: AppointmentScreen(date: widget.date, time: widget.slots[index],doctorId: widget.doctorId,HospitalID: widget.HospitalID,profile: widget.profile,name: widget.name,location: widget.location,),
                       ctx: context),
                 );
               },

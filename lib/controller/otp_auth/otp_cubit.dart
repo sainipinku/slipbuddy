@@ -1,8 +1,10 @@
 
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:slipbuddy/config/sharedpref.dart';
 import 'package:slipbuddy/constants/api_manager.dart';
 import 'package:slipbuddy/constants/config.dart';
 
@@ -18,8 +20,10 @@ class OtpCubit extends Cubit<OtpState> {
     try {
       var response = await apiManager.postRequest(
           map, Config.baseUrl + Routes.verifyOtp);
-      debugPrint("response${response.body}");
+
       if (response.statusCode == 200) {
+        SharedPref.setUserID(json.decode(response.body)['Msrno'].toString());
+        debugPrint("response${response.body}");
         emit(OtpSuccess());
       } else if (response.statusCode == 403) {
         emit(OtpOnHold());

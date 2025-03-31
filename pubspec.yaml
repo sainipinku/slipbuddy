@@ -47,6 +47,8 @@ dependencies:
   banner_image: ^1.0.7
   smooth_page_indicator: ^1.2.0+3
   intl: ^0.19.0
+  webview_flutter: ^4.8.0
+  animated_text_kit: ^4.2.2
 
 
     # The following adds the Cupertino Icons font to your application.
@@ -83,6 +85,7 @@ flutter:
   assets:
      - assets/images/
      - assets/icons/
+     - assets/fonts/BauhausItalic.ttf
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
@@ -95,6 +98,12 @@ flutter:
   # "family" key with the font family name, and a "fonts" key with a
   # list giving the asset and other descriptors for the font. For
   # example:
+  fonts:
+    - family: BauhausItalic
+      fonts:
+        - asset: assets/fonts/BauhausItalic.ttf
+        - asset: assets/fonts/BauhausBold.ttf
+
   # fonts:
   #   - family: Schyler
   #     fonts:

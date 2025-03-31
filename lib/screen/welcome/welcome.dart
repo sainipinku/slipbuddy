@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -16,11 +17,11 @@ class Welcome extends StatefulWidget {
 }
 
 class _WelcomeState extends State<Welcome> {
-  static  TextStyle black35Medium = GoogleFonts.poppins(
+  static  TextStyle black35Medium = TextStyle(
     fontSize: 35,
     color: Colors.black,
+    fontFamily: 'BauhausItalic',
     fontWeight: FontWeight.w700,
-    fontStyle: FontStyle.italic,
   );
   @override
   Widget build(BuildContext context) {
@@ -60,12 +61,28 @@ class _WelcomeState extends State<Welcome> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text(
-                      'Welcome to Slip Buddy',
-                      style: GoogleFonts.poppins(
-                        fontSize: 18,
-                        color: Colors.black,
-                        fontWeight: FontWeight.w700,
+                    RichText(
+                      text: TextSpan(
+                        text: 'Welcome to ', // सामान्य टेक्स्ट
+                        style:GoogleFonts.poppins(
+                          fontSize: 18,
+                          color: Colors.black,
+                          fontWeight: FontWeight.w700,
+                        ),
+                        children: <TextSpan>[
+                          TextSpan(
+                            text: 'Slip Buddy!'.toUpperCase(), // क्लिकेबल टेक्स्ट
+                            style: GoogleFonts.poppins(
+                              fontSize: 18,
+                              color: Colors.black,
+                              fontWeight: FontWeight.w700,
+                            ),
+                            recognizer: TapGestureRecognizer()
+                              ..onTap = () {
+
+                              },
+                          ),
+                        ],
                       ),
                     ),
                     SizedBox(height: 20),
@@ -81,7 +98,7 @@ class _WelcomeState extends State<Welcome> {
                       ),
                     ),
                     SizedBox(height: 20),
-                    button(color: AppTheme.blackColor,text: 'Get Start',button: () {
+                    button(color: AppTheme.bgColor,text: 'Get Started'.toUpperCase(),button: () {
                       Navigator.pushAndRemoveUntil(
                         context,
                         PageTransition(

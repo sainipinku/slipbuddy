@@ -30,7 +30,7 @@ class MyStyles {
     textStyle: const TextStyle(
       color: Colors.blue,
       fontSize: 14,
-      fontWeight: FontWeight.bold, // regular
+      fontWeight: FontWeight.w400, // regular
     ),
   );
   static TextStyle black35Medium = GoogleFonts.openSans(

@@ -18,11 +18,11 @@ Widget button ({required Color color,required String text,required VoidCallback 
             button();
           },
           style: ElevatedButton.styleFrom(
-            backgroundColor: AppTheme.bgColor,
+            backgroundColor: color,
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(borderRadius ?? 25.0)),
           ),
-          child: Text('GET STARTED',style: GoogleFonts.roboto(
+          child: Text(text,style: GoogleFonts.roboto(
             color: AppTheme.whiteColor,
             fontSize: 12,
             fontWeight: FontWeight.w500,

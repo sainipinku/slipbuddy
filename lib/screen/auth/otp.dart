@@ -77,11 +77,11 @@ class _OtpState extends State<Otp> {
     super.dispose();
 
   }
-  static  TextStyle black35Medium = GoogleFonts.poppins(
-      fontSize: 35,
-      color: Colors.black,
-      fontWeight: FontWeight.w700,
-      fontStyle: FontStyle.italic
+  static  TextStyle black35Medium = TextStyle(
+    fontSize: 35,
+    color: Colors.black,
+    fontFamily: 'BauhausItalic',
+    fontWeight: FontWeight.w700,
   );
   @override
   Widget build(BuildContext context) {
@@ -90,7 +90,7 @@ class _OtpState extends State<Otp> {
           (Set<MaterialState> states) {
         // Track color when the switch is selected.
         if (states.contains(MaterialState.selected)) {
-          return Colors.amber;
+          return AppTheme.statusBar;
         }
         // Otherwise return null to set default track color
         // for remaining states such as when the switch is
@@ -246,7 +246,7 @@ class _OtpState extends State<Otp> {
                     ),
                   ),
                   Container(
-                      margin: EdgeInsets.symmetric(horizontal: 10,vertical: 20),
+                      margin: EdgeInsets.symmetric(horizontal: 50,vertical: 20),
                       color: Colors.transparent,
                       child: PinCodeTextField(
                         appContext: context,
@@ -254,10 +254,10 @@ class _OtpState extends State<Otp> {
                         length: 4,
                         controller: _pinPutController,
                         pinTheme: PinTheme(
-                          shape: PinCodeFieldShape.box,
+                          shape: PinCodeFieldShape.circle,
                           borderRadius: BorderRadius.circular(15), // increase this value for more rounded corners
-                          fieldHeight: 50,
-                          fieldWidth: 50,
+                          fieldHeight: 40,
+                          fieldWidth: 40,
                           borderWidth: 0.1,
                           activeFillColor: Colors.grey,
                           inactiveColor: Colors.black,
@@ -326,15 +326,15 @@ class _OtpState extends State<Otp> {
                       children: [
                         Image.asset('assets/images/whtimg.png',height: 20,width: 20,),
                         Text(
-                          'Stay information with regular updates on \nWhatsApp!',
-                          style: MyStyles.black14Light,
+                          'Stay information with regular updates on WhatsApp!',
+                          style: MyStyles.black12Light,
                         ),
                         Switch(
                           // This bool value toggles the switch.
                           value: light,
                           overlayColor: overlayColor,
                           trackColor: trackColor,
-                          thumbColor: const MaterialStatePropertyAll<Color>(Colors.black),
+                          thumbColor: const MaterialStatePropertyAll<Color>(Colors.white),
                           onChanged: (bool value) {
                             // This is called when the user toggles the switch.
                             setState(() {
@@ -363,7 +363,7 @@ class _OtpState extends State<Otp> {
                       ],
                     ),
                   ),
-                  SizedBox(height: 30.h,),
+                  SizedBox(height: 100.h,),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 8.0),
                     child: Text(
@@ -387,8 +387,7 @@ class _OtpState extends State<Otp> {
             ),
           ),
         )),
-      )
-      ,
+      ),
     );
   }
 }

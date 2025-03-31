@@ -41,11 +41,11 @@ class _LoginState extends State<Login> {
     initCubit();
     super.initState();
   }
-  static  TextStyle black35Medium = GoogleFonts.poppins(
+  static  TextStyle black35Medium = TextStyle(
     fontSize: 35,
     color: Colors.black,
+    fontFamily: 'BauhausItalic',
     fontWeight: FontWeight.w700,
-    fontStyle: FontStyle.italic,
   );
   Future<void> _handleGoogleSignIn(BuildContext context) async {
     try {
@@ -172,10 +172,10 @@ class _LoginState extends State<Login> {
                       ),
                       SizedBox(height: 30.h,),
                       Text(
-                        'Continue with Google',
+                        'Login to your account',
                         style: GoogleFonts.poppins(
-                          fontSize: 16,
-                          color: Colors.black,
+                          fontSize: 24,
+                          color: Colors.blueGrey,
                           fontWeight: FontWeight.w700,
                         ),
                       ),
@@ -335,7 +335,7 @@ class _LoginState extends State<Login> {
                           style: GoogleFonts.poppins(
                             fontSize: 16,
                             color: Colors.black,
-                            fontWeight: FontWeight.w700,
+                            fontWeight: FontWeight.w400,
                           ),
                         ),
                       ),
@@ -349,7 +349,7 @@ class _LoginState extends State<Login> {
                           ],
                         ),
                       ),
-                      SizedBox(height: 30.h,),
+                      SizedBox(height: 100.h,),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 8.0),
                         child: Text(
