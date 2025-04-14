@@ -110,38 +110,42 @@ class AppointmentsTab extends StatelessWidget {
       child: BlocBuilder<AppointmentCubit,AppointmentState>(builder: (context,state){
         if (state is AppointmentLoaded) {
           int itemCount = state.appointmentList.length;
-
+          String formattedDateTime = '';
           return ListView.builder(
             itemCount: itemCount, // Total number of items
             itemBuilder: (context, index) {
               var item = state.appointmentList[index];
-              String appointmentDate = item.appointmentDate!;
-              String timeSlot = item.timeSlot!;
+              if(item.appointmentDate!.isNotEmpty && item.timeSlot!.isNotEmpty){
+                String? appointmentDate = item.appointmentDate;
+                String? timeSlot = item.timeSlot;
 
-              // Parse the date and time
-              DateTime parsedDate = DateFormat("MM/dd/yyyy hh:mm:ss a").parse(appointmentDate);
-              DateTime parsedTime = DateFormat("HH:mm:ss").parse(timeSlot);
+                // Parse the date and time
+                DateTime parsedDate = DateFormat("MM/dd/yyyy hh:mm:ss a").parse(appointmentDate!);
+                DateTime parsedTime = DateFormat("HH:mm:ss").parse(timeSlot!);
 
-              // Combine date and time
-              DateTime combinedDateTime = DateTime(
-                parsedDate.year,
-                parsedDate.month,
-                parsedDate.day,
-                parsedTime.hour,
-                parsedTime.minute,
-              );
+                // Combine date and time
+                DateTime combinedDateTime = DateTime(
+                  parsedDate.year,
+                  parsedDate.month,
+                  parsedDate.day,
+                  parsedTime.hour,
+                  parsedTime.minute,
+                );
 
-              // Format the DateTime
-              String formattedDateTime = DateFormat("MMM dd, h:mm a").format(combinedDateTime);
+                // Format the DateTime
+                formattedDateTime = DateFormat("MMM dd, h:mm a").format(combinedDateTime);
+              }
               return AppointmentCard(
                 dateTime: formattedDateTime,
                 title: item.department!,
                 doctorName: item.drName!,
+                patientName: item.patientName!,
                 clinic: item.hospitalAddress!,
-                imageUrl: 'https://via.placeholder.com/150', // Replace with actual image URL
-                status: 'Booked',
+                imageUrl: item.drPic!, // Replace with actual image URL
+                status: item.status!,
                 actionText: 'View Details',
                 actionColor: Colors.blue,
+                token: item.TokenNo!,
               );
             },
           );
@@ -157,92 +161,133 @@ class AppointmentCard extends StatelessWidget {
   final String dateTime;
   final String title;
   final String doctorName;
+  final String patientName;
   final String clinic;
   final String imageUrl;
   final String status;
   final String actionText;
   final Color actionColor;
   final bool isCancelled;
-
+  final String token;
   const AppointmentCard({
     required this.dateTime,
     required this.title,
     required this.doctorName,
+    required this.patientName,
     required this.clinic,
     required this.imageUrl,
     required this.status,
     required this.actionText,
     required this.actionColor,
     this.isCancelled = false,
+    required this.token,
   });
 
   @override
   Widget build(BuildContext context) {
+    Color bgColor;
+    Color textColor;
+    String statusLabel;
+    IconData iconData;
+
+    switch (status) {
+      case 'cancelled':
+        bgColor = Colors.red.shade50;
+        textColor = Colors.red;
+        statusLabel = 'Appointment Cancelled';
+        iconData = Icons.cancel;
+        break;
+      case 'InProcess':
+        bgColor = Colors.yellow.shade50;
+        textColor = Colors.orange;
+        statusLabel = 'Appointment Pending';
+        iconData = Icons.schedule;
+        break;
+      case 'completed':
+        bgColor = Colors.green.shade50;
+        textColor = Colors.green;
+        statusLabel = 'Appointment Completed';
+        iconData = Icons.check_circle;
+        break;
+      default:
+        bgColor = Colors.grey.shade200;
+        textColor = Colors.black;
+        statusLabel = 'Unknown Status';
+        iconData = Icons.help;
+    }
     return Card(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-      elevation: 3,
-      child: Container(
-        padding: EdgeInsets.all(10),
-        color: isCancelled ? Colors.red[50] : Colors.white,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              dateTime,
-              style: TextStyle(fontSize: 14, color: Colors.grey),
+      margin: EdgeInsets.all(10),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            height: 45,
+            color: bgColor,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10.0),
+              child: Row(
+                children: [
+                  Icon(iconData, color: textColor),
+                  SizedBox(width: 8),
+                  Text(
+                    statusLabel,
+                    style: TextStyle(color: textColor, fontWeight: FontWeight.bold),
+                  ),
+                ],
+              ),
             ),
-            SizedBox(height: 5),
-            Text(
-              title,
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            SizedBox(height: 5),
-            Row(
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10.0),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    SizedBox(height: 10),
+                    Text(dateTime, style: TextStyle(color: Colors.grey[600])),
+                    SizedBox(height: 5),
+                    Text(
+                      'In-Clinic Appointment, ${title}',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    SizedBox(height: 5),
+                    Text(doctorName),
+                    Text(clinic, style: TextStyle(color: Colors.grey)),
+                  ],
+                ),
                 CircleAvatar(
                   backgroundImage: NetworkImage(imageUrl),
-                  radius: 30,
-                ),
-                SizedBox(width: 10),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        doctorName,
-                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                      ),
-                      Text(
-                        clinic,
-                        style: TextStyle(fontSize: 14, color: Colors.grey),
-                      ),
-                    ],
-                  ),
+                  radius: 22,
                 ),
               ],
             ),
-            SizedBox(height: 10),
-            isCancelled
-                ? Text(
-              'Appointment Cancelled',
-              style: TextStyle(fontSize: 16, color: Colors.red),
-            )
-                : Container(),
-            SizedBox(height: 10),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
+          ),
+
+          SizedBox(height: 10),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10.0),
+            child: Text('Token :  $token'),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10.0,vertical: 5.0),
+            child: Row(
               children: [
-                ElevatedButton(
-                  onPressed: () {},
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: actionColor,
-                  ),
-                  child: Text(actionText),
+                Expanded(child: Text('Booked for $patientName')),
+                if(status != 'InProcess')
+                OutlinedButton(
+                  onPressed: () {
+                    // Handle Book Again
+                  },
+                  child: Text('Book Again'),
                 ),
               ],
             ),
-          ],
-        ),
+          )
+        ],
       ),
     );
   }

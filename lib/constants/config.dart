@@ -11,4 +11,9 @@ class Routes {
     static String dateSlotsList = "getslot";
     static String getAppointment = "getAppointment";
     static String AppointRegister = "Appoint_Register";
+    static String getdoctorhospital = "getdoctorhospital";
+    static String getdoctorbyid = "getdoctorbyid";
+    static String banner_list = "banner_list";
+    static String getappointmentbymsrno = "getappointmentbymsrno";
+    static String getuserprofilebymsrno = "getuserprofilebymsrno";
 }

@@ -14,6 +14,8 @@ class DoctorModel {
   String? profilePic;
   String? location;
   int? HospitalID;
+  String? NextAvailable;
+  String? Ranking;
 
   DoctorModel(
       {this.id,
@@ -29,7 +31,7 @@ class DoctorModel {
         this.experience,
         this.fees,
         this.profilePic,
-        this.location,this.HospitalID});
+        this.location,this.HospitalID,this.NextAvailable,this.Ranking});
 
   DoctorModel.fromJson(Map<String, dynamic> json) {
     id = json['Id'];
@@ -47,6 +49,8 @@ class DoctorModel {
     profilePic = json['ProfilePic'];
     location = json['Location'];
     HospitalID = json['HospitalID'];
+    NextAvailable = json['NextAvailable'];
+    Ranking = json['Ranking'];
   }
 
   Map<String, dynamic> toJson() {
@@ -66,6 +70,8 @@ class DoctorModel {
     data['ProfilePic'] = this.profilePic;
     data['Location'] = this.location;
     data['HospitalID'] = this.HospitalID;
+    data['NextAvailable'] = this.NextAvailable;
+    data['Ranking'] = this.Ranking;
     return data;
   }
 }

@@ -3,11 +3,13 @@
 import 'dart:async';
 
 import 'package:animated_text_kit/animated_text_kit.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:slipbuddy/Widgets/loading_logo_wiget.dart';
 import 'package:slipbuddy/Widgets/snack_bar_widget.dart';
@@ -15,6 +17,9 @@ import 'package:slipbuddy/bottom_diloag/category_bottom_dilaog.dart';
 import 'package:slipbuddy/constants/app_theme.dart';
 import 'package:slipbuddy/controller/department/department_cubit.dart';
 import 'package:slipbuddy/drawer/GlobalDrawer.dart';
+import 'package:slipbuddy/models/BannerModel.dart';
+import 'package:slipbuddy/models/CompletedDoctorListModel.dart';
+import 'package:slipbuddy/screen/location/LocationSearchPage.dart';
 import 'package:slipbuddy/screen/users/doctor_listing.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
@@ -29,26 +34,17 @@ class Dashboard extends StatefulWidget {
 class _DashboardState extends State<Dashboard> {
   final TextEditingController search = TextEditingController();
   bool isSearchEmpty = true;
-  String selectedCity = 'Murlipura'; // Default city
-  final List<String> cities = ['Murlipura', 'Jaipur', 'Delhi', 'Mumbai'];
+  String currentLocation = 'Japiur'; // Default city
   late DepartmentCubit departmentCubit;
   final PageController _pageController = PageController(initialPage: 0);
   int _currentPage = 0;
   Timer? _timer;
   final GlobalKey<ScaffoldState> _key = GlobalKey(); // Create a key
-  final List<String> bannerImages = [
-    'assets/images/banner_1.jpg',
-    'assets/images/banner_2.jpg',
-    'assets/images/banner_1.jpg',
-    'assets/images/banner_2.jpg',
-    'assets/images/banner_1.jpg',
-  //  'https://via.placeholder.com/350x150.png?text=Banner+2',
-   // 'https://via.placeholder.com/350x150.png?text=Banner+3',
-  ];
+  List<BannerModel>? bannerImagesList;
 
-  void _autoScrollPages() {
-    _timer = Timer.periodic(Duration(seconds: 5), (Timer timer) {
-      if (_currentPage < bannerImages.length - 1) {
+  void _autoScrollPages() async {
+    _timer = await Timer.periodic(Duration(seconds: 5), (Timer timer) {
+      if (_currentPage < bannerImagesList!.length - 1) {
         _currentPage++;
       } else {
         _currentPage = 0;
@@ -77,7 +73,22 @@ class _DashboardState extends State<Dashboard> {
     String userToken = prefs.getString('user_id') ?? '';
     print("----------------------------------------------------$userToken");
   }
+  void _openCitySelector() async {
+    final selectedCity = await Navigator.push(
+      context,
+      PageTransition(
+          type: PageTransitionType.rightToLeft,
+          child: LocationSearchPage(),
+          ctx: context),
+    );
 
+    if (selectedCity != null) {
+      print('Selected City: $selectedCity');
+      setState(() {
+        currentLocation = selectedCity;
+      });
+    }
+  }
   @override
   void initState() {
     // Add listener to TextField controller
@@ -86,8 +97,9 @@ class _DashboardState extends State<Dashboard> {
         isSearchEmpty = search.text.isEmpty; // Check if the TextField is empty
       });
     });
-    _autoScrollPages();
+
     initCubit();
+    _autoScrollPages();
     super.initState();
   }
   @override
@@ -126,7 +138,20 @@ class _DashboardState extends State<Dashboard> {
                   'Status update successfully', Icons.done, Colors.green);
               ScaffoldMessenger.of(context).showSnackBar(_snackBar);
 
-            } else if (state is DepartmentFailed) {
+            }else if (state is BannerImageLoaded) {
+              // Navigator.of(context).pop();
+              final _snackBar = snackBar(
+                  'Banner Data Get successfully', Icons.done, Colors.green);
+              ScaffoldMessenger.of(context).showSnackBar(_snackBar);
+
+            }else if (state is CompletedDoctorListLoaded) {
+              // Navigator.of(context).pop();
+              final _snackBar = snackBar(
+                  'Completed Doctor List Get successfully', Icons.done, Colors.green);
+              ScaffoldMessenger.of(context).showSnackBar(_snackBar);
+
+            }
+            else if (state is DepartmentFailed) {
              // Navigator.of(context).pop();
               final _snackBar = snackBar('Failed to update complain status.',
                   Icons.warning, Colors.red);
@@ -154,177 +179,194 @@ class _DashboardState extends State<Dashboard> {
       ],
       child: Scaffold(
         key: _key,
-        appBar: AppBar(
-          backgroundColor: AppTheme.statusBar,
-          elevation: 0,
-          toolbarHeight: 150, // Increase height for customization
-          automaticallyImplyLeading: false, // Removes default back arrow
-          title: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 15.0),
-            child: Column(
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        appBar: PreferredSize(
+          preferredSize: Size.fromHeight(150),
+          child: Container(
+            decoration: BoxDecoration(
+              color: AppTheme.statusBar,
+              borderRadius: BorderRadius.only(
+                bottomLeft: Radius.circular(25),
+                bottomRight: Radius.circular(25),
+              ),
+            ),
+            child: AppBar(
+              backgroundColor: Colors.transparent, // Make AppBar transparent so Container shows
+              elevation: 0,
+              toolbarHeight: 150, // Increase height for customization
+              automaticallyImplyLeading: false, // Removes default back arrow
+              title: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 15.0),
+                child: Column(
                   children: [
-                    // Location Icon on the Left Side
-                    GestureDetector(
-                      onTap: (){
-                        _key.currentState!.openDrawer();
-                        // Action when menu icon is clicked
-                        print("Menu button clicked");
-                      },
-                      child: CircleAvatar(
-                        radius: 25, // Adjust the radius as needed
-                        backgroundImage: NetworkImage('https://via.placeholder.com/25x25.png?text=Banner+2'), // Replace with your image URL
-                        // Alternatively, use AssetImage for local images
-                        // backgroundImage: AssetImage('assets/images/profile.png'),
-                        child: Text(
-                          'AB', // Initials can be shown in case the image fails to load
-                          style: TextStyle(color: Colors.white, fontSize: 16),
-                        ),
-                      ),
-                    ),
-                    // Dropdown for city selection
                     Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
+                        // Location Icon on the Left Side
+                        GestureDetector(
+                          onTap: (){
+                            _key.currentState!.openDrawer();
+                            // Action when menu icon is clicked
+                            print("Menu button clicked");
+                          },
+                          child: Container(
+                            height: 50,
+                            width: 50,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: Colors.blue
+                            ),
+                            child: Center(
+                              child: Text(
+                                'AB', // Initials can be shown in case the image fails to load
+                                style: TextStyle(color: Colors.white, fontSize: 16),
+                              ),
+                            ),
+                          ),
+                        ),
+                        // Dropdown for city selection
+                        GestureDetector(
+                          onTap: (){
+                            _openCitySelector();
+                          },
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              IconButton(
+                                icon: Icon(Icons.location_on,size: 25,color: Colors.white,), // Location icon
+                                onPressed: () {
+                                  // Action when location icon is clicked
+                                  print("Location icon clicked");
+                                },
+                              ),
+                              SizedBox(
+                                width: 100,
+                                child: Text(
+                                  currentLocation,maxLines: 1,overflow: TextOverflow.fade,
+                                  style: TextStyle(fontSize: 18, color: Colors.white,fontWeight: FontWeight.w700), // Responsive font size
+                                ),
+                              ),
+                              IconButton(
+                                icon: Icon(Icons.keyboard_arrow_down_outlined,size: 25,color: Colors.white,), // Location icon
+                                onPressed: () {
+                                  // Action when location icon is clicked
+                                  print("Location icon clicked");
+                                },
+                              ),
+                            ],
+                          ),
+                        ),
+                        // Profile button or any widget on the right side
                         IconButton(
-                          icon: Icon(Icons.location_on,size: 25,color: Colors.white,), // Location icon
+                          icon: Icon(Icons.notification_important), // Location icon
                           onPressed: () {
                             // Action when location icon is clicked
                             print("Location icon clicked");
                           },
                         ),
-                        DropdownButton<String>(
-                          dropdownColor: Colors.blue[100],
-                          value: selectedCity,
-                          icon: Icon(Icons.arrow_drop_down, color: Colors.white),
-                          underline: SizedBox(),
-                          style: TextStyle(color: Colors.white, fontSize: 16),
-                          items: cities.map<DropdownMenuItem<String>>((String value) {
-                            return DropdownMenuItem<String>(
-                              value: value,
-                              child: Text(value,style: TextStyle(fontSize: 22,fontWeight: FontWeight.w500),),
-                            );
-                          }).toList(),
-                          onChanged: (String? newValue) {
-                            setState(() {
-                              selectedCity = newValue!;
-                            });
-                          },
-                        ),
+
                       ],
                     ),
-                    // Profile button or any widget on the right side
-                    IconButton(
-                      icon: Icon(Icons.notification_important), // Location icon
-                      onPressed: () {
-                        // Action when location icon is clicked
-                        print("Location icon clicked");
-                      },
+                    SizedBox(height: 10),
+                    // Search field below the city dropdown
+                    Stack(
+                      children: [
+                        // Search TextField
+                        Container(
+                          margin: EdgeInsets.only(top: 10),
+                          child: TextField(
+                            maxLines: 2,
+                            minLines: 1,
+                            controller: search,
+                            decoration: InputDecoration(
+                              prefixIcon: Icon(Icons.search),
+                              hintText: '',
+                              hintStyle: GoogleFonts.poppins(
+                                color: Colors.black,
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                              ),
+                              filled: true,
+                              fillColor: Colors.white,
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(25),
+                                borderSide: BorderSide.none,
+                              ),
+                              contentPadding: EdgeInsets.symmetric(vertical: 0),
+                            ),
+                          ),
+                        ),
+
+                        // Animated text below TextField
+                        if (isSearchEmpty)
+                          Positioned(
+                            top: 25,
+                            left: 48,
+                            child: Container(
+                              width: 300,
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    'Search for ', // Static text
+                                    style: TextStyle(
+                                      fontSize: 16.0,
+                                      color: Colors.grey,
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: AnimatedTextKit(
+                                      animatedTexts: [
+                                        TypewriterAnimatedText(
+                                          'hospital and clinics',
+                                          textStyle: TextStyle(
+                                            fontSize: 14.0,
+                                            color: Colors.grey,
+                                          ),
+                                          speed: Duration(milliseconds: 100),
+                                        ),
+                                        TypewriterAnimatedText(
+                                          'doctors',
+                                          textStyle: TextStyle(
+                                            fontSize: 14.0,
+                                            color: Colors.grey,
+                                          ),
+                                          speed: Duration(milliseconds: 100),
+                                        ),
+                                        TypewriterAnimatedText(
+                                          'Symptoms',
+                                          textStyle: TextStyle(
+                                            fontSize: 14.0,
+                                            color: Colors.grey,
+                                          ),
+                                          speed: Duration(milliseconds: 100),
+                                        ),
+                                        TypewriterAnimatedText(
+                                          'Specialities',
+                                          textStyle: TextStyle(
+                                            fontSize: 14.0,
+                                            color: Colors.grey,
+                                          ),
+                                          speed: Duration(milliseconds: 100),
+                                        ),
+                                      ],
+                                      totalRepeatCount: 20000,
+                                      pause: Duration(milliseconds: 100),
+                                      displayFullTextOnTap: true,
+                                      stopPauseOnTap: true,
+                                      isRepeatingAnimation: true,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                      ],
                     ),
 
                   ],
                 ),
-                SizedBox(height: 10),
-                // Search field below the city dropdown
-                Stack(
-                  children: [
-                    // Search TextField
-                    Container(
-                      margin: EdgeInsets.only(top: 10),
-                      child: TextField(
-                        maxLines: 2,
-                        minLines: 1,
-                        controller: search,
-                        decoration: InputDecoration(
-                          prefixIcon: Icon(Icons.search),
-                          hintText: '',
-                          hintStyle: GoogleFonts.poppins(
-                            color: Colors.black,
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500,
-                          ),
-                          filled: true,
-                          fillColor: Colors.white,
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(25),
-                            borderSide: BorderSide.none,
-                          ),
-                          contentPadding: EdgeInsets.symmetric(vertical: 0),
-                        ),
-                      ),
-                    ),
-
-                    // Animated text below TextField
-                    if (isSearchEmpty)
-                      Positioned(
-                        top: 25,
-                        left: 48,
-                        child: Container(
-                          width: 300,
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Text(
-                                'Search for ', // Static text
-                                style: TextStyle(
-                                  fontSize: 16.0,
-                                  color: Colors.grey,
-                                ),
-                              ),
-                              Expanded(
-                                child: AnimatedTextKit(
-                                  animatedTexts: [
-                                    TypewriterAnimatedText(
-                                      'hospital and clinics',
-                                      textStyle: TextStyle(
-                                        fontSize: 14.0,
-                                        color: Colors.grey,
-                                      ),
-                                      speed: Duration(milliseconds: 100),
-                                    ),
-                                    TypewriterAnimatedText(
-                                      'doctors',
-                                      textStyle: TextStyle(
-                                        fontSize: 14.0,
-                                        color: Colors.grey,
-                                      ),
-                                      speed: Duration(milliseconds: 100),
-                                    ),
-                                    TypewriterAnimatedText(
-                                      'Symptoms',
-                                      textStyle: TextStyle(
-                                        fontSize: 14.0,
-                                        color: Colors.grey,
-                                      ),
-                                      speed: Duration(milliseconds: 100),
-                                    ),
-                                    TypewriterAnimatedText(
-                                      'Specialities',
-                                      textStyle: TextStyle(
-                                        fontSize: 14.0,
-                                        color: Colors.grey,
-                                      ),
-                                      speed: Duration(milliseconds: 100),
-                                    ),
-                                  ],
-                                  totalRepeatCount: 20000,
-                                  pause: Duration(milliseconds: 100),
-                                  displayFullTextOnTap: true,
-                                  stopPauseOnTap: true,
-                                  isRepeatingAnimation: true,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                  ],
-                ),
-
-              ],
+              ),
             ),
           ),
         ),
@@ -334,73 +376,98 @@ class _DashboardState extends State<Dashboard> {
           padding: const EdgeInsets.all(16.0),
           child: SingleChildScrollView(
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                Stack(
-                  alignment: Alignment.bottomCenter,
-                  children: [
-                    SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.16,
-                      child: PageView.builder(
-                        controller: _pageController,
-                        itemCount: bannerImages.length,
-                        itemBuilder: (context, index) {
-                          return Container(
-                            margin: EdgeInsets.symmetric(horizontal: 5.0),
-                            decoration: BoxDecoration(
-                              color: AppTheme.statusBar,
-                              borderRadius: BorderRadius.circular(10),
+                BlocBuilder<DepartmentCubit, DepartmentState>(
+                  builder: (context, state) {
+                    if (state is MultipleDataLoaded) {
+                      bannerImagesList = state.bannerImagesList;
+
+                      return Stack(
+                        alignment: Alignment.bottomCenter,
+                        children: [
+                          SizedBox(
+                            height: MediaQuery.of(context).size.height * 0.18,
+                            child: PageView.builder(
+                              controller: _pageController,
+                              itemCount: bannerImagesList!.length,
+                              itemBuilder: (context, index) {
+                                return Container(
+                                  margin: EdgeInsets.symmetric(horizontal: 5.0),
+                                  decoration: BoxDecoration(
+                                    color: AppTheme.statusBar,
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(10),
+                                    child: CachedNetworkImage(
+                                      imageUrl: bannerImagesList![index].path!,
+                                      fit: BoxFit.cover,
+                                      placeholder: (context, url) => Center(child: CircularProgressIndicator()),
+                                      errorWidget: (context, url, error) => Icon(Icons.error),
+                                    ),
+                                  ),
+                                );
+                              },
+                              onPageChanged: (index) {
+                                setState(() {
+                                  _currentPage = index;
+                                });
+                              },
                             ),
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(10),
-                              child: Image.asset(
-                                bannerImages[index],
-                                fit: BoxFit.cover,
+                          ),
+                          Positioned(
+                            bottom: 5,
+                            child: SmoothPageIndicator(
+                              controller: _pageController,
+                              count: bannerImagesList!.length,
+                              effect: WormEffect(
+                                dotHeight: 8,
+                                dotWidth: 8,
+                                spacing: 6,
+                                dotColor: Colors.grey,
+                                activeDotColor: AppTheme.statusBar,
                               ),
                             ),
-                          );
-                        },
-                        onPageChanged: (index) {
-                          setState(() {
-                            _currentPage = index;
-                          });
-                        },
-                      ),
-                    ),
-                    Positioned(
-                      bottom: 5, // You can adjust this value to move dots closer or further from the image
-                      child: SmoothPageIndicator(
-                        controller: _pageController, // PageController
-                        count: bannerImages.length,  // Number of pages
-                        effect: WormEffect(
-                          dotHeight: 8,  // Reduced dot size
-                          dotWidth: 8,   // Reduced dot size
-                          spacing: 6,    // Reduced spacing between dots
-                          dotColor: Colors.grey,
-                          activeDotColor: AppTheme.statusBar, // Customize active dot color
-                        ),
-                      ),
-                    ),
-                  ],
+                          ),
+                        ],
+                      );
+                    } else {
+                      return const Center(child: Text('No Announcement Found'));
+                    }
+                  },
                 ),
-
-                SizedBox(height: 20),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 10.0),
+                  child: Divider(
+                    color: Colors.black26,
+                    thickness: 5,
+                  ),
+                ),
                 ActionCard(
                   title: 'Schedule Your In-Clinic Visit',
                   desc: 'Experience personalized care with ease. Schedule your in-clinic visit now and get expert medical attention when you need it most.',
                   image: 'assets/images/doctor.jpg', // Use your asset path here
                 ),
-                SizedBox(height: MediaQuery.of(context).size.height * 0.03), // Responsive spacing
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 10.0),
+                  child: Divider(
+                    color: Colors.black26,
+                    thickness: 5,
+                  ),
+                ), // Responsive spacing
                 Text(
                   "Connect with top doctors in minutes.",
-                  style: TextStyle(fontSize: 22, color: Colors.black), // Responsive font size
+                  style: TextStyle(fontSize: 18, color: Colors.black,fontWeight: FontWeight.w700), // Responsive font size
                 ),
                 SizedBox(height: MediaQuery.of(context).size.height * 0.02), // Responsive spacing
-          Container(
+                Container(
             height: MediaQuery.of(context).size.height * 0.25, // Responsive height for the GridView
             child: BlocBuilder<DepartmentCubit, DepartmentState>(
               builder: (context, state) {
-                if (state is DepartmentLoaded) {
-                  int itemCount = state.DepartmentList.length > 8 ? 8 : state.DepartmentList.length;
+                if (state is MultipleDataLoaded) {
+                  int itemCount = state.departmentList.length > 8 ? 8 : state.departmentList.length;
 
                   return GridView.builder(
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -409,11 +476,11 @@ class _DashboardState extends State<Dashboard> {
                       crossAxisSpacing: 8.0, // Spacing between columns
                       childAspectRatio: 0.8, // Adjust this ratio for image-text size balance
                     ),
-                    itemCount: state.DepartmentList.length > 8 ? 8 : itemCount,
+                    itemCount: state.departmentList.length > 8 ? 8 : itemCount,
                     physics: NeverScrollableScrollPhysics(),
                     itemBuilder: (context, index) {
-                      if (index < 7 && index < state.DepartmentList.length) {
-                        final category = state.DepartmentList[index];
+                      if (index < 7 && index < state.departmentList.length) {
+                        final category = state.departmentList[index];
 
                         return GestureDetector(
                           onTap: () {
@@ -459,7 +526,7 @@ class _DashboardState extends State<Dashboard> {
                             },
                           ),
                         );
-                      } else if (index == 7 && state.DepartmentList.length > 8) {
+                      } else if (index == 7 && state.departmentList.length > 8) {
                         return GestureDetector(
                           onTap: () {
                             CategoryBottomDilog(context);
@@ -476,7 +543,7 @@ class _DashboardState extends State<Dashboard> {
                                 ),
                                 child: Center(
                                   child: Text(
-                                    '${state.DepartmentList.length}+',
+                                    '${state.departmentList.length}+',
                                     style: TextStyle(
                                       fontSize: MediaQuery.of(context).size.height * 0.03, // Responsive font size
                                       color: Colors.white,
@@ -499,64 +566,66 @@ class _DashboardState extends State<Dashboard> {
               },
             ),
           ),
-                SizedBox(height: MediaQuery.of(context).size.height * 0.03), // Responsive spacing
-                Row(
-                  children: [
-                    CircleAvatar(
-                      radius: 10,
-                      backgroundColor: Colors.black54,
-                      child: Icon(Icons.person, size: 10),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                      child: Text(
-                        "Consultation with Doctor Done",
-                        style: TextStyle(fontSize: MediaQuery.of(context).size.height * 0.02, color: Colors.black), // Responsive font size
-                      ),
-                    ),
-                  ],
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 10.0),
+                  child: Divider(
+                    color: Colors.black26,
+                    thickness: 5,
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  child: Text(
+                    "Consultation Successfully Completed",
+                    style: TextStyle(fontSize: 16, color: Colors.black,fontWeight: FontWeight.w700), // Responsive font size
+                  ),
                 ),
                 SizedBox(height: MediaQuery.of(context).size.height * 0.02), // Responsive spacing
-                Container(
-                  height: MediaQuery.of(context).size.height * 0.08, // Responsive height
-                  width: MediaQuery.of(context).size.width, // Full width
-                  decoration: BoxDecoration(
-                    border: Border.all(
-                      color: Colors.black,
-                      width: 0.1,
-                    ),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        CircleAvatar(
-                          backgroundImage: AssetImage('assets/images/demo_2.png'),
-                          radius: 15,
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 10.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(
-                                "Dr. Garima Gupta",
-                                style: TextStyle(fontSize: MediaQuery.of(context).size.height * 0.02, color: Colors.black),
+                BlocBuilder<DepartmentCubit, DepartmentState>(
+                  builder: (context, state) {
+                    if (state is MultipleDataLoaded) {
+                      List<CompletedDoctorListModel> completedDoctorList = state.completedDoctorList;
+
+                      return Container(
+                        height: 150, // Set the height for horizontal scroll
+                        padding: EdgeInsets.symmetric(horizontal: 10),
+                        child: completedDoctorList.isNotEmpty ? ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          itemCount: completedDoctorList.length,
+                          itemBuilder: (context, index) {
+
+                            return Container(
+                              width: 100,
+                              margin: EdgeInsets.symmetric(horizontal: 8),
+                              child: Column(
+                                children: [
+                                  CircleAvatar(
+                                      radius: 35,
+                                      backgroundImage: NetworkImage(completedDoctorList[index].drPic!),
+                                  ),
+                                  SizedBox(height: 5),
+                                  Text(
+                                    completedDoctorList[index].drName!,
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                  Text(
+                                    completedDoctorList[index].department!,
+                                    style: TextStyle(fontSize: 12, color: Colors.grey),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ],
                               ),
-                              Text(
-                                "Dentist",
-                                style: TextStyle(fontSize: MediaQuery.of(context).size.height * 0.018, color: Colors.black54),
-                              ),
-                            ],
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
+                            );
+                          },
+                        ) : Center(child: Text('No Record Found')),
+                      );
+                    } else {
+                      return const Center(child: Text('No Announcement Found'));
+                    }
+                  },
                 ),
               ],
             ),

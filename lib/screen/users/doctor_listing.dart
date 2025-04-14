@@ -120,11 +120,11 @@ class _DoctorListingState extends State<DoctorListing> {
                         doctorId: doctor.id!,
                         doctorName: doctor.fullName!,
                         experience: doctor.experience!,
-                        rating: 4.5,
+                        rating: double.parse(doctor.Ranking!),
                         hospital: doctor.hospitalName!,
                         location: doctor.location!,
                         fee: doctor.fees!.toString(),
-                        availableAt: '10:00 AM, tomorrow',
+                        availableAt: doctor.NextAvailable!,
                         imagePath: doctor.profilePic!, // Dynamic image path
                           HospitalID : doctor.HospitalID!,
                       ),
