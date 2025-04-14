@@ -2,14 +2,17 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:slipbuddy/Widgets/CommonAppBar.dart';
 import 'package:slipbuddy/Widgets/snack_bar_widget.dart';
 import 'package:slipbuddy/config/sharedpref.dart';
 import 'package:slipbuddy/constants/app_theme.dart';
+import 'package:slipbuddy/controller/user_profile/updateuserprofile_cubit.dart';
 import 'package:slipbuddy/controller/user_profile/userprofile_cubit.dart';
 import 'package:slipbuddy/models/UserProfileModel.dart';
 
@@ -31,13 +34,15 @@ class _EditProfilePageState extends State<EditProfilePage> {
   String age = "26";
   String email = "prem@gmail.com";
   String city = "Jaipur";
+  String imageUrl = "";
   final List<String> genderList = ['Male', 'Female', 'Other'];
   File? category_fill;
   DateTime? selectedDate;
   late UserProfileCubit userProfileCubit;
-
+  late UpdateUserProfileCubit updateUserProfileCubit;
   void initCubit()async {
     userProfileCubit = context.read<UserProfileCubit>();
+    updateUserProfileCubit = context.read<UpdateUserProfileCubit>();
     userProfileCubit.fetchUserProfileData();
   }
   @override
@@ -234,7 +239,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
               } else if (state is UserProfileLoaded) {
                 // Navigator.of(context).pop();
                 final _snackBar = snackBar(
-                    'Status update successfully', Icons.done, Colors.green);
+                    ' update successfully', Icons.done, Colors.green);
                 ScaffoldMessenger.of(context).showSnackBar(_snackBar);
 
               } else if (state is UserProfileFailed) {
@@ -260,6 +265,62 @@ class _EditProfilePageState extends State<EditProfilePage> {
                 snackBar('Token has been expired', Icons.done, Colors.red);
                 ScaffoldMessenger.of(context).showSnackBar(_snackBar);
               }
+            }),
+            BlocListener<UpdateUserProfileCubit,UpdateUserProfileState>(listener: (context,state){
+              if (state is UpdateUserProfileLoading) {
+                   showDialog(
+                  barrierDismissible: false,
+                  context: context,
+                  builder: (_ctx) {
+                    return Dialog(
+                      backgroundColor: Colors.white,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 20),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            CircularProgressIndicator(
+                              color: AppTheme.primaryColor,
+                            ),
+                            SizedBox(
+                              height: 10.h,
+                            ),
+                            const Text('Loading...')
+                          ],
+                        ),
+                      ),
+                    );
+                  });
+              } else if (state is UpdateUserProfile) {
+                Navigator.of(context).pop();
+                userProfileCubit.fetchUserProfileData();
+                final _snackBar = snackBar(
+                    'User Profile Status update successfully', Icons.done, Colors.green);
+                ScaffoldMessenger.of(context).showSnackBar(_snackBar);
+
+              } else if (state is UpdateUserProfileFailed) {
+                 Navigator.of(context).pop();
+                final _snackBar = snackBar('Failed to update complain status.',
+                    Icons.warning, Colors.red);
+
+                ScaffoldMessenger.of(context).showSnackBar(_snackBar);
+              } else if (state is UpdateUserProfileTimeout) {
+                 Navigator.of(context).pop();
+                final _snackBar =
+                snackBar('Time out exception', Icons.warning, Colors.red);
+
+                ScaffoldMessenger.of(context).showSnackBar(_snackBar);
+              } else if (state is UpdateUserProfileInternetError) {
+                 Navigator.of(context).pop();
+                final _snackBar = snackBar(
+                    'Internet connection failed.', Icons.wifi, Colors.red);
+
+                ScaffoldMessenger.of(context).showSnackBar(_snackBar);
+              } else if (state is UpdateUserProfileLogout) {
+                final _snackBar =
+                snackBar('Token has been expired', Icons.done, Colors.red);
+                ScaffoldMessenger.of(context).showSnackBar(_snackBar);
+              }
             })
           ],
           child: SingleChildScrollView(
@@ -273,6 +334,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                 emailController.text = user.email ?? '';
                 cityController.text = user.city ?? '';
                 gender = user.gender ?? '';
+                imageUrl = user.image ?? '';
                 SharedPref.setUserFirstName(user.name ?? '');
                 SharedPref.setUserEmail(user.email ?? '');
                 SharedPref.setToken(user.userId.toString());
@@ -294,7 +356,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                             : CircleAvatar(
                           radius: 45, // Ensure the size matches
                           backgroundImage: NetworkImage(
-                            '', // Placeholder image URL
+                            imageUrl, // Placeholder image URL
                           ),
                         ),
                         Positioned(
@@ -365,13 +427,24 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
                     SizedBox(height: 20),
                     ElevatedButton(
-                      onPressed: () {
+                      onPressed: () async {
                         if (_formKey.currentState!.validate()) {
                           _formKey.currentState!.save();
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text("Profile Saved")),
-                          );
+                          SharedPreferences prefs = await SharedPreferences.getInstance();
+                          String userToken = prefs.getString('user_id') ?? '';
+                          String userID = prefs.getString('user_token') ?? '';
+                          Map body = {
+                            "MsrNo": userToken,
+                            "UserId": userID,
+                            "Name":nameController.text.trim(),
+                            "Mobile":mobileController.text.trim(),
+                            "Email":emailController.text.trim(),
+                            "FullAddress":"abc street",
+                            "CityName":cityController.text.trim(),
+                            "Gender":gender};
+                          updateUserProfileCubit.fetchUpdateUserProfileData(body);
                         }
+
                       },
                       child: Text("Save"),
                       style: ElevatedButton.styleFrom(

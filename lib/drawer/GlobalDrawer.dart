@@ -27,7 +27,7 @@ class _GlobalDrawerState extends State<GlobalDrawer> {
   Future<void> getData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
-      name = prefs.getString('user_name') ?? ''; // Default to an empty string if null
+      name = prefs.getString('user_first_name') ?? ''; // Default to an empty string if null
       email = prefs.getString('user_email') ?? '';
     });
   }
@@ -51,6 +51,7 @@ class _GlobalDrawerState extends State<GlobalDrawer> {
               ),
               child: GestureDetector(
                 onTap: (){
+                  Navigator.of(context).pop();
                   Navigator.push(
                     context,
                     PageTransition(

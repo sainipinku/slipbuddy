@@ -1,0 +1,2 @@
+D:/sundaramji/sleepbuddy/slipbuddy/android/app/.cxx/Debug/1tl33434/x86/CMakeFiles/edit_cache.dir
+D:/sundaramji/sleepbuddy/slipbuddy/android/app/.cxx/Debug/1tl33434/x86/CMakeFiles/rebuild_cache.dir

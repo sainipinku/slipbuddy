@@ -16,4 +16,5 @@ class Routes {
     static String banner_list = "banner_list";
     static String getappointmentbymsrno = "getappointmentbymsrno";
     static String getuserprofilebymsrno = "getuserprofilebymsrno";
+    static String profileupdate = "Profile_Update";
 }
