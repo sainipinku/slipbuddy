@@ -12,10 +12,13 @@ import 'package:slipbuddy/constants/app_theme.dart';
 import 'package:slipbuddy/constants/common_ui.dart';
 import 'package:slipbuddy/constants/helpers.dart';
 import 'package:slipbuddy/controller/DoctorSchudleDetails/doctor_Schedule_Details_cubit.dart';
+import 'package:slipbuddy/controller/appointment/PatientBloc.dart';
+import 'package:slipbuddy/controller/appointment/PatientEvent.dart';
+import 'package:slipbuddy/controller/appointment/PatientState.dart';
 import 'package:slipbuddy/controller/schudle/schudle_cubit.dart';
 import 'package:slipbuddy/screen/users/dashboard.dart';
 import 'package:slipbuddy/webviewpage.dart';
-
+String patientName = '';
 class AppointmentScreen extends StatefulWidget {
   final String date;
   final String time;
@@ -30,6 +33,16 @@ class AppointmentScreen extends StatefulWidget {
 }
 
 class _AppointmentScreenState extends State<AppointmentScreen> {
+  final ScrollController _scrollController = ScrollController();
+  final GlobalKey _billDetailsKey = GlobalKey();
+
+  void _scrollToBillDetails() {
+    Scrollable.ensureVisible(
+      _billDetailsKey.currentContext!,
+      duration: Duration(milliseconds: 500),
+      curve: Curves.easeInOut,
+    );
+  }
   late SchudleCubit otpCubit;
   late DoctorScheduleDetailsCubit doctorScheduleDetailsCubit;
 
@@ -52,13 +65,17 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
   }
   String name = '';
   String email = '';
+  String phone = '';
 
   // Function to get data from SharedPreferences
   Future<void> getData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
-      name = prefs.getString('user_name') ?? ''; // Default to an empty string if null
+      name = prefs.getString('user_first_name') ?? ''; // Default to an empty string if null
       email = prefs.getString('user_email') ?? '';
+      phone = prefs.getString('user_phone') ?? '';
+      patientName = name;
+      context.read<PatientBloc>().add(UpdatePatientName(name));
     });
   }
 
@@ -221,6 +238,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
               var itemValue = state.DoctorScheduleDetailsList;
               print('doctore details------------------${itemValue[0].description}');
               return SingleChildScrollView(
+                controller: _scrollController,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -453,12 +471,14 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
 
                     Divider(),
                     Padding(
+
                       padding: const EdgeInsets.all(16.0),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           // Bill Details Section
                           Container(
+                            key: _billDetailsKey,
                             padding: const EdgeInsets.all(16.0),
                             decoration: BoxDecoration(
                               color: Colors.white,
@@ -642,13 +662,6 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                                   children: [
                                     Icon(Icons.check, color: Colors.green),
                                     SizedBox(width: 8),
-                                    Text("Mask Mandatory"),
-                                  ],
-                                ),
-                                Row(
-                                  children: [
-                                    Icon(Icons.check, color: Colors.green),
-                                    SizedBox(width: 8),
                                     Text(itemValue[0].safty1!),
                                   ],
                                 ),
@@ -755,10 +768,15 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
                                       Text("In-Clinic Appointment for",style: TextStyle(fontWeight: FontWeight.w300,fontSize: 10),),
-                                      Text(
-                                        name,
-                                        style: TextStyle(fontWeight: FontWeight.w500,fontSize: 16,),
+                                      BlocBuilder<PatientBloc, PatientState>(
+                                        builder: (context, state) {
+                                          return Text(
+                                            state.patientName,
+                                            style: TextStyle(fontWeight: FontWeight.w500,fontSize: 16,),
+                                          );
+                                        },
                                       )
+
                                     ],
                                   )
                                 ],
@@ -766,7 +784,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                               TextButton(
                                 onPressed: () {
                                   // Handle view bill
-                                  showSelectPatientBottomSheet(context);
+                                  showSelectPatientBottomSheet(context,name,phone);
                                 },
                                 style: TextButton.styleFrom(
                                   padding: EdgeInsets.zero, // Removes extra padding
@@ -794,14 +812,12 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-                                Text("₹300",style: TextStyle(
-                                  fontSize: 18,
+                                Text(itemValue[0].fees!,style: TextStyle(
+                                  fontSize: 14,
                                   fontWeight: FontWeight.bold,
                                 )),
                                 TextButton(
-                                  onPressed: () {
-                                    // Handle view bill
-                                  },
+                                  onPressed: _scrollToBillDetails,
                                   style: TextButton.styleFrom(
                                     padding: EdgeInsets.zero, // Removes extra padding
                                     minimumSize: Size(0, 0), // Ensures no minimum size constraints
@@ -831,13 +847,13 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                                   "RegistrationNumber": "123456",
                                   "HospitalId": widget.HospitalID,
                                   "AppointmentDate": Helpers.dateformat1(widget.date),
-                                  "Pname": "Mr. Shankar Lal",
+                                  "Pname": patientName,
                                   "Age": "44",
                                   "DOB": "2024-09-17",
                                   "Gender": "Male",
                                   "ConsultDr": widget.doctorId,
                                   "Mobile": "1234567890",
-                                  "Email": "shekhar#gmail.com",
+                                  "Email": email,
                                   "CareType": "S/O",
                                   "careName": "0",
                                   "Pcat": "1",
@@ -877,7 +893,13 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
     );
   }
 }
-void showPatientDetailsBottomSheet(BuildContext context) {
+void showPatientDetailsBottomSheet(BuildContext context,String name,String phone,String type) {
+  TextEditingController nametextEditingController = TextEditingController();
+  TextEditingController phonetextEditingController = TextEditingController();
+  TextEditingController emailtextEditingController = TextEditingController();
+  TextEditingController patientPhonetextEditingController = TextEditingController();
+  nametextEditingController.text = name;
+  phonetextEditingController.text = phone;
   showModalBottomSheet(
     context: context,
     isScrollControlled: true, // For full height
@@ -885,74 +907,99 @@ void showPatientDetailsBottomSheet(BuildContext context) {
       borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
     ),
     builder: (context) {
-      return Padding(
-        padding: EdgeInsets.only(
-          bottom: MediaQuery.of(context).viewInsets.bottom,
-          top: 20,
-          left: 20,
-          right: 20,
-        ),
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Row(
+      return StatefulBuilder(
+        builder:  (BuildContext context, StateSetter setState) {
+          return Padding(
+            padding: EdgeInsets.only(
+              bottom: MediaQuery.of(context).viewInsets.bottom,
+              top: 20,
+              left: 20,
+              right: 20,
+            ),
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  Spacer(),
-                  Text("Add Patient Details",
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold, fontSize: 18)),
-                  Spacer(),
-                  IconButton(
-                    icon: Icon(Icons.close),
-                    onPressed: () => Navigator.pop(context),
+                  Row(
+                    children: [
+                      Spacer(),
+                      Text("Add Patient Details",
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 18)),
+                      Spacer(),
+                      IconButton(
+                        icon: Icon(Icons.close),
+                        onPressed: () => Navigator.pop(context),
+                      ),
+                    ],
                   ),
+                  SizedBox(height: 10),
+                  TextField(
+                    controller: nametextEditingController,
+                    decoration: InputDecoration(
+                      labelText: "Patient's Full Name*",
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
+                  if(type == 'new')
+                  SizedBox(height: 10),
+                  if(type == 'new')
+                  TextField(
+                    controller: phonetextEditingController,
+                    keyboardType: TextInputType.phone,
+                    enabled: false,
+                    decoration: InputDecoration(
+                      labelText: "Patient's Mobile*",
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
+                  SizedBox(height: 10),
+                  TextField(
+                    controller: patientPhonetextEditingController,
+                    keyboardType: TextInputType.phone,
+                    decoration: InputDecoration(
+                      labelText: "Patient's Mobile*",
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
+
+                  SizedBox(height: 10),
+                  TextField(
+                    controller: emailtextEditingController,
+                    keyboardType: TextInputType.emailAddress,
+                    decoration: InputDecoration(
+                      labelText: "Patient's Email",
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
+                  SizedBox(height: 20),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      minimumSize: Size(double.infinity, 50),
+                      backgroundColor: AppTheme.statusBar,
+                    ),
+                    onPressed: () {
+
+                      setState((){
+                        patientName = nametextEditingController.text;
+                      });
+                      Navigator.pop(context); // Or perform submit logic
+                      context.read<PatientBloc>().add(UpdatePatientName(nametextEditingController.text));
+                    },
+                    child: Text("Confirm"),
+                  ),
+                  SizedBox(height: 20),
                 ],
               ),
-              SizedBox(height: 10),
-              TextField(
-                decoration: InputDecoration(
-                  labelText: "Patient's Full Name*",
-                  border: OutlineInputBorder(),
-                ),
-              ),
-              SizedBox(height: 10),
-              TextField(
-                keyboardType: TextInputType.phone,
-                decoration: InputDecoration(
-                  labelText: "Patient's Mobile*",
-                  border: OutlineInputBorder(),
-                ),
-              ),
-              SizedBox(height: 10),
-              TextField(
-                keyboardType: TextInputType.emailAddress,
-                decoration: InputDecoration(
-                  labelText: "Patient's Email",
-                  border: OutlineInputBorder(),
-                ),
-              ),
-              SizedBox(height: 20),
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  minimumSize: Size(double.infinity, 50),
-                  backgroundColor: AppTheme.statusBar,
-                ),
-                onPressed: () {
-                  Navigator.pop(context); // Or perform submit logic
-                },
-                child: Text("Confirm"),
-              ),
-              SizedBox(height: 20),
-            ],
-          ),
-        ),
+            ),
+          );
+        }
       );
     },
   );
 }
 
-void showSelectPatientBottomSheet(BuildContext context) {
+void showSelectPatientBottomSheet(BuildContext context,String name,String phone) {
   showModalBottomSheet(
     context: context,
     isScrollControlled: true,
@@ -994,12 +1041,12 @@ void showSelectPatientBottomSheet(BuildContext context) {
                     backgroundColor: Colors.black,
                     foregroundColor: Colors.white,
                   ),
-                  title: Text("Ram Saini"),
+                  title: Text(name),
                   subtitle: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text("Myself"),
-                      Text("+919680348264"),
+                      Text(phone),
                     ],
                   ),
                 ),
@@ -1010,6 +1057,9 @@ void showSelectPatientBottomSheet(BuildContext context) {
                       child: TextButton(
                         onPressed: () {
                           // Edit logic here
+                          Navigator.pop(context); // Or perform submit logic
+                          showPatientDetailsBottomSheet(context,name,phone,'edit');
+
                         },
                         child: Text("EDIT"),
                       ),
@@ -1019,6 +1069,7 @@ void showSelectPatientBottomSheet(BuildContext context) {
                         onPressed: () {
                           // Select logic
                           Navigator.pop(context);
+                          Navigator.pop(context); // Or perform submit logic
                         },
                         child: Text("SELECT"),
                       ),
@@ -1035,7 +1086,8 @@ void showSelectPatientBottomSheet(BuildContext context) {
           OutlinedButton(
             onPressed: () {
               // Add new patient logic here
-              showPatientDetailsBottomSheet(context);
+              Navigator.pop(context); // Or perform submit logic
+              showPatientDetailsBottomSheet(context,name,phone,'new');
             },
             child: Text("+ Add New Patient"),
             style: OutlinedButton.styleFrom(

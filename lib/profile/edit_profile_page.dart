@@ -338,6 +338,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
                 SharedPref.setUserFirstName(user.name ?? '');
                 SharedPref.setUserEmail(user.email ?? '');
                 SharedPref.setToken(user.userId.toString());
+                SharedPref.setProfileImage(user.image ?? '');
+                SharedPref.setUserPhone(user.mobile ?? '');
                 return Column(
                   children: [
                     // Profile Image

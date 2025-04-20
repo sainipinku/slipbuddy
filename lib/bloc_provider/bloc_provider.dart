@@ -1,9 +1,11 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:slipbuddy/controller/DoctorSchudleDetails/doctor_Schedule_Details_cubit.dart';
+import 'package:slipbuddy/controller/appointment/PatientBloc.dart';
 
 import 'package:slipbuddy/controller/appointment/appointment_cubit.dart';
 import 'package:slipbuddy/controller/department/department_cubit.dart';
 import 'package:slipbuddy/controller/doctor/doctor_cubit.dart';
+import 'package:slipbuddy/controller/global_search/global_search_cubit.dart';
 import 'package:slipbuddy/controller/home/doctor_cubit.dart';
 import 'package:slipbuddy/controller/login_auth/login_cubit.dart';
 import 'package:slipbuddy/controller/otp_auth/otp_cubit.dart';
@@ -27,5 +29,7 @@ class BlocProviders {
     BlocProvider<UserProfileCubit>(create: (context) => UserProfileCubit()),
     BlocProvider<UpdateUserProfileCubit>(create: (context) => UpdateUserProfileCubit()),
     BlocProvider<DoctorScheduleDetailsCubit>(create: (context) => DoctorScheduleDetailsCubit()),
+    BlocProvider<PatientBloc>(create: (context) => PatientBloc()),
+    BlocProvider<GlobalSearchCubit>(create: (context) => GlobalSearchCubit()),
   ];
 }

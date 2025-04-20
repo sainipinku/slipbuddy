@@ -22,8 +22,8 @@ class _CategoryWidgetState extends State<CategoryWidget> {
   Widget build(BuildContext context) {
     return BlocBuilder<DepartmentCubit, DepartmentState>(
       builder: (context, state) {
-        if (state is DepartmentLoaded) {
-          int itemCount = state.DepartmentList.length; // Show 6 items plus "More" button if applicable
+        if (state is MultipleDataLoaded) {
+          int itemCount = state.departmentList.length; // Show 6 items plus "More" button if applicable
 
           return Container(
             height: MediaQuery.of(context).size.height * 0.90,
@@ -48,7 +48,7 @@ class _CategoryWidgetState extends State<CategoryWidget> {
                   child: ListView.builder(
                     itemCount: itemCount,
                     itemBuilder: (context, index) {
-                      final category = state.DepartmentList[index];
+                      final category = state.departmentList[index];
                       return GestureDetector(
                         onTap: () {
                           Navigator.push(

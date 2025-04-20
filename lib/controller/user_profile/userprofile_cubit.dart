@@ -19,7 +19,7 @@ class UserProfileCubit extends Cubit<UserProfileState> {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String userToken = prefs.getString('user_id') ?? '';
-      var body = {"MsrNo" : '89'};
+      var body = {"MsrNo" : userToken};
       final userProfileResponse = await apiManager.postRequest(body,Config.baseUrl + Routes.getuserprofilebymsrno);
       if (userProfileResponse.statusCode == 200 ) {
         print('userProfileResponse response----------------${userProfileResponse.statusCode}');

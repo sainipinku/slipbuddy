@@ -17,4 +17,5 @@ class Routes {
     static String getappointmentbymsrno = "getappointmentbymsrno";
     static String getuserprofilebymsrno = "getuserprofilebymsrno";
     static String profileupdate = "Profile_Update";
+    static String searchbytext = "searchbytext";
 }

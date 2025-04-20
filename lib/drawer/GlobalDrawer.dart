@@ -22,13 +22,14 @@ class GlobalDrawer extends StatefulWidget {
 class _GlobalDrawerState extends State<GlobalDrawer> {
   String name = '';
   String email = '';
-
+  String imageUrl = "";
   // Function to get data from SharedPreferences
   Future<void> getData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
       name = prefs.getString('user_first_name') ?? ''; // Default to an empty string if null
       email = prefs.getString('user_email') ?? '';
+      imageUrl = prefs.getString('user_profile') ?? '';
     });
   }
   @override
@@ -65,13 +66,9 @@ class _GlobalDrawerState extends State<GlobalDrawer> {
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     CircleAvatar(
-                      radius: 25, // Adjust the radius as needed
-                      backgroundImage: NetworkImage('https://via.placeholder.com/25x25.png?text=Banner+2'), // Replace with your image URL
-                      // Alternatively, use AssetImage for local images
-                      // backgroundImage: AssetImage('assets/images/profile.png'),
-                      child: Text(
-                        'AB', // Initials can be shown in case the image fails to load
-                        style: TextStyle(color: Colors.white, fontSize: 16),
+                      radius: 25, // Ensure the size matches
+                      backgroundImage: NetworkImage(
+                        imageUrl, // Placeholder image URL
                       ),
                     ),
                     Padding(
@@ -105,29 +102,6 @@ class _GlobalDrawerState extends State<GlobalDrawer> {
             ),
           ),
           ListTile(
-            leading: Container(
-              padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-              decoration: BoxDecoration(
-                color: Colors.purple[100],
-                borderRadius: BorderRadius.circular(4),
-              ),
-              child: Text(
-                "PLUS",
-                style: TextStyle(
-                  color: Colors.purple,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 12,
-                ),
-              ),
-            ),
-            title: Text("Health Plan for your family"),
-            trailing: Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
-            onTap: () {
-              // Add logic
-            },
-          ),
-          Divider( thickness: 10,),
-          ListTile(
             leading: Icon(Icons.home),
             title: Text('Appointment',style: GoogleFonts.poppins(
                 fontSize: 16,
@@ -141,171 +115,36 @@ class _GlobalDrawerState extends State<GlobalDrawer> {
             },
             trailing: Icon(Icons.arrow_forward_ios_outlined,size: 15,),
           ),
-        /*  ListTile(
-            leading: Icon(Icons.copy),
-            title: Text('Test Bookings',style: GoogleFonts.poppins(
+          ListTile(
+            leading: Icon(Icons.home),
+            title: Text('Reminder',style: GoogleFonts.poppins(
                 fontSize: 16,
                 fontWeight: FontWeight.w500,
                 color: AppTheme.blackColor)),
             onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => TestBookingScreen()),
-              );
+
             },
             trailing: Icon(Icons.arrow_forward_ios_outlined,size: 15,),
-          ),*/
-       /*   ListTile(
-            leading: Icon(Icons.hourglass_bottom_outlined),
-            title: Text('Orders',style: GoogleFonts.poppins(
+          ),
+          ListTile(
+            leading: Icon(Icons.home),
+            title: Text('Payment',style: GoogleFonts.poppins(
                 fontSize: 16,
                 fontWeight: FontWeight.w500,
                 color: AppTheme.blackColor)),
             onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => OrderScreen()),
-              );
+
             },
             trailing: Icon(Icons.arrow_forward_ios_outlined,size: 15,),
           ),
           ListTile(
-            leading: Icon(Icons.note_alt),
-            title: Text('Consultations',style: GoogleFonts.poppins(
+            leading: Icon(Icons.home),
+            title: Text('Setting',style: GoogleFonts.poppins(
                 fontSize: 16,
                 fontWeight: FontWeight.w500,
                 color: AppTheme.blackColor)),
             onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => ConsulataionScreen()),
-              );
-            },
-            trailing: Icon(Icons.arrow_forward_ios_outlined,size: 15,),
-          ),*/
-          ListTile(
-            leading: Icon(Icons.local_hospital),
-            title: Text('My doctors',style: GoogleFonts.poppins(
-                fontSize: 16,
-                fontWeight: FontWeight.w500,
-                color: AppTheme.blackColor)),
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => ConsulataionScreen()),
-              );
-            },
-            trailing: Icon(Icons.arrow_forward_ios_outlined,size: 15,),
-          ),
-          ListTile(
-            leading: Icon(Icons.horizontal_split),
-            title: Text('Medical records',style: GoogleFonts.poppins(
-                fontSize: 16,
-                fontWeight: FontWeight.w500,
-                color: AppTheme.blackColor)),
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => ConsulataionScreen()),
-              );
-            },
-            trailing: Icon(Icons.arrow_forward_ios_outlined,size: 15,),
-          ),
-          ListTile(
-            leading: Icon(Icons.plus_one),
-            title: Text('My Insurance Policy',style: GoogleFonts.poppins(
-                fontSize: 16,
-                fontWeight: FontWeight.w500,
-                color: AppTheme.blackColor)),
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => ConsulataionScreen()),
-              );
-            },
-            trailing: Icon(Icons.arrow_forward_ios_outlined,size: 15,),
-          ),
-          ListTile(
-            leading: Icon(Icons.watch_later_rounded),
-            title: Text('Reminders',style: GoogleFonts.poppins(
-                fontSize: 16,
-                fontWeight: FontWeight.w500,
-                color: AppTheme.blackColor)),
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => ConsulataionScreen()),
-              );
-            },
-            trailing: Icon(Icons.arrow_forward_ios_outlined,size: 15,),
-          ),
-          ListTile(
-            leading: Icon(Icons.payment),
-            title: Text('Payment & HealthCash',style: GoogleFonts.poppins(
-                fontSize: 16,
-                fontWeight: FontWeight.w500,
-                color: AppTheme.blackColor)),
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => ConsulataionScreen()),
-              );
-            },
-            trailing: Icon(Icons.arrow_forward_ios_outlined,size: 15,),
-          ),
-          Divider( thickness: 10,),
-          ListTile(
-            leading: Icon(Icons.person),
-            title: Text('Read about health' ,style: GoogleFonts.poppins(
-                fontSize: 16,
-                fontWeight: FontWeight.w500,
-                color: AppTheme.blackColor)),
-            onTap: () {
-              Navigator.pushNamed(context, '/Read About Health');
-            },
-            trailing: Icon(Icons.arrow_forward_ios_outlined,size: 15,),
-          ),
-          ListTile(
-            leading: Icon(Icons.help),
-            title: Text('Help Center' ,style: GoogleFonts.poppins(
-    fontSize: 16,
-    fontWeight: FontWeight.w500,
-    color: AppTheme.blackColor)),
-            onTap: () {
-              Navigator.pushNamed(context, '/Help Center');
-            },
-            trailing: Icon(Icons.arrow_forward_ios_outlined,size: 15,),
-          ),
-          ListTile(
-            leading: Icon(Icons.settings),
-            title: Text('Settings' ,style: GoogleFonts.poppins(
-    fontSize: 16,
-    fontWeight: FontWeight.w500,
-    color: AppTheme.blackColor)),
-            onTap: () {
-              Navigator.pushNamed(context, '/Settings');
-            },
-            trailing: Icon(Icons.arrow_forward_ios_outlined,size: 15,),
-          ),
-          ListTile(
-            leading: Icon(Icons.thumb_up),
-            title: Text('Like us? Give us 5 star' , style: GoogleFonts.poppins(
-    fontSize: 16,
-    fontWeight: FontWeight.w500,
-    color: AppTheme.blackColor)),
-            onTap: () {
-              Navigator.pushNamed(context, '/Like us');
-            },
-            trailing: Icon(Icons.arrow_forward_ios_outlined,size: 15,),
-          ),
-          ListTile(
-            leading: Icon(Icons.medical_services_outlined),
-            title: Text('Are you doctor?' ,style: GoogleFonts.poppins(
-    fontSize: 16,
-    fontWeight: FontWeight.w500,
-    color: AppTheme.blackColor)),
-            onTap: () {
-              Navigator.pushNamed(context, '/are you doctor');
+
             },
             trailing: Icon(Icons.arrow_forward_ios_outlined,size: 15,),
           ),

@@ -58,7 +58,7 @@ class _ClinicVisitScreenState extends State<ClinicVisitScreen> {
         title: Row(
           children: [
             CircleAvatar(
-              radius: 30, // Size of the circle
+              radius: 20, // Size of the circle
               child: ClipOval( // Ensures the image is clipped to a circle
                 child: FadeInImage(
                   image: NetworkImage(widget.profile), // Network image from a URL
@@ -363,7 +363,7 @@ class _ClinicVisitScreenState extends State<ClinicVisitScreen> {
     );
   }
 }
-int ind = -1;
+String selectTime = '';
 class TimeSlotSection extends StatefulWidget {
   final String label;
   final String date;
@@ -412,7 +412,7 @@ class _TimeSlotSectionState extends State<TimeSlotSection> {
             return GestureDetector(
               onTap: (){
                 setState(() {
-                  ind = index;
+                  selectTime = widget.slots[index];
                 });
                 Navigator.push(
                   context,
@@ -425,10 +425,10 @@ class _TimeSlotSectionState extends State<TimeSlotSection> {
               child: Container(
                 padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                 decoration: BoxDecoration(
-                  border: ind == index ? Border.all( color: Colors.green) : Border.all( color: Colors.blueAccent),
+                  border: selectTime == widget.slots[index] ? Border.all( color: Colors.green) : Border.all( color: Colors.blueAccent),
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: Text(Helpers.formatTime(widget.slots[index]), style: TextStyle(color:  ind == index ?  Colors.green :Colors.blueAccent)),
+                child: Text(Helpers.formatTime(widget.slots[index]), style: TextStyle(color:  selectTime == widget.slots[index] ?  Colors.green :Colors.blueAccent)),
               ),
             );
           }),

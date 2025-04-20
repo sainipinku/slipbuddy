@@ -19,6 +19,7 @@ import 'package:slipbuddy/controller/department/department_cubit.dart';
 import 'package:slipbuddy/drawer/GlobalDrawer.dart';
 import 'package:slipbuddy/models/BannerModel.dart';
 import 'package:slipbuddy/models/CompletedDoctorListModel.dart';
+import 'package:slipbuddy/screen/location/GalobleSearchPage.dart';
 import 'package:slipbuddy/screen/location/LocationSearchPage.dart';
 import 'package:slipbuddy/screen/users/doctor_listing.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
@@ -89,8 +90,18 @@ class _DashboardState extends State<Dashboard> {
       });
     }
   }
+  String imageUrl = '';
+
+  // Function to get data from SharedPreferences
+  Future<void> getData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      imageUrl = prefs.getString('user_profile') ?? ''; // Default to an empty string if null
+    });
+  }
   @override
   void initState() {
+    getData();
     // Add listener to TextField controller
     search.addListener(() {
       setState(() {
@@ -216,9 +227,11 @@ class _DashboardState extends State<Dashboard> {
                               color: Colors.blue
                             ),
                             child: Center(
-                              child: Text(
-                                'AB', // Initials can be shown in case the image fails to load
-                                style: TextStyle(color: Colors.white, fontSize: 16),
+                              child: CircleAvatar(
+                                radius: 45, // Ensure the size matches
+                                backgroundImage: NetworkImage(
+                                  imageUrl, // Placeholder image URL
+                                ),
                               ),
                             ),
                           ),
@@ -269,99 +282,111 @@ class _DashboardState extends State<Dashboard> {
                     ),
                     SizedBox(height: 10),
                     // Search field below the city dropdown
-                    Stack(
-                      children: [
-                        // Search TextField
-                        Container(
-                          margin: EdgeInsets.only(top: 10),
-                          child: TextField(
-                            maxLines: 2,
-                            minLines: 1,
-                            controller: search,
-                            decoration: InputDecoration(
-                              prefixIcon: Icon(Icons.search),
-                              hintText: '',
-                              hintStyle: GoogleFonts.poppins(
-                                color: Colors.black,
-                                fontSize: 14,
-                                fontWeight: FontWeight.w500,
+                    GestureDetector(
+                      onTap: (){
+                        Navigator.push(
+                          context,
+                          PageTransition(
+                              type: PageTransitionType.rightToLeft,
+                              child: Galoblesearchpage(),
+                              ctx: context),
+                        );
+                      },
+                      child: Stack(
+                        children: [
+                          // Search TextField
+                          Container(
+                            margin: EdgeInsets.only(top: 10),
+                            child: TextField(
+                              maxLines: 2,
+                              minLines: 1,
+                              controller: search,
+                              enabled: false,
+                              decoration: InputDecoration(
+                                prefixIcon: Icon(Icons.search),
+                                hintText: '',
+                                hintStyle: GoogleFonts.poppins(
+                                  color: Colors.black,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                                filled: true,
+                                fillColor: Colors.white,
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(25),
+                                  borderSide: BorderSide.none,
+                                ),
+                                contentPadding: EdgeInsets.symmetric(vertical: 0),
                               ),
-                              filled: true,
-                              fillColor: Colors.white,
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(25),
-                                borderSide: BorderSide.none,
-                              ),
-                              contentPadding: EdgeInsets.symmetric(vertical: 0),
                             ),
                           ),
-                        ),
 
-                        // Animated text below TextField
-                        if (isSearchEmpty)
-                          Positioned(
-                            top: 25,
-                            left: 48,
-                            child: Container(
-                              width: 300,
-                              child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  Text(
-                                    'Search for ', // Static text
-                                    style: TextStyle(
-                                      fontSize: 16.0,
-                                      color: Colors.grey,
+                          // Animated text below TextField
+                          if (isSearchEmpty)
+                            Positioned(
+                              top: 25,
+                              left: 48,
+                              child: Container(
+                                width: 300,
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      'Search for ', // Static text
+                                      style: TextStyle(
+                                        fontSize: 16.0,
+                                        color: Colors.grey,
+                                      ),
                                     ),
-                                  ),
-                                  Expanded(
-                                    child: AnimatedTextKit(
-                                      animatedTexts: [
-                                        TypewriterAnimatedText(
-                                          'hospital and clinics',
-                                          textStyle: TextStyle(
-                                            fontSize: 14.0,
-                                            color: Colors.grey,
+                                    Expanded(
+                                      child: AnimatedTextKit(
+                                        animatedTexts: [
+                                          TypewriterAnimatedText(
+                                            'hospital and clinics',
+                                            textStyle: TextStyle(
+                                              fontSize: 14.0,
+                                              color: Colors.grey,
+                                            ),
+                                            speed: Duration(milliseconds: 100),
                                           ),
-                                          speed: Duration(milliseconds: 100),
-                                        ),
-                                        TypewriterAnimatedText(
-                                          'doctors',
-                                          textStyle: TextStyle(
-                                            fontSize: 14.0,
-                                            color: Colors.grey,
+                                          TypewriterAnimatedText(
+                                            'doctors',
+                                            textStyle: TextStyle(
+                                              fontSize: 14.0,
+                                              color: Colors.grey,
+                                            ),
+                                            speed: Duration(milliseconds: 100),
                                           ),
-                                          speed: Duration(milliseconds: 100),
-                                        ),
-                                        TypewriterAnimatedText(
-                                          'Symptoms',
-                                          textStyle: TextStyle(
-                                            fontSize: 14.0,
-                                            color: Colors.grey,
+                                          TypewriterAnimatedText(
+                                            'City',
+                                            textStyle: TextStyle(
+                                              fontSize: 14.0,
+                                              color: Colors.grey,
+                                            ),
+                                            speed: Duration(milliseconds: 100),
                                           ),
-                                          speed: Duration(milliseconds: 100),
-                                        ),
-                                        TypewriterAnimatedText(
-                                          'Specialities',
-                                          textStyle: TextStyle(
-                                            fontSize: 14.0,
-                                            color: Colors.grey,
+                                          TypewriterAnimatedText(
+                                            'Specialities',
+                                            textStyle: TextStyle(
+                                              fontSize: 14.0,
+                                              color: Colors.grey,
+                                            ),
+                                            speed: Duration(milliseconds: 100),
                                           ),
-                                          speed: Duration(milliseconds: 100),
-                                        ),
-                                      ],
-                                      totalRepeatCount: 20000,
-                                      pause: Duration(milliseconds: 100),
-                                      displayFullTextOnTap: true,
-                                      stopPauseOnTap: true,
-                                      isRepeatingAnimation: true,
+                                        ],
+                                        totalRepeatCount: 20000,
+                                        pause: Duration(milliseconds: 100),
+                                        displayFullTextOnTap: true,
+                                        stopPauseOnTap: true,
+                                        isRepeatingAnimation: true,
+                                      ),
                                     ),
-                                  ),
-                                ],
+                                  ],
+                                ),
                               ),
                             ),
-                          ),
-                      ],
+                        ],
+                      ),
                     ),
 
                   ],

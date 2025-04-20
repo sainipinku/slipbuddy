@@ -118,14 +118,31 @@ class _LocationSearchPageState extends State<LocationSearchPage> {
       padding: EdgeInsets.symmetric(horizontal: 16),
       child: TextField(
         controller: searchController,
+        onChanged: (value) {
+          setState(() {}); // To show/hide clear icon based on input
+        },
         decoration: InputDecoration(
           hintText: 'Search your location here',
           border: InputBorder.none,
           icon: Icon(Icons.search),
+          suffixIcon: searchController.text.isNotEmpty
+              ? IconButton(
+            icon: Icon(Icons.close),
+            onPressed: () {
+              searchController.clear();
+              setState(() {}); // To hide the icon
+
+              /// Optionally clear your search result list
+              // yourList.clear();
+              // Or trigger a BLoC event or function to update list
+            },
+          )
+              : null,
         ),
       ),
     );
   }
+
 
   Widget _buildOptionTile(String title, IconData icon) {
     return ListTile(

@@ -7,18 +7,19 @@ import 'package:http/http.dart';
 import 'package:slipbuddy/constants/api_manager.dart';
 import 'package:slipbuddy/constants/config.dart';
 import 'package:slipbuddy/models/DoctorModel.dart';
-part 'doctor_state.dart';
 
-class DoctorCubit extends Cubit<DoctorState> {
-  DoctorCubit() : super(DoctorInitial());
+part 'global_search_state.dart';
+
+class GlobalSearchCubit extends Cubit<GlobalSearchState> {
+  GlobalSearchCubit() : super(GlobalSearchInitial());
 
   ApiManager apiManager = ApiManager();
 
-  fetchDoctor(var body) async {
-    emit(DoctorLoading());
+  fetchGlobalSearch(var body) async {
+    emit(GlobalSearchLoading());
     try {
       Response response;
-      response = await apiManager.postRequest(body,Config.baseUrl + Routes.doctorList);
+      response = await apiManager.postRequest(body,Config.baseUrl + Routes.searchbytext);
 
       if (response.statusCode == 200) {
         print('Doctor response----------------${response.statusCode}');
@@ -34,19 +35,19 @@ class DoctorCubit extends Cubit<DoctorState> {
         print('Parsed Doctor list: ${jsonEncode(DoctorList.toString())}');
 
         // Emit the loaded state with the list of Doctors
-        emit(DoctorLoaded(DoctorList: DoctorList));
+        emit(GlobalSearchLoaded(DoctorList: DoctorList));
       } else if (response.statusCode == 401 || response.statusCode == 403) {
-        emit(DoctorLogout());
+        emit(GlobalSearchLogout());
       } else {
-        emit(DoctorFailed());
+        emit(GlobalSearchFailed());
       }
     } on SocketException {
-      emit(DoctorInternetError());
+      emit(GlobalSearchInternetError());
     } on TimeoutException {
-      emit(DoctorTimeout());
+      emit(GlobalSearchTimeout());
     } catch (e) {
-      print('Error fetching Doctors: $e');
-      emit(DoctorFailed());
+      print('Error fetching GlobalSearchs: $e');
+      emit(GlobalSearchFailed());
     }
   }
 

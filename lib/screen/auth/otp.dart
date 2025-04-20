@@ -239,6 +239,7 @@ class _OtpState extends State<Otp> {
                             recognizer: TapGestureRecognizer()
                               ..onTap = () {
                                 // Handle the tap action here
+                                Navigator.pop(context);
                               },
                           ),
                         ],
