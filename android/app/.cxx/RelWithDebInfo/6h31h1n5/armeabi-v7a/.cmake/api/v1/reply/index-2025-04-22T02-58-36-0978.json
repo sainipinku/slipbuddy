@@ -8,10 +8,10 @@
 		},
 		"paths" : 
 		{
-			"cmake" : "C:/Users/Administrator/AppData/Local/Android/Sdk/cmake/3.22.1/bin/cmake.exe",
-			"cpack" : "C:/Users/Administrator/AppData/Local/Android/Sdk/cmake/3.22.1/bin/cpack.exe",
-			"ctest" : "C:/Users/Administrator/AppData/Local/Android/Sdk/cmake/3.22.1/bin/ctest.exe",
-			"root" : "C:/Users/Administrator/AppData/Local/Android/Sdk/cmake/3.22.1/share/cmake-3.22"
+			"cmake" : "C:/Users/DELL-PC/AppData/Local/Android/Sdk/cmake/3.22.1/bin/cmake.exe",
+			"cpack" : "C:/Users/DELL-PC/AppData/Local/Android/Sdk/cmake/3.22.1/bin/cpack.exe",
+			"ctest" : "C:/Users/DELL-PC/AppData/Local/Android/Sdk/cmake/3.22.1/bin/ctest.exe",
+			"root" : "C:/Users/DELL-PC/AppData/Local/Android/Sdk/cmake/3.22.1/share/cmake-3.22"
 		},
 		"version" : 
 		{
@@ -26,7 +26,7 @@
 	"objects" : 
 	[
 		{
-			"jsonFile" : "codemodel-v2-f71e16a94d2b3ce955bc.json",
+			"jsonFile" : "codemodel-v2-07855444d2d7978c1fcb.json",
 			"kind" : "codemodel",
 			"version" : 
 			{
@@ -35,7 +35,7 @@
 			}
 		},
 		{
-			"jsonFile" : "cache-v2-a3c24e87d07864b7091d.json",
+			"jsonFile" : "cache-v2-d3c96853a1df57a8d970.json",
 			"kind" : "cache",
 			"version" : 
 			{
@@ -44,7 +44,7 @@
 			}
 		},
 		{
-			"jsonFile" : "cmakeFiles-v1-fb7ddbe1aa4ea95c810b.json",
+			"jsonFile" : "cmakeFiles-v1-c09eb8a50239b5c35d15.json",
 			"kind" : "cmakeFiles",
 			"version" : 
 			{
@@ -59,7 +59,7 @@
 		{
 			"cache-v2" : 
 			{
-				"jsonFile" : "cache-v2-a3c24e87d07864b7091d.json",
+				"jsonFile" : "cache-v2-d3c96853a1df57a8d970.json",
 				"kind" : "cache",
 				"version" : 
 				{
@@ -69,7 +69,7 @@
 			},
 			"cmakeFiles-v1" : 
 			{
-				"jsonFile" : "cmakeFiles-v1-fb7ddbe1aa4ea95c810b.json",
+				"jsonFile" : "cmakeFiles-v1-c09eb8a50239b5c35d15.json",
 				"kind" : "cmakeFiles",
 				"version" : 
 				{
@@ -79,7 +79,7 @@
 			},
 			"codemodel-v2" : 
 			{
-				"jsonFile" : "codemodel-v2-f71e16a94d2b3ce955bc.json",
+				"jsonFile" : "codemodel-v2-07855444d2d7978c1fcb.json",
 				"kind" : "codemodel",
 				"version" : 
 				{

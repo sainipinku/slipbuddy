@@ -22,9 +22,14 @@ class OtpCubit extends Cubit<OtpState> {
           map, Config.baseUrl + Routes.verifyOtp);
 
       if (response.statusCode == 200) {
-        SharedPref.setUserID(json.decode(response.body)['Msrno'].toString());
-        debugPrint("response${response.body}");
-        emit(OtpSuccess());
+
+        if(json.decode(response.body)['status'] == 'True'){
+          SharedPref.setUserID(json.decode(response.body)['Msrno'].toString());
+          emit(OtpSuccess());
+        }else {
+          emit(InvalidOtpSuccess());
+        }
+
       } else if (response.statusCode == 403) {
         emit(OtpOnHold());
       } else {

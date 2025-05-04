@@ -124,9 +124,7 @@ class _ClinicVisitScreenState extends State<ClinicVisitScreen> {
                       });
                 } else*/ if (state is SlotsLoaded) {
                   // Navigator.of(context).pop();
-                  final _snackBar = snackBar(
-                      'Status update successfully', Icons.done, Colors.green);
-                  ScaffoldMessenger.of(context).showSnackBar(_snackBar);
+
 
                 } else if (state is SlotsFailed) {
                   // Navigator.of(context).pop();
@@ -156,7 +154,7 @@ class _ClinicVisitScreenState extends State<ClinicVisitScreen> {
             BlocListener<DateCubit, DateState>(
               listener: (context, state) {
                 if (state is DateLoading) {
-                  showDialog(
+                /*  showDialog(
                       barrierDismissible: false,
                       context: context,
                       builder: (_ctx) {
@@ -178,12 +176,10 @@ class _ClinicVisitScreenState extends State<ClinicVisitScreen> {
                             ),
                           ),
                         );
-                      });
+                      });*/
                 } else if (state is DateSlotsLoaded) {
                   // Navigator.of(context).pop();
-                  final _snackBar = snackBar(
-                      'Status update successfully', Icons.done, Colors.green);
-                  ScaffoldMessenger.of(context).showSnackBar(_snackBar);
+
 
                 } else if (state is DateFailed) {
                   // Navigator.of(context).pop();

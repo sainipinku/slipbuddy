@@ -10,8 +10,9 @@ import 'package:slipbuddy/controller/doctor/doctor_cubit.dart';
 import 'package:slipbuddy/screen/users/ClinicVisitScreen.dart';
 
 class DoctorListing extends StatefulWidget {
-  final String id;
-  const DoctorListing({super.key,required this.id});
+  final String drId;
+  final String catId;
+  const DoctorListing({super.key,required this.drId,required this.catId});
 
   @override
   State<DoctorListing> createState() => _DoctorListingState();
@@ -20,7 +21,7 @@ class DoctorListing extends StatefulWidget {
 class _DoctorListingState extends State<DoctorListing> {
   late DoctorCubit doctorCubit;
   initCubit() {
-    var body = {"categoryid" : widget.id};
+    var body = {"categoryid" : widget.catId,"doctorid" : widget.drId};
     doctorCubit = context.read<DoctorCubit>();
     doctorCubit.fetchDoctor(body);
     print("----------------------------------------------------");
@@ -47,7 +48,7 @@ class _DoctorListingState extends State<DoctorListing> {
           BlocListener<DoctorCubit, DoctorState>(
             listener: (context, state) {
               if (state is DoctorLoading) {
-                showDialog(
+              /*  showDialog(
                     barrierDismissible: false,
                     context: context,
                     builder: (_ctx) {
@@ -69,12 +70,10 @@ class _DoctorListingState extends State<DoctorListing> {
                           ),
                         ),
                       );
-                    });
+                    });*/
               } else if (state is DoctorLoaded) {
                 // Navigator.of(context).pop();
-                final _snackBar = snackBar(
-                    'Status update successfully', Icons.done, Colors.green);
-                ScaffoldMessenger.of(context).showSnackBar(_snackBar);
+
 
               } else if (state is DoctorFailed) {
                 // Navigator.of(context).pop();

@@ -49,71 +49,66 @@ class _CategoryWidgetState extends State<CategoryWidget> {
                     itemCount: itemCount,
                     itemBuilder: (context, index) {
                       final category = state.departmentList[index];
-                      return GestureDetector(
+                      return InkWell(
                         onTap: () {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
                               builder: (context) => DoctorListing(
-                                id: category.iD.toString(),
+                                catId: category.iD.toString(),drId: "0",
                               ),
                             ),
                           );
-                          // Handle item tap
                           print('${category.deptName} clicked');
-                          // Navigate to another screen or perform an action
                         },
                         child: Column(
                           children: [
                             Padding(
                               padding: const EdgeInsets.all(2.0),
-                              child: Row(
-                                children: [
-                                  Container(
-                                    height:50,
-                                    width:50,
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(10),
-                                      color: Colors.blue[50],
-                                    ),
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: Center(
-                                          child:
-                                          FadeInImage(
+                              child: Container(
+                                width: double.infinity, // Makes sure the tap area is full width
+                                child: Row(
+                                  children: [
+                                    Container(
+                                      height: 50,
+                                      width: 50,
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(10),
+                                        color: Colors.blue[50],
+                                      ),
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Center(
+                                          child: FadeInImage(
                                             image: NetworkImage('${category.icon}'),
                                             fit: BoxFit.cover,
-
-                                            placeholder:
-                                            const AssetImage(
-                                                "assets/images/google.png"),
-                                            imageErrorBuilder:
-                                                (context,
-                                                error,
-                                                stackTrace) {
-                                              return Image
-                                                  .asset(
-                                                "assets/images/google.png",
-                                              );
+                                            placeholder: const AssetImage("assets/images/google.png"),
+                                            imageErrorBuilder: (context, error, stackTrace) {
+                                              return Image.asset("assets/images/google.png");
                                             },
-                                          )),
+                                          ),
+                                        ),
+                                      ),
                                     ),
-                                  ),
-                                  SizedBox(width: 10), // Space between icon and text
-                                  Text(
-                                    '${category.deptName}',
-                                    style: TextStyle(fontSize: 16, color: Colors.black),
-                                  ),
-                                ],
+                                    SizedBox(width: 10),
+                                    Expanded( // Make text take remaining space
+                                      child: Text(
+                                        '${category.deptName}',
+                                        style: TextStyle(fontSize: 16, color: Colors.black),
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
                             Padding(
                               padding: const EdgeInsets.only(top: 8.0),
-                              child: Divider(color: Colors.black38,),
+                              child: Divider(color: Colors.black38),
                             )
                           ],
                         ),
                       );
+
                     },
                   ),
                 ),

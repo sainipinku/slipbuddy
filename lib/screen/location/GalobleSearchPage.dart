@@ -7,6 +7,7 @@ import 'package:slipbuddy/constants/app_theme.dart';
 import 'package:slipbuddy/controller/global_search/global_search_cubit.dart';
 import 'package:slipbuddy/screen/location/LocationSearchPage.dart';
 import 'package:slipbuddy/screen/users/ClinicVisitScreen.dart';
+import 'package:slipbuddy/screen/users/doctor_listing.dart';
 
 class Galoblesearchpage extends StatefulWidget {
   @override
@@ -66,6 +67,7 @@ class _GaloblesearchpageState extends State<Galoblesearchpage> {
               child: Column(
                 children: [
                   Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       // Location Icon on the Left Side
@@ -82,32 +84,29 @@ class _GaloblesearchpageState extends State<Galoblesearchpage> {
                           crossAxisAlignment: CrossAxisAlignment.center,
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            IconButton(
-                              icon: Icon(Icons.location_on,size: 25,color: Colors.white,), // Location icon
-                              onPressed: () {
-                                // Action when location icon is clicked
-                                print("Location icon clicked");
-                              },
-                            ),
-                            SizedBox(
-                              width: 60,
-                              child: Text(
-                                currentLocation,maxLines: 1,overflow: TextOverflow.fade,
-                                style: TextStyle(fontSize: 18, color: Colors.white,fontWeight: FontWeight.w700), // Responsive font size
+                            Icon(Icons.location_on, size: 25, color: Colors.white),
+                            SizedBox(width: 4), // Space between icon and text
+                            Text(
+                              currentLocation,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                fontSize: 18,
+                                color: Colors.white,
+                                fontWeight: FontWeight.w700,
                               ),
                             ),
-                            IconButton(
-                              icon: Icon(Icons.keyboard_arrow_down_outlined,size: 25,color: Colors.white,), // Location icon
-                              onPressed: () {
-                                // Action when location icon is clicked
-                                print("Location icon clicked");
-                              },
-                            ),
+                            SizedBox(width: 4), // Space between icon and text
+                            Icon(Icons.keyboard_arrow_down_outlined, size: 25, color: Colors.white),
                           ],
-                        ),
+                        )
+                        ,
                       ),
                       // Profile button or any widget on the right side
-                     SizedBox()
+                      IconButton(
+                        icon: Icon(Icons.arrow_back,color: AppTheme.statusBar,),
+                        onPressed: () => {},
+                      ),
                     ],
                   ),
                 ],
@@ -223,45 +222,36 @@ class _GaloblesearchpageState extends State<Galoblesearchpage> {
                             final doctor = state.DoctorList[index];
                             return ListTile(
                               leading: Container(
-                                height:50,
-                                width:50,
+                                height: 50,
+                                width: 50,
                                 decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(10),
-                                  color: Colors.blue[50],
+                                    shape: BoxShape.circle,
+                                    color: Colors.blue
                                 ),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Center(
-                                      child:
-                                      FadeInImage(
-                                        image: NetworkImage(doctor.profilePic!),
-                                        fit: BoxFit.cover,
-
-                                        placeholder:
-                                        const AssetImage(
-                                            "assets/images/google.png"),
-                                        imageErrorBuilder:
-                                            (context,
-                                            error,
-                                            stackTrace) {
-                                          return Image
-                                              .asset(
-                                            "assets/images/google.png",
-                                          );
-                                        },
-                                      )),
+                                child: Center(
+                                  child: CircleAvatar(
+                                    radius: 45, // Ensure the size matches
+                                    backgroundImage: NetworkImage(
+                                      doctor.profilePic!, // Placeholder image URL
+                                    ),
+                                  ),
                                 ),
                               ),
-                              title: Text(doctor.fullName!),
+                              title: Text(doctor.fullName!,style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                              )),
                               subtitle: Text(doctor.hospitalName!),
                               onTap: () {
                                 Navigator.push(
                                   context,
-                                  PageTransition(
-                                      type: PageTransitionType.rightToLeft,
-                                      child: ClinicVisitScreen(doctorId: doctor.id!,HospitalID: doctor.departMentID!,profile: doctor.profilePic!,name: doctor.fullName!,location: doctor.location!,),
-                                      ctx: context),
+                                  MaterialPageRoute(
+                                    builder: (context) => DoctorListing(
+                                      drId: doctor.id!.toString(),catId: "0",
+                                    ),
+                                  ),
                                 );
+
                                 // Do something on tap
                               },
                             );

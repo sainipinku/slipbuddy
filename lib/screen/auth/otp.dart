@@ -153,7 +153,14 @@ class _OtpState extends State<Otp> {
                   child: Dashboard(),
                   ctx: context),
             );
-          } else if (state is OtpResendSuccess) {
+          } else if (state is InvalidOtpSuccess) {
+            Navigator.of(context).pop();
+            final _snackBar =
+            snackBar('Invalid Otp', Icons.done, Colors.green);
+
+            ScaffoldMessenger.of(context).showSnackBar(_snackBar);
+          }
+          else if (state is OtpResendSuccess) {
             Navigator.of(context).pop();
             final _snackBar =
             snackBar('Otp sent successfully', Icons.done, Colors.green);
@@ -364,7 +371,7 @@ class _OtpState extends State<Otp> {
                       ],
                     ),
                   ),
-                  SizedBox(height: 100.h,),
+                  SizedBox(height: 30.h,),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 8.0),
                     child: Text(
@@ -372,7 +379,7 @@ class _OtpState extends State<Otp> {
                       style: MyStyles.black16Light,
                     ),
                   ),
-                  SizedBox(height: 30.h,),
+                  SizedBox(height: 10.h,),
                   RichText(
                     text: TextSpan(
                       text: 'Disclaimer',

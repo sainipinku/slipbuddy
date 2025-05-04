@@ -19,6 +19,7 @@ import 'package:slipbuddy/controller/schudle/schudle_cubit.dart';
 import 'package:slipbuddy/screen/users/dashboard.dart';
 import 'package:slipbuddy/webviewpage.dart';
 String patientName = '';
+String patientAge = '';
 class AppointmentScreen extends StatefulWidget {
   final String date;
   final String time;
@@ -35,7 +36,7 @@ class AppointmentScreen extends StatefulWidget {
 class _AppointmentScreenState extends State<AppointmentScreen> {
   final ScrollController _scrollController = ScrollController();
   final GlobalKey _billDetailsKey = GlobalKey();
-
+  bool light = true;
   void _scrollToBillDetails() {
     Scrollable.ensureVisible(
       _billDetailsKey.currentContext!,
@@ -81,7 +82,36 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
 
   @override
   Widget build(BuildContext context) {
-
+    final MaterialStateProperty<Color?> trackColor =
+    MaterialStateProperty.resolveWith<Color?>(
+          (Set<MaterialState> states) {
+        // Track color when the switch is selected.
+        if (states.contains(MaterialState.selected)) {
+          return AppTheme.statusBar;
+        }
+        // Otherwise return null to set default track color
+        // for remaining states such as when the switch is
+        // hovered, focused, or disabled.
+        return null;
+      },
+    );
+    final MaterialStateProperty<Color?> overlayColor =
+    MaterialStateProperty.resolveWith<Color?>(
+          (Set<MaterialState> states) {
+        // Material color when switch is selected.
+        if (states.contains(MaterialState.selected)) {
+          return Colors.amber.withOpacity(0.54);
+        }
+        // Material color when switch is disabled.
+        if (states.contains(MaterialState.disabled)) {
+          return Colors.grey.shade400;
+        }
+        // Otherwise return null to set default material color
+        // for remaining states such as when the switch is
+        // hovered, or focused.
+        return null;
+      },
+    );
     return Scaffold(
       appBar: AppBar(
         backgroundColor: AppTheme.statusBar,
@@ -140,16 +170,10 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                 );
               } else if (state is SchudleResendSuccess) {
                 Navigator.of(context).pop();
-                final _snackBar =
-                snackBar('Schudle sent successfully', Icons.done, Colors.green);
 
-                ScaffoldMessenger.of(context).showSnackBar(_snackBar);
               } else if (state is SchudleFailed) {
                 Navigator.of(context).pop();
-                final _snackBar =
-                snackBar('Failed to send an Schudle.', Icons.warning, Colors.red);
 
-                ScaffoldMessenger.of(context).showSnackBar(_snackBar);
               } else if (state is SchudleOnHold) {
                 Navigator.of(context).pop();
                 final _snackBar = snackBar(
@@ -176,7 +200,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
           BlocListener<DoctorScheduleDetailsCubit, DoctorScheduleDetailsState>(
             listener: (context, state) {
               if (state is DoctorScheduleDetailsLoading) {
-                showDialog(
+              /*  showDialog(
                     barrierDismissible: false,
                     context: context,
                     builder: (_ctx) {
@@ -198,20 +222,14 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                           ),
                         ),
                       );
-                    });
+                    });*/
               } else if (state is DoctorScheduleDetailsLoaded) {
                 // Navigator.of(context).pop();
-                final _snackBar = snackBar(
-                    'Status update successfully', Icons.done, Colors.green);
-                ScaffoldMessenger.of(context).showSnackBar(_snackBar);
+
 
               } else if (state is DoctorScheduleDetailsFailed) {
                 // Navigator.of(context).pop();
-                final _snackBar = snackBar('Failed to update complain status.',
-                    Icons.warning, Colors.red);
-
-                ScaffoldMessenger.of(context).showSnackBar(_snackBar);
-              } else if (state is DoctorScheduleDetailsTimeout) {
+                            } else if (state is DoctorScheduleDetailsTimeout) {
                 // Navigator.of(context).pop();
                 final _snackBar =
                 snackBar('Time out exception', Icons.warning, Colors.red);
@@ -236,7 +254,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
             if (state is DoctorScheduleDetailsLoaded) {
               // Set the max item count to 6 or less, plus 1 if there are more than 6 items for the 'More' button
               var itemValue = state.DoctorScheduleDetailsList;
-              print('doctore details------------------${itemValue[0].description}');
+              print('doctore details------------------${itemValue[0].profilePic}');
               return SingleChildScrollView(
                 controller: _scrollController,
                 child: Column(
@@ -420,15 +438,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                                   color: Colors.blue,
                                   shape: BoxShape.circle,
                                 ),
-                                child: Center(
-                                  child: Text(
-                                    '%',
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ),
+                                child: Image.asset('assets/images/copan.jpg',height: 20,width: 20,),
                               ),
                               SizedBox(width: 15),
                               // Text Column
@@ -564,7 +574,6 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                           SizedBox(height: 16),
                           // Practo Promise Section
                           Container(
-                            padding: const EdgeInsets.all(16.0),
                             decoration: BoxDecoration(
                               color: Colors.white,
                               borderRadius: BorderRadius.circular(10),
@@ -573,61 +582,90 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(
-                                  itemValue[0].promiseHeading!,
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.purple,
+                                Container(
+                                  height : 40,
+                                  width: MediaQuery.of(context).size.width,
+                                  decoration: BoxDecoration(
+                                    color: Colors.purple.shade100,
+                                    borderRadius: BorderRadius.all(Radius.circular(10)),
+                                  ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(left: 8.0),
+                                    child: Row(
+                                      children: [
+                                        Container(decoration: BoxDecoration(shape: BoxShape.circle,color: Colors.purple),child: Padding(
+                                          padding: const EdgeInsets.all(4.0),
+                                          child: Icon(Icons.check, color: Colors.white,size: 15,),
+                                        )),
+                                        Padding(
+                                          padding: const EdgeInsets.only(left: 8.0),
+                                          child: Text(
+                                            itemValue[0].promiseHeading!,
+                                            style: TextStyle(fontSize: 18,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.purple,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ),
-                                SizedBox(height: 10),
-                                Row(
-                                  children: [
-                                    Icon(Icons.check, color: Colors.purple),
-                                    SizedBox(width: 8),
-                                    Expanded(
-                                      child: Text(
-                                        itemValue[0].promiseText1!,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                SizedBox(height: 8),
-                                Row(
-                                  children: [
-                                    Icon(Icons.check, color: Colors.purple),
-                                    SizedBox(width: 8),
-                                    Expanded(
-                                      child: Text(
-                                        itemValue[0].promiseText2!,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                SizedBox(height: 8),
-                                Row(
-                                  children: [
-                                    Icon(Icons.check, color: Colors.purple),
-                                    SizedBox(width: 8),
-                                    Expanded(
-                                      child: Text(
-                                        itemValue[0].promiseText3!,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                SizedBox(height: 8),
-                                Row(
-                                  children: [
-                                    Icon(Icons.check, color: Colors.purple),
-                                    SizedBox(width: 8),
-                                    Expanded(
-                                      child: Text(
-                                        itemValue[0].promiseText4!,
-                                      ),
-                                    ),
-                                  ],
-                                ),
+                               Padding(
+                                 padding: const EdgeInsets.all(8.0),
+                                 child: Column(
+                                   children: [
+                                     SizedBox(height: 10),
+                                     Row(
+                                       children: [
+                                         Icon(Icons.check, color: Colors.purple),
+                                         SizedBox(width: 8),
+                                         Expanded(
+                                           child: Text(
+                                             itemValue[0].promiseText1!,textAlign: TextAlign.justify,
+                                           ),
+                                         ),
+                                       ],
+                                     ),
+                                     SizedBox(height: 8),
+                                     Row(
+                                       children: [
+                                         Icon(Icons.check, color: Colors.purple),
+                                         SizedBox(width: 8),
+                                         Expanded(
+                                           child: Text(
+                                             itemValue[0].promiseText2!,textAlign: TextAlign.justify,
+                                           ),
+                                         ),
+                                       ],
+                                     ),
+                                     SizedBox(height: 8),
+                                     Row(
+                                       children: [
+                                         Icon(Icons.check, color: Colors.purple),
+                                         SizedBox(width: 8),
+                                         Expanded(
+                                           child: Text(
+                                             itemValue[0].promiseText3!,textAlign: TextAlign.justify,
+                                           ),
+                                         ),
+                                       ],
+                                     ),
+                                     SizedBox(height: 8),
+                                     Row(
+                                       children: [
+                                         Icon(Icons.check, color: Colors.purple),
+                                         SizedBox(width: 8),
+                                         Expanded(
+                                           child: Text(
+                                             itemValue[0].promiseText4!,textAlign: TextAlign.justify,
+                                           ),
+                                         ),
+                                       ],
+                                     ),
+                                   ],
+                                 ),
+                               )
                               ],
                             ),
                           ),
@@ -642,48 +680,59 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Row(
-                                  children: [
-                                    Icon(Icons.shield, color: Colors.blue),
-                                    SizedBox(width: 8),
-                                    Text(
-                                      "Safe VISIT",
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.blue,
+                                Container(
+                                  padding: EdgeInsets.symmetric(horizontal: 5.0, vertical: 5.0),
+                                  decoration: BoxDecoration(
+                                    color: AppTheme.whiteColor,
+                                    borderRadius: BorderRadius.all(Radius.circular(10)),
+                                  ),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min, // important to shrink-wrap content
+                                    children: [
+                                      Icon(Icons.verified_user, color: AppTheme.statusBar),
+                                      SizedBox(width: 4),
+                                      Text(
+                                        "Safe VISIT",
+                                        style: TextStyle(fontSize: 12,
+                                          fontWeight: FontWeight.bold,
+                                          color: AppTheme.statusBar,
+                                        ),
                                       ),
-                                    ),
-                                  ],
+                                    ],
+                                  ),
                                 ),
                                 SizedBox(height: 10),
-                                Text("Safety measures followed by Clinic:"),
+                                Text("Safety measures followed by Clinic:",style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold,color: Colors.black),),
                                 SizedBox(height: 8),
                                 Row(
                                   children: [
-                                    Icon(Icons.check, color: Colors.green),
+                                    Icon(Icons.fiber_manual_record, color: Colors.black,size: 15,),
                                     SizedBox(width: 8),
-                                    Text(itemValue[0].safty1!),
+                                    Text(itemValue[0].safty1!,textAlign: TextAlign.justify,),
                                   ],
                                 ),
+                                SizedBox(height: 4),
                                 Row(
                                   children: [
-                                    Icon(Icons.check, color: Colors.green),
+                                    Icon(Icons.fiber_manual_record, color: Colors.black,size: 15,),
                                     SizedBox(width: 8),
-                                    Text(itemValue[0].safty2!),
+                                    Text(itemValue[0].safty2!,textAlign: TextAlign.justify,),
                                   ],
                                 ),
+                                SizedBox(height: 4),
                                 Row(
                                   children: [
-                                    Icon(Icons.check, color: Colors.green),
+                                    Icon(Icons.fiber_manual_record, color: Colors.black,size: 15,),
                                     SizedBox(width: 8),
-                                    Text(itemValue[0].safty3!),
+                                    Text(itemValue[0].safty3!,textAlign: TextAlign.justify,),
                                   ],
                                 ),
+                                SizedBox(height: 4),
                                 Row(
                                   children: [
-                                    Icon(Icons.check, color: Colors.green),
+                                    Icon(Icons.fiber_manual_record, color: Colors.black,size: 15,),
                                     SizedBox(width: 8),
-                                    Text(itemValue[0].safty4!),
+                                    Text(itemValue[0].safty4!,textAlign: TextAlign.justify,),
                                   ],
                                 ),
                               ],
@@ -692,16 +741,40 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                           SizedBox(height: 16),
                           // WhatsApp Notification Section
                           Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Icon(Icons.wallet, color: Colors.green),
-                              SizedBox(width: 8),
-                              Text("Get notification on WhatsApp"),
+                              Column(
+                                children: [
+                                  Row(
+                                    children: [
+                                      Icon(Icons.wallet, color: Colors.green),
+                                      SizedBox(width: 8),
+                                      Text("Get notification on WhatsApp"),
+
+                                    ],
+                                  ),
+                                  Text(
+                                    "* Updates will be sent to $phone",
+                                    style: TextStyle(fontSize: 12, color: Colors.grey),
+                                  ),
+                                ],
+                              ),
+                              Switch(
+                                // This bool value toggles the switch.
+                                value: light,
+                                overlayColor: overlayColor,
+                                trackColor: trackColor,
+                                thumbColor: const MaterialStatePropertyAll<Color>(Colors.white),
+                                onChanged: (bool value) {
+                                  // This is called when the user toggles the switch.
+                                  setState(() {
+                                    light = value;
+                                  });
+                                },
+                              )
                             ],
-                          ),
-                          Text(
-                            "* Updates will be sent to +91xxxxxxxxxx.",
-                            style: TextStyle(fontSize: 12, color: Colors.grey),
-                          ),
+                          )
+
                         ],
                       ),
                     ),
@@ -848,7 +921,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                                   "HospitalId": widget.HospitalID,
                                   "AppointmentDate": Helpers.dateformat1(widget.date),
                                   "Pname": patientName,
-                                  "Age": "44",
+                                  "Age": patientAge,
                                   "DOB": "2024-09-17",
                                   "Gender": "Male",
                                   "ConsultDr": widget.doctorId,
@@ -966,9 +1039,9 @@ void showPatientDetailsBottomSheet(BuildContext context,String name,String phone
                   SizedBox(height: 10),
                   TextField(
                     controller: emailtextEditingController,
-                    keyboardType: TextInputType.emailAddress,
+                    keyboardType: TextInputType.phone,
                     decoration: InputDecoration(
-                      labelText: "Patient's Email",
+                      labelText: "Patient's Age",
                       border: OutlineInputBorder(),
                     ),
                   ),
@@ -982,6 +1055,7 @@ void showPatientDetailsBottomSheet(BuildContext context,String name,String phone
 
                       setState((){
                         patientName = nametextEditingController.text;
+                        patientAge = emailtextEditingController.text;
                       });
                       Navigator.pop(context); // Or perform submit logic
                       context.read<PatientBloc>().add(UpdatePatientName(nametextEditingController.text));

@@ -60,9 +60,7 @@ class _AppoitmentHistoryState extends State<AppoitmentHistory> {
                   });*/
             } else if (state is AppointmentLoaded) {
               // Navigator.of(context).pop();
-              final _snackBar = snackBar(
-                  'Status update successfully', Icons.done, Colors.green);
-              ScaffoldMessenger.of(context).showSnackBar(_snackBar);
+
 
             } else if (state is AppointmentFailed) {
               // Navigator.of(context).pop();

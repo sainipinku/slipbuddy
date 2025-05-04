@@ -45,6 +45,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
     updateUserProfileCubit = context.read<UpdateUserProfileCubit>();
     userProfileCubit.fetchUserProfileData();
   }
+  bool isDataSet = false;
   @override
   void initState() {
     // TODO: implement initState
@@ -294,9 +295,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
               } else if (state is UpdateUserProfile) {
                 Navigator.of(context).pop();
                 userProfileCubit.fetchUserProfileData();
-                final _snackBar = snackBar(
-                    'User Profile Status update successfully', Icons.done, Colors.green);
-                ScaffoldMessenger.of(context).showSnackBar(_snackBar);
+
 
               } else if (state is UpdateUserProfileFailed) {
                  Navigator.of(context).pop();
@@ -328,18 +327,24 @@ class _EditProfilePageState extends State<EditProfilePage> {
             child: BlocBuilder<UserProfileCubit,UserProfileState>(builder: (context,state){
               if (state is MultipleDataLoaded) {
                 final user = state.userList.first;
-                nameController.text = user.name ?? '';
-                mobileController.text = user.mobile ?? '';
-                dobController.text = user.dob ?? '';
-                emailController.text = user.email ?? '';
-                cityController.text = user.city ?? '';
-                gender = user.gender ?? '';
-                imageUrl = user.image ?? '';
-                SharedPref.setUserFirstName(user.name ?? '');
-                SharedPref.setUserEmail(user.email ?? '');
-                SharedPref.setToken(user.userId.toString());
-                SharedPref.setProfileImage(user.image ?? '');
-                SharedPref.setUserPhone(user.mobile ?? '');
+                // ✅ Only set once
+                if (!isDataSet) {
+                  nameController.text = user.name ?? '';
+                  mobileController.text = user.mobile ?? '';
+                  dobController.text = user.dob ?? '';
+                  emailController.text = user.email ?? '';
+                  cityController.text = user.city ?? '';
+                  gender = user.gender ?? '';
+                  imageUrl = user.image ?? '';
+
+                  SharedPref.setUserFirstName(user.name ?? '');
+                  SharedPref.setUserEmail(user.email ?? '');
+                  SharedPref.setToken(user.userId.toString());
+                  SharedPref.setProfileImage(user.image ?? '');
+                  SharedPref.setUserPhone(user.mobile ?? '');
+
+                  isDataSet = true;
+                }
                 return Column(
                   children: [
                     // Profile Image

@@ -8,6 +8,8 @@ final class OtpLoading extends OtpState {}
 
 final class OtpSuccess extends OtpState {}
 
+final class InvalidOtpSuccess extends OtpState {}
+
 final class OtpResendSuccess extends OtpState {}
 
 final class OtpFailed extends OtpState {}

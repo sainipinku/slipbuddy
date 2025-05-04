@@ -349,7 +349,7 @@ class _LoginState extends State<Login> {
                           ],
                         ),
                       ),
-                      SizedBox(height: 100.h,),
+                      SizedBox(height: 30.h,),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 8.0),
                         child: Text(
@@ -357,7 +357,7 @@ class _LoginState extends State<Login> {
                           style: MyStyles.black16Light,
                         ),
                       ),
-                      SizedBox(height: 30.h,),
+                      SizedBox(height: 10.h,),
                       RichText(
                         text: TextSpan(
                           text: 'Disclaimer',

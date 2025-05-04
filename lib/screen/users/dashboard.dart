@@ -145,21 +145,15 @@ class _DashboardState extends State<Dashboard> {
                   });*/
             } else if (state is DepartmentLoaded) {
              // Navigator.of(context).pop();
-              final _snackBar = snackBar(
-                  'Status update successfully', Icons.done, Colors.green);
-              ScaffoldMessenger.of(context).showSnackBar(_snackBar);
+
 
             }else if (state is BannerImageLoaded) {
               // Navigator.of(context).pop();
-              final _snackBar = snackBar(
-                  'Banner Data Get successfully', Icons.done, Colors.green);
-              ScaffoldMessenger.of(context).showSnackBar(_snackBar);
+
 
             }else if (state is CompletedDoctorListLoaded) {
               // Navigator.of(context).pop();
-              final _snackBar = snackBar(
-                  'Completed Doctor List Get successfully', Icons.done, Colors.green);
-              ScaffoldMessenger.of(context).showSnackBar(_snackBar);
+
 
             }
             else if (state is DepartmentFailed) {
@@ -210,6 +204,7 @@ class _DashboardState extends State<Dashboard> {
                 child: Column(
                   children: [
                     Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         // Location Icon on the Left Side
@@ -245,33 +240,21 @@ class _DashboardState extends State<Dashboard> {
                             crossAxisAlignment: CrossAxisAlignment.center,
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              IconButton(
-                                icon: Icon(Icons.location_on,size: 25,color: Colors.white,), // Location icon
-                                onPressed: () {
-                                  // Action when location icon is clicked
-                                  print("Location icon clicked");
-                                },
-                              ),
+                              Icon(Icons.location_on,size: 25,color: Colors.white,),
                               SizedBox(
-                                width: 100,
                                 child: Text(
-                                  currentLocation,maxLines: 1,overflow: TextOverflow.fade,
+                                  currentLocation,maxLines: 1,overflow: TextOverflow.fade,textAlign: TextAlign.center,
                                   style: TextStyle(fontSize: 18, color: Colors.white,fontWeight: FontWeight.w700), // Responsive font size
                                 ),
                               ),
-                              IconButton(
-                                icon: Icon(Icons.keyboard_arrow_down_outlined,size: 25,color: Colors.white,), // Location icon
-                                onPressed: () {
-                                  // Action when location icon is clicked
-                                  print("Location icon clicked");
-                                },
-                              ),
+                              SizedBox()
+
                             ],
                           ),
                         ),
                         // Profile button or any widget on the right side
                         IconButton(
-                          icon: Icon(Icons.notification_important), // Location icon
+                          icon: Icon(Icons.notifications,size: 30,), // Location icon
                           onPressed: () {
                             // Action when location icon is clicked
                             print("Location icon clicked");
@@ -464,10 +447,10 @@ class _DashboardState extends State<Dashboard> {
                   },
                 ),
                 Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 10.0),
+                  padding: const EdgeInsets.symmetric(vertical: 3.0),
                   child: Divider(
                     color: Colors.black26,
-                    thickness: 5,
+                    thickness: 2,
                   ),
                 ),
                 ActionCard(
@@ -476,14 +459,14 @@ class _DashboardState extends State<Dashboard> {
                   image: 'assets/images/doctor.jpg', // Use your asset path here
                 ),
                 Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 10.0),
+                  padding: const EdgeInsets.symmetric(vertical: 3.0),
                   child: Divider(
                     color: Colors.black26,
-                    thickness: 5,
+                    thickness: 2,
                   ),
                 ), // Responsive spacing
                 Text(
-                  "Connect with top doctors in minutes.",
+                  "Connect with Top Doctors In Minutes.",
                   style: TextStyle(fontSize: 18, color: Colors.black,fontWeight: FontWeight.w700), // Responsive font size
                 ),
                 SizedBox(height: MediaQuery.of(context).size.height * 0.02), // Responsive spacing
@@ -513,7 +496,7 @@ class _DashboardState extends State<Dashboard> {
                               context,
                               MaterialPageRoute(
                                 builder: (context) => DoctorListing(
-                                  id: category.iD.toString(),
+                                  catId: category.iD.toString(),drId: "0",
                                 ),
                               ),
                             );
@@ -592,10 +575,10 @@ class _DashboardState extends State<Dashboard> {
             ),
           ),
                 Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 10.0),
+                  padding: const EdgeInsets.symmetric(vertical: 3.0),
                   child: Divider(
                     color: Colors.black26,
-                    thickness: 5,
+                    thickness: 2,
                   ),
                 ),
                 Padding(
@@ -743,7 +726,7 @@ class ActionCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                Text(title,maxLines: 2,overflow: TextOverflow.ellipsis, textAlign: TextAlign.start,style: TextStyle(fontSize: 18,color: Colors.white,fontWeight: FontWeight.w700),),
+                Text(title,maxLines: 2,overflow: TextOverflow.ellipsis, textAlign: TextAlign.start,style: TextStyle(fontSize: 16,color: Colors.white,fontWeight: FontWeight.w700),),
                 SizedBox(height: 5,),
                 Text(desc,maxLines: 5,overflow: TextOverflow.ellipsis, textAlign: TextAlign.justify,style: TextStyle(fontSize: 14,color: Colors.white,fontWeight: FontWeight.w500),),
               ],
