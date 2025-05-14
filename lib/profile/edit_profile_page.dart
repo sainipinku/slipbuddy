@@ -336,13 +336,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   cityController.text = user.city ?? '';
                   gender = user.gender ?? '';
                   imageUrl = user.image ?? '';
-
-                  SharedPref.setUserFirstName(user.name ?? '');
-                  SharedPref.setUserEmail(user.email ?? '');
-                  SharedPref.setToken(user.userId.toString());
-                  SharedPref.setProfileImage(user.image ?? '');
-                  SharedPref.setUserPhone(user.mobile ?? '');
-
                   isDataSet = true;
                 }
                 return Column(

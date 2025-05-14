@@ -21,6 +21,7 @@ import 'package:slipbuddy/models/BannerModel.dart';
 import 'package:slipbuddy/models/CompletedDoctorListModel.dart';
 import 'package:slipbuddy/screen/location/GalobleSearchPage.dart';
 import 'package:slipbuddy/screen/location/LocationSearchPage.dart';
+import 'package:slipbuddy/screen/notification/notification.dart';
 import 'package:slipbuddy/screen/users/doctor_listing.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
@@ -209,9 +210,8 @@ class _DashboardState extends State<Dashboard> {
                       children: [
                         // Location Icon on the Left Side
                         GestureDetector(
-                          onTap: (){
+                          onTap: () {
                             _key.currentState!.openDrawer();
-                            // Action when menu icon is clicked
                             print("Menu button clicked");
                           },
                           child: Container(
@@ -219,14 +219,15 @@ class _DashboardState extends State<Dashboard> {
                             width: 50,
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
-                              color: Colors.blue
+                              color: Colors.white,
                             ),
                             child: Center(
                               child: CircleAvatar(
-                                radius: 45, // Ensure the size matches
-                                backgroundImage: NetworkImage(
-                                  imageUrl, // Placeholder image URL
-                                ),
+                                radius: 22, // Adjusted to fit inside the container
+                                backgroundImage: (imageUrl.isNotEmpty)
+                                    ? NetworkImage(imageUrl)
+                                    : AssetImage('assets/images/defult_img.png') as ImageProvider,
+                                backgroundColor: Colors.transparent,
                               ),
                             ),
                           ),
@@ -256,6 +257,13 @@ class _DashboardState extends State<Dashboard> {
                         IconButton(
                           icon: Icon(Icons.notifications,size: 30,), // Location icon
                           onPressed: () {
+                            Navigator.push(
+                              context,
+                              PageTransition(
+                                  type: PageTransitionType.rightToLeft,
+                                  child: NotificationPage(),
+                                  ctx: context),
+                            );
                             // Action when location icon is clicked
                             print("Location icon clicked");
                           },
@@ -671,14 +679,14 @@ class CategoryCard extends StatelessWidget {
 
                   placeholder:
                   const AssetImage(
-                      "assets/images/google.png"),
+                      "assets/images/defult_img.png"),
                   imageErrorBuilder:
                       (context,
                       error,
                       stackTrace) {
                     return Image
                         .asset(
-                      "assets/images/google.png",
+                      "assets/images/defult_img.png",
                     );
                   },
                 )),

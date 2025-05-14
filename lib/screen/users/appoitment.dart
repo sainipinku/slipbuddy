@@ -18,8 +18,8 @@ import 'package:slipbuddy/controller/appointment/PatientState.dart';
 import 'package:slipbuddy/controller/schudle/schudle_cubit.dart';
 import 'package:slipbuddy/screen/users/dashboard.dart';
 import 'package:slipbuddy/webviewpage.dart';
-String patientName = '';
-String patientAge = '';
+String patientName = 'Ramchadra saini';
+String patientAge = '29';
 class AppointmentScreen extends StatefulWidget {
   final String date;
   final String time;
@@ -881,7 +881,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                         children: [
                           // Price Section with 20% width
                           Expanded(
-                            flex: 2, // 20% of total width
+                            flex: 3, // 20% of total width
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
@@ -908,10 +908,10 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                           SizedBox(width: 10), // Add some spacing between the two sections
                           // Confirm Clinic Visit Button with 80% width
                           Expanded(
-                            flex: 8, // 80% of total width
+                            flex: 7, // 80% of total width
                             child: commonButton(
                               color: AppTheme.statusBar,
-                              text: 'Confirm Clinic Visit',
+                              text: 'Confirm Appointment',
                               button: () async {
                                 SharedPreferences prefs = await SharedPreferences.getInstance();
                                 String userToken = prefs.getString('user_id') ?? '';

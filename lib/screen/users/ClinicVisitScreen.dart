@@ -63,10 +63,10 @@ class _ClinicVisitScreenState extends State<ClinicVisitScreen> {
                 child: FadeInImage(
                   image: NetworkImage(widget.profile), // Network image from a URL
                   fit: BoxFit.cover, // Ensures the image covers the circle
-                  placeholder: const AssetImage("assets/images/google.png"), // Placeholder image
+                  placeholder: const AssetImage("assets/images/defult_img.png"), // Placeholder image
                   imageErrorBuilder: (context, error, stackTrace) {
                     return Image.asset(
-                      "assets/images/google.png", // Fallback image if URL fails
+                      "assets/images/defult_img.png", // Fallback image if URL fails
                     );
                   },
                 ),

@@ -109,7 +109,7 @@ class AppointmentsTab extends StatelessWidget {
         if (state is AppointmentLoaded) {
           int itemCount = state.appointmentList.length;
           String formattedDateTime = '';
-          return ListView.builder(
+          return itemCount != 0 ? ListView.builder(
             itemCount: itemCount, // Total number of items
             itemBuilder: (context, index) {
               var item = state.appointmentList[index];
@@ -146,9 +146,9 @@ class AppointmentsTab extends StatelessWidget {
                 token: item.TokenNo!,
               );
             },
-          );
+          ): Center(child: Text('No Record Found'));
         } else {
-          return const Center(child: Text('No Announcement Found'));
+          return const Center(child: Text('Loading......'));
         }
       }),
     );

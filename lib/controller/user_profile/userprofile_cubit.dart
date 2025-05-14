@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:slipbuddy/config/sharedpref.dart';
 import 'package:slipbuddy/constants/api_manager.dart';
 import 'package:slipbuddy/constants/config.dart';
 import 'package:slipbuddy/models/UserProfileModel.dart';
@@ -27,6 +28,11 @@ class UserProfileCubit extends Cubit<UserProfileState> {
         List<UserProfileModel> userList = jsonList
             .map((item) => UserProfileModel.fromJson(item))
             .toList();
+        SharedPref.setUserFirstName(userList[0].name ?? '');
+        SharedPref.setUserEmail(userList[0].email ?? '');
+        SharedPref.setToken(userList[0].userId.toString());
+        SharedPref.setProfileImage(userList[0].image ?? '');
+        SharedPref.setUserPhone(userList[0].mobile ?? '');
         print('userProfileResponse response----------------${userList}');
         emit(MultipleDataLoaded(userList: userList));
       } else if (userProfileResponse.statusCode == 401 || userProfileResponse.statusCode == 403) {

@@ -1,5 +1,6 @@
 import 'package:country_code_picker/country_code_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -14,6 +15,8 @@ import 'package:slipbuddy/constants/app_theme.dart';
 import 'package:slipbuddy/constants/my_styles.dart';
 import 'package:slipbuddy/controller/login_auth/login_cubit.dart';
 import 'package:slipbuddy/screen/auth/otp.dart';
+import 'package:slipbuddy/webviewpage.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 
 class Login extends StatefulWidget {
@@ -341,11 +344,46 @@ class _LoginState extends State<Login> {
                       ),
                       RichText(
                         text: TextSpan(
-                          text: 'Terms of use ',
-                          style: MyStyles.blu14bold,
-                          children:  <TextSpan>[
-                            TextSpan(text: ' and ' , style: TextStyle(fontWeight: FontWeight.bold,color: Colors.black)),
-                            TextSpan(text: ' Privacy Policy',style: MyStyles.blu14bold),
+                          style: TextStyle(fontSize: 14.0),
+                          children: [
+                            TextSpan(
+                              text: 'Terms & Condition',
+                              style: MyStyles.blu14bold,
+                              recognizer: TapGestureRecognizer()
+                                ..onTap = () {
+                                  Navigator.push(
+                                    context,
+                                    PageTransition(
+                                        type: PageTransitionType.rightToLeft,
+                                        child: WebViewPage(url: 'https://www.slipbuddy.com/terms',),
+                                        ctx: context),
+                                  );
+                                  // Navigate or launch URL for Terms
+                                  print("Terms & Condition clicked");
+                                  // _launchURL('https://example.com/terms');
+                                },
+                            ),
+                            TextSpan(
+                              text: ' and ',
+                              style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
+                            ),
+                            TextSpan(
+                              text: 'Privacy Policy',
+                              style: MyStyles.blu14bold,
+                              recognizer: TapGestureRecognizer()
+                                ..onTap = () {
+                                  Navigator.push(
+                                    context,
+                                    PageTransition(
+                                        type: PageTransitionType.rightToLeft,
+                                        child: WebViewPage(url: 'https://www.slipbuddy.com/policy',),
+                                        ctx: context),
+                                  );
+                                  // Navigate or launch URL for Privacy Policy
+                                  print("Privacy Policy clicked");
+                                  // _launchURL('https://example.com/privacy');
+                                },
+                            ),
                           ],
                         ),
                       ),
@@ -357,17 +395,6 @@ class _LoginState extends State<Login> {
                           style: MyStyles.black16Light,
                         ),
                       ),
-                      SizedBox(height: 10.h,),
-                      RichText(
-                        text: TextSpan(
-                          text: 'Disclaimer',
-                          style: MyStyles.blu14bold,
-                          children:  <TextSpan>[
-                            TextSpan(text: '   Privacy Policy  ' , style :MyStyles.blu14bold),
-                            TextSpan(text: 'Terms of use',style: MyStyles.blu14bold),
-                          ],
-                        ),
-                      ),
                     ],
                   ),
                 ),
@@ -377,5 +404,13 @@ class _LoginState extends State<Login> {
         ),
       ),
     );
+  }
+  void _launchURL(String url) async {
+    final Uri uri = Uri.parse(url);
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri, mode: LaunchMode.inAppWebView); // Use external browser
+    } else {
+      throw 'Could not launch $url';
+    }
   }
 }

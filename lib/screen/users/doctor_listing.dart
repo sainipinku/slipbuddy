@@ -8,6 +8,7 @@ import 'package:slipbuddy/Widgets/snack_bar_widget.dart';
 import 'package:slipbuddy/constants/app_theme.dart';
 import 'package:slipbuddy/controller/doctor/doctor_cubit.dart';
 import 'package:slipbuddy/screen/users/ClinicVisitScreen.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class DoctorListing extends StatefulWidget {
   final String drId;
@@ -125,7 +126,7 @@ class _DoctorListingState extends State<DoctorListing> {
                         fee: doctor.fees!.toString(),
                         availableAt: doctor.NextAvailable!,
                         imagePath: doctor.profilePic!, // Dynamic image path
-                          HospitalID : doctor.HospitalID!,
+                          HospitalID : doctor.HospitalID!,mobile: doctor.mobile!,
                       ),
                       SizedBox(height: 10),
                     ],
@@ -167,7 +168,7 @@ class DoctorCard extends StatelessWidget {
   final String availableAt;
   final String imagePath;
   final int HospitalID;
-
+  final String mobile;
   DoctorCard({
     required this.doctorId,
     required this.doctorName,
@@ -179,6 +180,7 @@ class DoctorCard extends StatelessWidget {
     required this.availableAt,
     required this.imagePath,
     required this.HospitalID,
+    required this.mobile,
   });
 
   @override
@@ -202,14 +204,14 @@ class DoctorCard extends StatelessWidget {
                         fit: BoxFit.cover,
                         placeholder:
                         const AssetImage(
-                            "assets/images/google.png"),
+                            "assets/images/defult_img.png"),
                         imageErrorBuilder:
                             (context,
                             error,
                             stackTrace) {
                           return Image
                               .asset(
-                            "assets/images/google.png",
+                            "assets/images/defult_img.png",
                           );
                         },
                       )),// Use NetworkImage for a URL image
@@ -245,7 +247,9 @@ class DoctorCard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    _makePhoneCall(mobile);
+                  },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppTheme.statusBar
                   ),
@@ -255,6 +259,7 @@ class DoctorCard extends StatelessWidget {
                     fontWeight: FontWeight.w400,
                   ),),
                 ),
+                SizedBox(width: 10,),
                 ElevatedButton(
                   onPressed: () {
                     Navigator.push(
@@ -280,6 +285,14 @@ class DoctorCard extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+void _makePhoneCall(String phoneNumber) async {
+  final Uri url = Uri(scheme: 'tel', path: phoneNumber);
+  if (await canLaunchUrl(url)) {
+    await launchUrl(url);
+  } else {
+    throw 'Could not launch $url';
   }
 }
 class Doctor {

@@ -82,9 +82,9 @@ class _CategoryWidgetState extends State<CategoryWidget> {
                                           child: FadeInImage(
                                             image: NetworkImage('${category.icon}'),
                                             fit: BoxFit.cover,
-                                            placeholder: const AssetImage("assets/images/google.png"),
+                                            placeholder: const AssetImage("assets/images/defult_img.png"),
                                             imageErrorBuilder: (context, error, stackTrace) {
-                                              return Image.asset("assets/images/google.png");
+                                              return Image.asset("assets/images/defult_img.png");
                                             },
                                           ),
                                         ),

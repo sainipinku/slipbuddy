@@ -66,10 +66,13 @@ class _GlobalDrawerState extends State<GlobalDrawer> {
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     CircleAvatar(
-                      radius: 25, // Ensure the size matches
-                      backgroundImage: NetworkImage(
-                        imageUrl, // Placeholder image URL
-                      ),
+                      radius: 22,
+
+                      // Adjusted to fit inside the container
+                      backgroundImage: (imageUrl.isNotEmpty)
+                          ? NetworkImage(imageUrl)
+                          : AssetImage('assets/images/defult_img.png') as ImageProvider,
+                      backgroundColor: Colors.white,
                     ),
                     Padding(
                       padding: const EdgeInsets.only(left: 8.0),
@@ -115,7 +118,7 @@ class _GlobalDrawerState extends State<GlobalDrawer> {
             },
             trailing: Icon(Icons.arrow_forward_ios_outlined,size: 15,),
           ),
-          ListTile(
+        /*  ListTile(
             leading: Icon(Icons.home),
             title: Text('Reminder',style: GoogleFonts.poppins(
                 fontSize: 16,
@@ -147,7 +150,7 @@ class _GlobalDrawerState extends State<GlobalDrawer> {
 
             },
             trailing: Icon(Icons.arrow_forward_ios_outlined,size: 15,),
-          ),
+          ),*/
           ListTile(
             leading: Icon(Icons.exit_to_app),
             title: Text('Logout' ,style: GoogleFonts.poppins(

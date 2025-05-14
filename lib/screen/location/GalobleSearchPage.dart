@@ -229,7 +229,8 @@ class _GaloblesearchpageState extends State<Galoblesearchpage> {
                                     color: Colors.blue
                                 ),
                                 child: Center(
-                                  child: CircleAvatar(
+                                  child: 
+                                  CircleAvatar(
                                     radius: 45, // Ensure the size matches
                                     backgroundImage: NetworkImage(
                                       doctor.profilePic!, // Placeholder image URL

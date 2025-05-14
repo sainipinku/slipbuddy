@@ -12,6 +12,8 @@ import 'package:slipbuddy/constants/my_styles.dart';
 import 'package:slipbuddy/controller/otp_auth/otp_cubit.dart';
 import 'package:slipbuddy/screen/dashboard/home_screen.dart';
 import 'package:slipbuddy/screen/users/dashboard.dart';
+import 'package:slipbuddy/webviewpage.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 
 class Otp extends StatefulWidget {
@@ -363,11 +365,46 @@ class _OtpState extends State<Otp> {
                   ),
                   RichText(
                     text: TextSpan(
-                      text: 'Terms of use ',
-                      style: MyStyles.blu14bold,
-                      children:  <TextSpan>[
-                        TextSpan(text: ' and ' , style: TextStyle(fontWeight: FontWeight.bold,color: Colors.black)),
-                        TextSpan(text: ' Privacy Policy',style: MyStyles.blu14bold),
+                      style: TextStyle(fontSize: 14.0),
+                      children: [
+                        TextSpan(
+                          text: 'Terms & Condition',
+                          style: MyStyles.blu14bold,
+                          recognizer: TapGestureRecognizer()
+                            ..onTap = () {
+                              Navigator.push(
+                                context,
+                                PageTransition(
+                                    type: PageTransitionType.rightToLeft,
+                                    child: WebViewPage(url: 'https://www.slipbuddy.com/terms',),
+                                    ctx: context),
+                              );
+                              // Navigate or launch URL for Terms
+                              print("Terms & Condition clicked");
+                              // _launchURL('https://example.com/terms');
+                            },
+                        ),
+                        TextSpan(
+                          text: ' and ',
+                          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
+                        ),
+                        TextSpan(
+                          text: 'Privacy Policy',
+                          style: MyStyles.blu14bold,
+                          recognizer: TapGestureRecognizer()
+                            ..onTap = () {
+                              Navigator.push(
+                                context,
+                                PageTransition(
+                                    type: PageTransitionType.rightToLeft,
+                                    child: WebViewPage(url: 'https://www.slipbuddy.com/policy',),
+                                    ctx: context),
+                              );
+                              // Navigate or launch URL for Privacy Policy
+                              print("Privacy Policy clicked");
+                              // _launchURL('https://example.com/privacy');
+                            },
+                        ),
                       ],
                     ),
                   ),
@@ -379,17 +416,6 @@ class _OtpState extends State<Otp> {
                       style: MyStyles.black16Light,
                     ),
                   ),
-                  SizedBox(height: 10.h,),
-                  RichText(
-                    text: TextSpan(
-                      text: 'Disclaimer',
-                      style: MyStyles.blu14bold,
-                      children:  <TextSpan>[
-                        TextSpan(text: '   Privacy Policy  ' , style :MyStyles.blu14bold),
-                        TextSpan(text: 'Terms of use',style: MyStyles.blu14bold),
-                      ],
-                    ),
-                  ),
                 ],
               ),
             ),
@@ -397,5 +423,13 @@ class _OtpState extends State<Otp> {
         )),
       ),
     );
+  }
+  void _launchURL(String url) async {
+    final Uri uri = Uri.parse(url);
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    } else {
+      throw 'Could not launch $url';
+    }
   }
 }

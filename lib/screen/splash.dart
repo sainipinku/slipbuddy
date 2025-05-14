@@ -2,10 +2,12 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:slipbuddy/constants/app_theme.dart';
+import 'package:slipbuddy/controller/user_profile/userprofile_cubit.dart';
 import 'package:slipbuddy/screen/auth/login.dart';
 import 'package:slipbuddy/screen/dashboard/home_screen.dart';
 import 'package:slipbuddy/screen/users/dashboard.dart';
@@ -45,8 +47,16 @@ class _SplashState extends State<Splash> {
     }
 
   }
+  late UserProfileCubit userProfileCubit;
+  void initCubit()async {
+    userProfileCubit = context.read<UserProfileCubit>();
+    userProfileCubit.fetchUserProfileData();
+  }
+  bool isDataSet = false;
+
   @override
   void initState() {
+    initCubit();
     Timer(const Duration(seconds: 3), () {
       navigationToScreen();
     });
