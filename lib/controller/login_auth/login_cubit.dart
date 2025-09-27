@@ -34,6 +34,27 @@ class LoginCubit extends Cubit<LoginState> {
       emit(LoginFailed());
     }
   }
+  getDeleteAccount(Map map) async {
+    emit(LoginLoading());
+    try {
+      var response = await apiManager.postRequest(
+          map, Config.baseUrl + Routes.ProfileDelete);
+      debugPrint("response${response.body}");
+      if (response.statusCode == 200) {
+        emit(LoginSuccess());
+      } else if (response.statusCode == 403) {
+        emit(LoginOnHold());
+      } else {
+        emit(LoginFailed());
+      }
+    } on SocketException {
+      emit(LoginInternetError());
+    } on TimeoutException {
+      emit(LoginTimeout());
+    } catch (e) {
+      emit(LoginFailed());
+    }
+  }
 
 
 }

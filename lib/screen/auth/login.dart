@@ -44,10 +44,9 @@ class _LoginState extends State<Login> {
     initCubit();
     super.initState();
   }
-  static  TextStyle black35Medium = TextStyle(
-    fontSize: 35,
+  static  TextStyle black35Medium = GoogleFonts.poppins(
+    fontSize: 32,
     color: Colors.black,
-    fontFamily: 'BauhausItalic',
     fontWeight: FontWeight.w700,
   );
   Future<void> _handleGoogleSignIn(BuildContext context) async {
@@ -160,30 +159,68 @@ class _LoginState extends State<Login> {
         },
         child: SafeArea(
           child: Padding(
-            padding: const EdgeInsets.all(12.0),
+            padding: const EdgeInsets.all(20.0),
             child: Form(
               key: formkey,
               child: Center(
                 child: SingleChildScrollView(
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      Text(
-                        'Slip Buddy',
-                    style: black35Medium,
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                'Slip',
+                                style: black35Medium,
+                              ),
+                              Image.asset(
+                                "assets/images/logo.PNG",
+                                width: 50,height: 50,
+                              ),
+                              Text(
+                                'Buddy',
+                                style: black35Medium,
+                              ),
+                            ],
+                          ),
+
+                          Text(
+                            'Your Health, Just a Click Away',
+                            style: GoogleFonts.poppins(
+                              fontSize: 14,
+                              color: Colors.black,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
                       ),
-                      SizedBox(height: 30.h,),
+                      SizedBox(height: 40.h,),
                       Text(
-                        'Login to your account',
+                        'Sign In \nwith Your Mobile',
                         style: GoogleFonts.poppins(
-                          fontSize: 24,
-                          color: Colors.blueGrey,
+                          fontSize: 28,
+                          color: Colors.black,
                           fontWeight: FontWeight.w700,
                         ),
                       ),
+                      SizedBox(height: 10.h,),
+                      Text(
+                        'Enter your mobile number to receive a one-time\npassword (OTP) for secure login',
+                        style: GoogleFonts.poppins(
+                          fontSize: 12,
+                          color: Colors.grey,
+                          fontWeight: FontWeight.w400,
+                        ),
+                      ),
                       SizedBox(height: 30.h,),
-                      Container(
+                    /*  Container(
                         width: MediaQuery.of(context).size.width,
                         height: 50.h,
                         decoration: BoxDecoration(
@@ -253,52 +290,38 @@ class _LoginState extends State<Login> {
                           Container(color: Colors.black,height: 1,width: 50.w,)
                         ],
                       ),
-                      SizedBox(height: 50.h,),
-                      Container(
-                        width: MediaQuery.of(context).size.width,
-                        decoration: BoxDecoration(
-                            border: Border(bottom: BorderSide(color: Colors.black))
-                        ),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Container(
-                              width: 100,
-                              child: CountryCodePicker(
-                                enabled: true,
-                                onChanged: (c) => c.code,
-                                initialSelection: 'IN',
-                                showCountryOnly: false,
-                                // showOnlyCountryWhenClosed: true,
-                                favorite: const ['+91', 'hi'],
-                              ),
-                            ),
-                            Expanded(child: TextFormField(
-                              autovalidateMode: AutovalidateMode.onUserInteraction,
-                              keyboardType: TextInputType.number,
-                              textAlign: TextAlign.left,
-                              inputFormatters: [
-                                LengthLimitingTextInputFormatter(10),
-                              ],
-                              onChanged: (value){
+                      SizedBox(height: 50.h,),*/
+                      TextFormField(
+                        autovalidateMode: AutovalidateMode.onUserInteraction,
+                        keyboardType: TextInputType.number,
+                        textAlign: TextAlign.left,
+                        inputFormatters: [
+                          LengthLimitingTextInputFormatter(10),
+                        ],
+                        onChanged: (value){
 
-                              },
-                              validator: (text) {
-                                if(text == null || text.isEmpty){
-                                  return 'please enter phone number';
-                                }
-                                return null;
-                              },
-                              controller: phoneController,
-                              style: MyStyles.black16Light,
-                              decoration:  InputDecoration(
-                                border: InputBorder.none,
-                                hintText: "mobile number",
-                                hintStyle: MyStyles.black16Light,
-                              ),
-                            ))
-                          ],
+                        },
+                        validator: (text) {
+                          if(text == null || text.isEmpty){
+                            return 'please enter phone number';
+                          }
+                          return null;
+                        },
+                        controller: phoneController,
+                        style: MyStyles.black12Light,
+                        decoration: InputDecoration(
+                          hintText: 'Enter Your Mobile Number', // Optional hint inside the field
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                            borderSide: BorderSide(color: Colors.grey),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                            borderSide: BorderSide(color: Colors.blue),
+                          ),
                         ),
                       ),
                       SizedBox(height: 20.h,),
@@ -319,80 +342,24 @@ class _LoginState extends State<Login> {
                           );*/
                         },
                         child: Container(
-                          height: 60.h,
+                          height: 50.h,
                           width: MediaQuery.of(context).size.width,
-                          color: AppTheme.statusBar,
-                          child: Center(
-                            child: Text(
-                              'Login with OTP',
-                              style: MyStyles.white22ExtraBold,
-                            ),
+                          padding: EdgeInsets.symmetric(horizontal: 10.0),
+                          decoration: BoxDecoration(
+                              color: AppTheme.statusBar,
+                            borderRadius: BorderRadius.all(Radius.circular(10.0))
                           ),
-                        ),
-                      ),
-                      SizedBox(height: 30.h,),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                        child: Text(
-                          'By Logging in you agree to the following',
-                          style: GoogleFonts.poppins(
-                            fontSize: 16,
-                            color: Colors.black,
-                            fontWeight: FontWeight.w400,
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                'Continue',
+                                style: MyStyles.black16Medium,
+                              ),
+                              Icon(Icons.arrow_forward)
+                            ],
                           ),
-                        ),
-                      ),
-                      RichText(
-                        text: TextSpan(
-                          style: TextStyle(fontSize: 14.0),
-                          children: [
-                            TextSpan(
-                              text: 'Terms & Condition',
-                              style: MyStyles.blu14bold,
-                              recognizer: TapGestureRecognizer()
-                                ..onTap = () {
-                                  Navigator.push(
-                                    context,
-                                    PageTransition(
-                                        type: PageTransitionType.rightToLeft,
-                                        child: WebViewPage(url: 'https://www.slipbuddy.com/terms',),
-                                        ctx: context),
-                                  );
-                                  // Navigate or launch URL for Terms
-                                  print("Terms & Condition clicked");
-                                  // _launchURL('https://example.com/terms');
-                                },
-                            ),
-                            TextSpan(
-                              text: ' and ',
-                              style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
-                            ),
-                            TextSpan(
-                              text: 'Privacy Policy',
-                              style: MyStyles.blu14bold,
-                              recognizer: TapGestureRecognizer()
-                                ..onTap = () {
-                                  Navigator.push(
-                                    context,
-                                    PageTransition(
-                                        type: PageTransitionType.rightToLeft,
-                                        child: WebViewPage(url: 'https://www.slipbuddy.com/policy',),
-                                        ctx: context),
-                                  );
-                                  // Navigate or launch URL for Privacy Policy
-                                  print("Privacy Policy clicked");
-                                  // _launchURL('https://example.com/privacy');
-                                },
-                            ),
-                          ],
-                        ),
-                      ),
-                      SizedBox(height: 30.h,),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                        child: Text(
-                          'Copyright @ 2024 \n www.silpbuddy.com All Right Reserved',textAlign: TextAlign.center,
-                          style: MyStyles.black16Light,
                         ),
                       ),
                     ],

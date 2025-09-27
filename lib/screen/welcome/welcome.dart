@@ -17,10 +17,9 @@ class Welcome extends StatefulWidget {
 }
 
 class _WelcomeState extends State<Welcome> {
-  static  TextStyle black35Medium = TextStyle(
-    fontSize: 35,
+  static  TextStyle black35Medium = GoogleFonts.poppins(
+    fontSize: 32,
     color: Colors.black,
-    fontFamily: 'BauhausItalic',
     fontWeight: FontWeight.w700,
   );
   @override
@@ -33,26 +32,36 @@ class _WelcomeState extends State<Welcome> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: <Widget>[
-                SizedBox(),
+
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Image.asset(
-                      "assets/images/logo.PNG",
-                      width: 100,height: 100,
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          'Slip',
+                          style: black35Medium,
+                        ),
+                        Image.asset(
+                          "assets/images/logo.PNG",
+                          width: 50,height: 50,
+                        ),
+                        Text(
+                          'Buddy',
+                          style: black35Medium,
+                        ),
+                      ],
                     ),
-                    SizedBox(height: 10.h,),
+
                     Text(
-                      'Slip Buddy',
-                      style: black35Medium,
-                    ),
-                    Text(
-                      'Care made easy',
+                      'Your Health, Just a Click Away',
                       style: GoogleFonts.poppins(
-                        fontSize: 16,
+                        fontSize: 14,
                         color: Colors.black,
-                        fontWeight: FontWeight.w700,
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
                   ],
@@ -71,7 +80,7 @@ class _WelcomeState extends State<Welcome> {
                         ),
                         children: <TextSpan>[
                           TextSpan(
-                            text: 'Slip Buddy!'.toUpperCase(), // क्लिकेबल टेक्स्ट
+                            text: 'Slip Buddy', // क्लिकेबल टेक्स्ट
                             style: GoogleFonts.poppins(
                               fontSize: 18,
                               color: Colors.black,
@@ -98,7 +107,7 @@ class _WelcomeState extends State<Welcome> {
                       ),
                     ),
                     SizedBox(height: 20),
-                    button(color: AppTheme.bgColor,text: 'Get Started'.toUpperCase(),button: () {
+                    button(color: AppTheme.statusappBar,text: 'Get Started'.toUpperCase(),button: () {
                       Navigator.pushAndRemoveUntil(
                         context,
                         PageTransition(

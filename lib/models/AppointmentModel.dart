@@ -18,6 +18,9 @@ class AppointmentModel {
   String? timeSlot;
   String? department;
   String? TokenNo;
+  double? Fees;
+  int? HospitalId;
+  int? DoctorID;
 
   AppointmentModel(
       {this.id,
@@ -37,7 +40,7 @@ class AppointmentModel {
         this.hospitalAddress,
         this.appointmentDate,
         this.timeSlot,
-        this.department,this.TokenNo});
+        this.department,this.TokenNo,this.Fees,this.HospitalId,this.DoctorID});
 
   AppointmentModel.fromJson(Map<String, dynamic> json) {
     id = json['Id'];
@@ -59,6 +62,9 @@ class AppointmentModel {
     timeSlot = json['TimeSlot'] ?? '12:30:00';
     department = json['Department'];
     TokenNo = json['TokenNo'];
+    Fees = json['Fees'];
+    DoctorID = json['DoctorID'];
+    HospitalId = json['HospitalId'];
   }
 
   Map<String, dynamic> toJson() {
@@ -82,6 +88,9 @@ class AppointmentModel {
     data['TimeSlot'] = this.timeSlot;
     data['Department'] = this.department;
     data['TokenNo'] = this.TokenNo;
+    data['Fees'] = this.Fees;
+    data['DoctorID'] = this.DoctorID;
+    data['HospitalId'] = this.HospitalId;
     return data;
   }
 }

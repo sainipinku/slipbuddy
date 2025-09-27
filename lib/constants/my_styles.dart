@@ -12,28 +12,28 @@ class MyFontWeight {
 }
 
 class MyStyles {
-  static TextStyle black12Light = GoogleFonts.openSans(
+  static TextStyle black12Light = GoogleFonts.poppins(
     textStyle: const TextStyle(
       color: AppTheme.blackColor,
       fontSize: 12,
       fontWeight: FontWeight.w400, // regular
     ),
   );
-  static TextStyle black14Light = GoogleFonts.openSans(
+  static TextStyle black14Light = GoogleFonts.poppins(
     textStyle: const TextStyle(
       color: AppTheme.blackColor,
       fontSize: 14,
       fontWeight: FontWeight.w400, // regular
     ),
   );
-  static TextStyle blu14bold = GoogleFonts.openSans(
+  static TextStyle blu14bold = GoogleFonts.poppins(
     textStyle: const TextStyle(
       color: Colors.blue,
       fontSize: 14,
       fontWeight: FontWeight.w400, // regular
     ),
   );
-  static TextStyle black35Medium = GoogleFonts.openSans(
+  static TextStyle black35Medium = GoogleFonts.poppins(
     textStyle:  TextStyle(
       color: AppTheme.blackColor,
       fontSize: 35,
@@ -41,35 +41,35 @@ class MyStyles {
       fontWeight: MyFontWeight.extraBold, // regular
     ),
   );
-  static TextStyle black20Medium = GoogleFonts.openSans(
+  static TextStyle black20Medium = GoogleFonts.poppins(
     textStyle:  TextStyle(
       color: AppTheme.blackColor,
       fontSize: 20,
       fontWeight: MyFontWeight.medium, // regular
     ),
   );
-    static TextStyle white22ExtraBold = GoogleFonts.openSans(
+    static TextStyle white22ExtraBold = GoogleFonts.poppins(
     textStyle:  TextStyle(
       color: AppTheme.whiteColor,
       fontSize: 22,
       fontWeight: MyFontWeight.extraBold, // regular
     ),
   );
-    static TextStyle black25Medium = GoogleFonts.openSans(
+    static TextStyle black25Medium = GoogleFonts.poppins(
     textStyle:  TextStyle(
       color: AppTheme.blackColor,
       fontSize: 25,
       fontWeight: MyFontWeight.medium, // regular
     ),
   );
-  static TextStyle black22bold = GoogleFonts.openSans(
+  static TextStyle black22bold = GoogleFonts.poppins(
     textStyle:  TextStyle(
       color: AppTheme.blackColor,
       fontSize: 22,
       fontWeight: MyFontWeight.bold, // regular
     ),
   );
-  static TextStyle black16Light = GoogleFonts.openSans(
+  static TextStyle black16Light = GoogleFonts.poppins(
     textStyle:  TextStyle(
       color: AppTheme.blackColor,
       fontSize: 16,
@@ -77,14 +77,14 @@ class MyStyles {
     ),
   );
   
-    static TextStyle black16Bold = GoogleFonts.openSans(
+    static TextStyle black16Medium = GoogleFonts.poppins(
     textStyle:  TextStyle(
       color: AppTheme.blackColor,
       fontSize: 16,
-      fontWeight: MyFontWeight.bold, // regular
+      fontWeight: MyFontWeight.regular, // regular
     ),
   );
-  static TextStyle whiteGry20Light = GoogleFonts.openSans(
+  static TextStyle whiteGry20Light = GoogleFonts.poppins(
     textStyle:  TextStyle(
       color: Colors.grey,
       fontSize: 16,

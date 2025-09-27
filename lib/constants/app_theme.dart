@@ -9,7 +9,12 @@ class AppTheme {
   static const primaryColor = Color(0xFF2cd7d6);
   static const secondaryColor = Color(0xFFfb7733);
   static  Color whiteColor = const Color(0xFFFFFFFF);
-  static  Color statusBar = const Color(0xff03084c);
+  static  Color statusBar = const Color(0xff2ED8D2);
   static  Color bgBule = const Color(0xFFEAF2FE);
   static  Color shudleColor = const Color(0xff427998);
+  static Color statusappBar = const Color(0xFF2ED8D2);
+  static Color statusappBarBg = const Color(0xFFd2f6f6);
+  static Color greyText =const Color(0xFF515151);
+  static Color searchGreyText =const Color(0xFFD9D9D9);
+  static Color billpayText = const Color(0xFFe0f9c5);
 }

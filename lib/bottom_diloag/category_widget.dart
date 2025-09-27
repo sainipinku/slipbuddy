@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:slipbuddy/Widgets/CrossIconWidget.dart';
 import 'package:slipbuddy/controller/department/department_cubit.dart';
 import 'package:slipbuddy/screen/users/doctor_listing.dart';
@@ -42,7 +43,7 @@ class _CategoryWidgetState extends State<CategoryWidget> {
                 ),
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 8.0),
-                  child: Text('Find a Doctor for your Health Problem',style: TextStyle(fontSize: 25,color: Colors.black),),
+                  child: Text('Find a Doctor for your Health Problem',style: GoogleFonts.poppins(fontSize: 25,color: Colors.black,fontWeight: FontWeight.w500),),
                 ),
                 Expanded(
                   child: ListView.builder(
@@ -94,7 +95,7 @@ class _CategoryWidgetState extends State<CategoryWidget> {
                                     Expanded( // Make text take remaining space
                                       child: Text(
                                         '${category.deptName}',
-                                        style: TextStyle(fontSize: 16, color: Colors.black),
+                                        style: GoogleFonts.poppins(fontSize: 16, color: Colors.black,fontWeight: FontWeight.w500),
                                       ),
                                     ),
                                   ],

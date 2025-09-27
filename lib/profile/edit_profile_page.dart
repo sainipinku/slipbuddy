@@ -64,14 +64,18 @@ class _EditProfilePageState extends State<EditProfilePage> {
       context: context,
       initialDate: selectedDate ?? DateTime(2000),
       firstDate: DateTime(1900),
-      lastDate: DateTime.now(),
+      lastDate: DateTime(2100), // Allow future dates
     );
-    if (picked != null && picked != selectedDate)
+    if (picked != null && picked != selectedDate) {
       setState(() {
         selectedDate = picked;
-        dobController.text = "${picked.day}/${picked.month}/${picked.year}"; // Update age field
+        dobController.text = "${picked.year}-${picked.month.toString().padLeft(2, '0')}-${picked.day.toString().padLeft(2, '0')}";
       });
+      print('date----------${"${picked.year}-${picked.month.toString().padLeft(2, '0')}-${picked.day.toString().padLeft(2, '0')}"}');
+    }
   }
+
+
 
   _FromCamera(BuildContext context,ImageSource source) async {
     // Ask permission
@@ -341,7 +345,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                 return Column(
                   children: [
                     // Profile Image
-                    Stack(
+               /*     Stack(
                       children: [
                         category_fill != null
                             ? ClipRRect(
@@ -379,52 +383,190 @@ class _EditProfilePageState extends State<EditProfilePage> {
                         ),
                       ],
                     ),
-                    SizedBox(height: 20),
+                    SizedBox(height: 20),*/
                     Form(
                       key: _formKey,
                       child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.start,
                         children: [
-                          _buildTextField(nameController,"Name", (val) => name = val),
-                          _buildTextField(mobileController,"Mobile",(val) => mobile = val),
-                          SizedBox(height: 10),
-                          DropdownButtonFormField<String>(
-                            value: gender,
-                            decoration: InputDecoration(
-                              labelText: 'Gender',
-                              border: OutlineInputBorder(),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                            child: Text(
+                              'Full Name',
+                              style: GoogleFonts.poppins(
+                                  color: AppTheme.blackColor,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w400),
                             ),
-                            items: genderList.map((String value) {
-                              return DropdownMenuItem<String>(
-                                value: value,
-                                child: Text(value),
-                              );
-                            }).toList(),
-                            onChanged: (String? newValue) {
-                              setState(() {
-                                gender = newValue!;
-                              });
-                            },
                           ),
-                          SizedBox(height: 10),
-                          GestureDetector(
-                            onTap: () => _selectDate(context),
-                            child: AbsorbPointer(
-                              child: TextFormField(
-                                controller: TextEditingController(text: dobController.text),
-                                decoration: InputDecoration(
-                                  labelText: 'Date of Birth',
-                                  border: OutlineInputBorder(),
-                                  suffixIcon: Icon(Icons.calendar_today),
+                          _buildTextField(nameController,"Name", (val) => name = val),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                                      child: Text(
+                                        'Age (Years)',
+                                        style: GoogleFonts.poppins(
+                                            color: AppTheme.blackColor,
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w400),
+                                      ),
+                                    ),
+                                    GestureDetector(
+                                      onTap: () => _selectDate(context),
+                                      child: AbsorbPointer(
+                                        child: TextFormField(
+                                          controller: TextEditingController(text: dobController.text),
+                                          style: GoogleFonts.poppins(
+                                              color: AppTheme.blackColor,
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w400),
+                                          decoration: InputDecoration(
+                                            contentPadding: EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+                                            suffixIcon: Icon(Icons.calendar_today),
+                                            hintText: 'Date of Birth', // Optional hint inside the field
+                                            border: OutlineInputBorder(
+                                              borderRadius: BorderRadius.circular(35),
+                                            ),
+                                            enabledBorder: OutlineInputBorder(
+                                              borderRadius: BorderRadius.circular(35),
+                                              borderSide: BorderSide(color: Colors.grey),
+                                            ),
+                                            focusedBorder: OutlineInputBorder(
+                                              borderRadius: BorderRadius.circular(35),
+                                              borderSide: BorderSide(color: Colors.blue),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
+                              SizedBox(width: 10,),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                                      child: Text(
+                                        'Gender',
+                                        style: GoogleFonts.poppins(
+                                            color: AppTheme.blackColor,
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w400),
+                                      ),
+                                    ),
+                                    DropdownButtonFormField<String>(
+                                      value: gender,
+                                      style: GoogleFonts.poppins(
+                                          color: AppTheme.blackColor,
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w400),
+                                      decoration: InputDecoration(
+                                        contentPadding: EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+                                        hintText: 'Gender', // Optional hint inside the field
+                                        border: OutlineInputBorder(
+                                          borderRadius: BorderRadius.circular(35),
+                                        ),
+                                        enabledBorder: OutlineInputBorder(
+                                          borderRadius: BorderRadius.circular(35),
+                                          borderSide: BorderSide(color: Colors.grey),
+                                        ),
+                                        focusedBorder: OutlineInputBorder(
+                                          borderRadius: BorderRadius.circular(35),
+                                          borderSide: BorderSide(color: Colors.blue),
+                                        ),
+                                      ),
+                                      items: genderList.map((String value) {
+                                        return DropdownMenuItem<String>(
+                                          value: value,
+                                          child: Text(value),
+                                        );
+                                      }).toList(),
+                                      onChanged: (String? newValue) {
+                                        setState(() {
+                                          gender = newValue!;
+                                        });
+                                      },
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 15.0),
+                            child: Divider(height: 2,color: Colors.grey,),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 8.0,vertical: 10.0),
+                            child: Text(
+                              'Communication Details',
+                              style: GoogleFonts.poppins(
+                                  color: AppTheme.blackColor,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w500),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                            child: Text(
+                              'Mobile',
+                              style: GoogleFonts.poppins(
+                                  color: AppTheme.blackColor,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w400),
+                            ),
+                          ),
+                          _buildTextField(mobileController,"Mobile",(val) => mobile = val),
+                          SizedBox(height: 10),
+
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                            child: Text(
+                              'Email',
+                              style: GoogleFonts.poppins(
+                                  color: AppTheme.blackColor,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w400),
                             ),
                           ),
                           _buildTextField(emailController,"Email", (val) => email = val),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                            child: Text(
+                              'City',
+                              style: GoogleFonts.poppins(
+                                  color: AppTheme.blackColor,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w400),
+                            ),
+                          ),
                           _buildTextField(cityController,"City", (val) => city = val),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 15.0),
+                            child: Divider(height: 2,color: Colors.grey,),
+                          ),
+                          Container(
+                            height: 45,width: MediaQuery.of(context).size.width,
+                            decoration: BoxDecoration(borderRadius: BorderRadius.circular(35),border: Border.all(color: Colors.grey)),
+                            child: Center(child: Text('Use My Current Location',style: GoogleFonts.poppins(
+                                color: AppTheme.blackColor,
+                                fontSize: 14,
+                                fontWeight: FontWeight.w400),),),
+                          )
                         ],
                       ),
                     ),
-
                     SizedBox(height: 20),
                     ElevatedButton(
                       onPressed: () async {
@@ -436,26 +578,296 @@ class _EditProfilePageState extends State<EditProfilePage> {
                           Map body = {
                             "MsrNo": userToken,
                             "UserId": userID,
-                            "Name":nameController.text.trim(),
-                            "Mobile":mobileController.text.trim(),
-                            "Email":emailController.text.trim(),
-                            "FullAddress":"abc street",
-                            "CityName":cityController.text.trim(),
-                            "Gender":gender};
+                            "Name": nameController.text.trim(),
+                            "Mobile": mobileController.text.trim(),
+                            "Email": emailController.text.trim(),
+                            "FullAddress": "abc street",
+                            "CityName": cityController.text.trim(),
+                            "Gender": gender,
+                            "dob": dobController.text.trim(),
+                          };
                           updateUserProfileCubit.fetchUpdateUserProfileData(body);
                         }
-
                       },
-                      child: Text("Save"),
+                      child: Text("Update Info",style: GoogleFonts.poppins(
+                          color: AppTheme.whiteColor,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500),),
                       style: ElevatedButton.styleFrom(
                         minimumSize: Size(double.infinity, 50),
                         backgroundColor: AppTheme.statusBar,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(35), // <-- Rounded corners
+                        ),
                       ),
                     )
+
                   ],
                 );
               } else {
-                return const Center(child: Text('No Announcement Found'));
+                return Column(
+                  children: [
+                    // Profile Image
+                    /*     Stack(
+                      children: [
+                        category_fill != null
+                            ? ClipRRect(
+                          borderRadius: BorderRadius.circular(45), // Rounded corners
+                          child: Image.file(
+                            category_fill!,
+                            height: 90,
+                            width: 90,
+                            fit: BoxFit.cover, // Ensures the image fits well
+                          ),
+                        )
+                            : CircleAvatar(
+                          radius: 45, // Ensure the size matches
+                          backgroundImage: NetworkImage(
+                            imageUrl, // Placeholder image URL
+                          ),
+                        ),
+                        Positioned(
+                          bottom: 0,
+                          right: 0,
+                          child: GestureDetector(
+                            onTap: () {
+                              _showPicker(context);
+                            },
+                            child: CircleAvatar(
+                              radius: 15,
+                              backgroundColor: Colors.amber,
+                              child: Icon(
+                                Icons.edit,
+                                size: 16,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 20),*/
+                    Form(
+                      key: _formKey,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                            child: Text(
+                              'Full Name',
+                              style: GoogleFonts.poppins(
+                                  color: AppTheme.blackColor,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w400),
+                            ),
+                          ),
+                          _buildTextField(nameController,"Name", (val) => name = val),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                                      child: Text(
+                                        'Age (Years)',
+                                        style: GoogleFonts.poppins(
+                                            color: AppTheme.blackColor,
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w400),
+                                      ),
+                                    ),
+                                    GestureDetector(
+                                      onTap: () => _selectDate(context),
+                                      child: AbsorbPointer(
+                                        child: TextFormField(
+                                          controller: TextEditingController(text: dobController.text),
+                                          style: GoogleFonts.poppins(
+                                              color: AppTheme.blackColor,
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w400),
+                                          decoration: InputDecoration(
+                                            contentPadding: EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+                                            suffixIcon: Icon(Icons.calendar_today),
+                                            hintText: 'Date of Birth', // Optional hint inside the field
+                                            border: OutlineInputBorder(
+                                              borderRadius: BorderRadius.circular(35),
+                                            ),
+                                            enabledBorder: OutlineInputBorder(
+                                              borderRadius: BorderRadius.circular(35),
+                                              borderSide: BorderSide(color: Colors.grey),
+                                            ),
+                                            focusedBorder: OutlineInputBorder(
+                                              borderRadius: BorderRadius.circular(35),
+                                              borderSide: BorderSide(color: Colors.blue),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              SizedBox(width: 10,),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                                      child: Text(
+                                        'Gender',
+                                        style: GoogleFonts.poppins(
+                                            color: AppTheme.blackColor,
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w400),
+                                      ),
+                                    ),
+                                    DropdownButtonFormField<String>(
+                                      value: gender,
+                                      style: GoogleFonts.poppins(
+                                          color: AppTheme.blackColor,
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w400),
+                                      decoration: InputDecoration(
+                                        contentPadding: EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+                                        hintText: 'Gender', // Optional hint inside the field
+                                        border: OutlineInputBorder(
+                                          borderRadius: BorderRadius.circular(35),
+                                        ),
+                                        enabledBorder: OutlineInputBorder(
+                                          borderRadius: BorderRadius.circular(35),
+                                          borderSide: BorderSide(color: Colors.grey),
+                                        ),
+                                        focusedBorder: OutlineInputBorder(
+                                          borderRadius: BorderRadius.circular(35),
+                                          borderSide: BorderSide(color: Colors.blue),
+                                        ),
+                                      ),
+                                      items: genderList.map((String value) {
+                                        return DropdownMenuItem<String>(
+                                          value: value,
+                                          child: Text(value),
+                                        );
+                                      }).toList(),
+                                      onChanged: (String? newValue) {
+                                        setState(() {
+                                          gender = newValue!;
+                                        });
+                                      },
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 15.0),
+                            child: Divider(height: 2,color: Colors.grey,),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 8.0,vertical: 10.0),
+                            child: Text(
+                              'Communication Details',
+                              style: GoogleFonts.poppins(
+                                  color: AppTheme.blackColor,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w500),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                            child: Text(
+                              'Mobile',
+                              style: GoogleFonts.poppins(
+                                  color: AppTheme.blackColor,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w400),
+                            ),
+                          ),
+                          _buildTextField(mobileController,"Mobile",(val) => mobile = val),
+                          SizedBox(height: 10),
+
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                            child: Text(
+                              'Email',
+                              style: GoogleFonts.poppins(
+                                  color: AppTheme.blackColor,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w400),
+                            ),
+                          ),
+                          _buildTextField(emailController,"Email", (val) => email = val),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                            child: Text(
+                              'City',
+                              style: GoogleFonts.poppins(
+                                  color: AppTheme.blackColor,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w400),
+                            ),
+                          ),
+                          _buildTextField(cityController,"City", (val) => city = val),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 15.0),
+                            child: Divider(height: 2,color: Colors.grey,),
+                          ),
+                          Container(
+                            height: 45,width: MediaQuery.of(context).size.width,
+                            decoration: BoxDecoration(borderRadius: BorderRadius.circular(35),border: Border.all(color: Colors.grey)),
+                            child: Center(child: Text('Use My Current Location',style: GoogleFonts.poppins(
+                                color: AppTheme.blackColor,
+                                fontSize: 14,
+                                fontWeight: FontWeight.w400),),),
+                          )
+                        ],
+                      ),
+                    ),
+                    SizedBox(height: 20),
+                    ElevatedButton(
+                      onPressed: () async {
+                        if (_formKey.currentState!.validate()) {
+                          _formKey.currentState!.save();
+                          SharedPreferences prefs = await SharedPreferences.getInstance();
+                          String userToken = prefs.getString('user_id') ?? '';
+                          String userID = prefs.getString('user_token') ?? '';
+                          Map body = {
+                            "MsrNo": userToken,
+                            "UserId": userID,
+                            "Name": nameController.text.trim(),
+                            "Mobile": mobileController.text.trim(),
+                            "Email": emailController.text.trim(),
+                            "FullAddress": "abc street",
+                            "CityName": cityController.text.trim(),
+                            "Gender": gender,
+                            "DOB": dobController.text.trim(),
+                          };
+                          print('user profile details -------------------$body');
+                          updateUserProfileCubit.fetchUpdateUserProfileData(body);
+                        }
+                      },
+                      child: Text("Update Info",style: GoogleFonts.poppins(
+                          color: AppTheme.whiteColor,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500),),
+                      style: ElevatedButton.styleFrom(
+                        minimumSize: Size(double.infinity, 50),
+                        backgroundColor: AppTheme.statusBar,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(35), // <-- Rounded corners
+                        ),
+                      ),
+                    )
+
+                  ],
+                );
               }
             })
             ,
@@ -463,17 +875,35 @@ class _EditProfilePageState extends State<EditProfilePage> {
     );
   }
 
-  Widget _buildTextField(TextEditingController controller,String label, Function(String) onChanged) {
+  Widget _buildTextField(
+      TextEditingController controller, String hint, Function(String) onChanged) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8),
       child: TextFormField(
         controller: controller,
+        style: GoogleFonts.poppins(
+            color: AppTheme.blackColor,
+            fontSize: 14,
+            fontWeight: FontWeight.w400),
         decoration: InputDecoration(
-          labelText: label,
-          border: OutlineInputBorder(),
+          hintText: hint,
+          contentPadding: EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(35),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(35),
+            borderSide: BorderSide(color: Colors.grey),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(35),
+            borderSide: BorderSide(color: Colors.blue),
+          ),
         ),
-        onChanged: (val) => onChanged(val!),
+        onChanged: (val) => onChanged(val),
       ),
     );
   }
+
+
 }

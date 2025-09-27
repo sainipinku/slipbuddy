@@ -20,12 +20,12 @@ Widget button ({required Color color,required String text,required VoidCallback 
           style: ElevatedButton.styleFrom(
             backgroundColor: color,
             shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(borderRadius ?? 25.0)),
+                borderRadius: BorderRadius.circular(borderRadius ?? 5.0)),
           ),
-          child: Text(text,style: GoogleFonts.roboto(
-            color: AppTheme.whiteColor,
-            fontSize: 12,
-            fontWeight: FontWeight.w500,
+          child: Text(text,style: GoogleFonts.poppins(
+            color: AppTheme.blackColor,
+            fontSize: 14,
+            fontWeight: FontWeight.w700,
           ),),
         ),
       ),

@@ -10,6 +10,7 @@ class Routes {
     static String slotsList = "getavailableslot";
     static String dateSlotsList = "getslot";
     static String getAppointment = "getAppointment";
+    static String AppointStatusUpdate = "AppointStatus_Update";
     static String AppointRegister = "Appoint_Register";
     static String getdoctorhospital = "getdoctorhospital";
     static String getdoctorbyid = "getdoctorbyid";
@@ -18,4 +19,5 @@ class Routes {
     static String getuserprofilebymsrno = "getuserprofilebymsrno";
     static String profileupdate = "Profile_Update";
     static String searchbytext = "searchbytext";
+    static String ProfileDelete = "Profile_Delete";
 }

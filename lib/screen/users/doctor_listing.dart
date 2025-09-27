@@ -222,13 +222,13 @@ class DoctorCard extends StatelessWidget {
                   children: [
                     Text(
                       doctorName,
-                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                      style: GoogleFonts.poppins(fontWeight: FontWeight.w600, fontSize: 16,color: Colors.black),
                     ),
                     Text(experience),
                     Row(
                       children: [
                         Icon(Icons.star, color: Colors.orange, size: 16),
-                        Text(rating.toString(), style: TextStyle(fontSize: 14)),
+                        Text(rating.toString(), style: GoogleFonts.poppins(fontSize: 14,fontWeight: FontWeight.w400)),
                       ],
                     ),
                   ],
@@ -236,12 +236,12 @@ class DoctorCard extends StatelessWidget {
               ],
             ),
             SizedBox(height: 10),
-            Text(hospital),
-            Text('Location: $location'),
+            Text(hospital, style: GoogleFonts.poppins(fontSize: 14,fontWeight: FontWeight.w400)),
+            Text('Location: $location', style: GoogleFonts.poppins(fontSize: 14,fontWeight: FontWeight.w400)),
             SizedBox(height: 10),
-            Text('₹ $fee Consultation Fees'),
+            Text('₹ $fee Consultation Fees', style: GoogleFonts.poppins(fontSize: 14,fontWeight: FontWeight.w400)),
             SizedBox(height: 5),
-            Text('Next Available At: $availableAt'),
+            Text('Next Available At: $availableAt', style: GoogleFonts.poppins(fontSize: 14,fontWeight: FontWeight.w400)),
             SizedBox(height: 10),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -273,10 +273,10 @@ class DoctorCard extends StatelessWidget {
                   style: ElevatedButton.styleFrom(
                       backgroundColor: AppTheme.statusBar
                   ),
-                  child: Text('Book Clinic Visit',style:  GoogleFonts.roboto(
-                    color: AppTheme.whiteColor,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
+                  child: Text('Book Clinic Visit',style:  GoogleFonts.poppins(
+                    fontSize: 14,
+                    color: Colors.white,
+                    fontWeight: FontWeight.w400,
                   ),),
                 ),
               ],

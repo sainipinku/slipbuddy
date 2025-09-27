@@ -77,8 +77,8 @@ class _ClinicVisitScreenState extends State<ClinicVisitScreen> {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(widget.name, style: TextStyle(fontSize: 16)),
-                Text(widget.location, style: TextStyle(fontSize: 12)),
+                Text(widget.name, style: GoogleFonts.poppins(fontSize: 14,fontWeight: FontWeight.w600)),
+                Text(widget.location, style: GoogleFonts.poppins(fontSize: 14,fontWeight: FontWeight.w600)),
               ],
             ),
           ],
@@ -211,14 +211,14 @@ class _ClinicVisitScreenState extends State<ClinicVisitScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Clinic Visit Slots', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                Text('Clinic Visit Slots', style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w600,color: Colors.black)),
                 SizedBox(height: 10),
                 BlocBuilder<DateCubit, DateState>(builder: (context,state){
                   if(state is DateSlotsLoaded) {
                     int itemCount = state.dateSlotsList.length;
                     var slots = state.dateSlotsList;
                     return Container(
-                      height: 55, // Adjust height based on your need
+                      height: 58, // Adjust height based on your need
                       child: ListView.builder(
                         scrollDirection: Axis.horizontal,
                         itemCount: itemCount,
@@ -238,15 +238,14 @@ class _ClinicVisitScreenState extends State<ClinicVisitScreen> {
                               padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                               decoration: BoxDecoration(
                                 color: selectedIndex == index ? Colors.blue[100] : Colors.white,
-                                border: Border.all(color: Colors.grey[300]!),
+                                border: Border.all(color: AppTheme.statusBar),
                                 borderRadius: BorderRadius.circular(10),
                               ),
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  Text(Helpers.dateformat(slots[index].date!), style: TextStyle(fontSize: 14)),
-                                  SizedBox(height: 2),
-                                  Text(slots[index].status!, style: TextStyle(fontSize: 12, color: slots[index].status! == 'Available' ? Colors.green : Colors.grey)),
+                                  Text(Helpers.dateformat(slots[index].date!), style: GoogleFonts.poppins(fontSize: 14,fontWeight: FontWeight.w400)),
+                                  Text(slots[index].status!, style: GoogleFonts.poppins(fontSize: 12, color: slots[index].status! == 'Available' ? Colors.green : AppTheme.statusBar)),
                                 ],
                               ),
                             ),
@@ -260,7 +259,7 @@ class _ClinicVisitScreenState extends State<ClinicVisitScreen> {
 
                 }),
                 SizedBox(height: 10),
-                Text(Helpers.dateformat(date), style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                Text(Helpers.dateformat(date), style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w600,color: Colors.black)),
                 SizedBox(height: 10),
                 BlocBuilder<SlotsCubit, SlotsState>(builder: (context,state){
                   if (state is SlotsLoaded) {
@@ -341,7 +340,7 @@ class _ClinicVisitScreenState extends State<ClinicVisitScreen> {
                       style: ElevatedButton.styleFrom(
                         padding: EdgeInsets.symmetric(vertical: 16),
                         backgroundColor: AppTheme.statusBar,
-                        textStyle:  GoogleFonts.roboto(
+                        textStyle:  GoogleFonts.poppins(
                           color: AppTheme.whiteColor,
                           fontSize: 16,
                           fontWeight: FontWeight.w500,
@@ -397,7 +396,7 @@ class _TimeSlotSectionState extends State<TimeSlotSection> {
           children: [
             Icon(widget.icon, size: 20),
             SizedBox(width: 10),
-            Text('${widget.label} ${widget.slots.length} slots', style: TextStyle(fontSize: 16)),
+            Text('${widget.label} ${widget.slots.length} slots', style: GoogleFonts.poppins(fontSize: 14,fontWeight: FontWeight.w400,color: Colors.black)),
           ],
         ),
         SizedBox(height: 10),
@@ -421,10 +420,10 @@ class _TimeSlotSectionState extends State<TimeSlotSection> {
               child: Container(
                 padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                 decoration: BoxDecoration(
-                  border: selectTime == widget.slots[index] ? Border.all( color: Colors.green) : Border.all( color: Colors.blueAccent),
+                  border: selectTime == widget.slots[index] ? Border.all( color: Colors.green) : Border.all( color: AppTheme.statusBar),
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: Text(Helpers.formatTime(widget.slots[index]), style: TextStyle(color:  selectTime == widget.slots[index] ?  Colors.green :Colors.blueAccent)),
+                child: Text(Helpers.formatTime(widget.slots[index]), style: GoogleFonts.poppins(color:  selectTime == widget.slots[index] ?  Colors.green :AppTheme.statusBar,fontSize: 14,fontWeight: FontWeight.w400)),
               ),
             );
           }),

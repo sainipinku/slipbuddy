@@ -19,7 +19,7 @@ class SchudleCubit extends Cubit<SchudleState> {
     try {
       var response = await apiManager.postRequest(
           map, Config.baseUrl + Routes.AppointRegister);
-      debugPrint("response${response.body}");
+      debugPrint("response${response.body} map----------------------------->>>>>>>$map");
       if (response.statusCode == 200) {
         emit(SchudleSuccess());
       } else if (response.statusCode == 403) {

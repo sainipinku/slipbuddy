@@ -79,6 +79,7 @@ class _OtpState extends State<Otp> {
     super.dispose();
 
   }
+
   static  TextStyle black35Medium = TextStyle(
     fontSize: 35,
     color: Colors.black,
@@ -203,46 +204,97 @@ class _OtpState extends State<Otp> {
               child: Column(
                 children: [
                   SizedBox(height: 20.h,),
-                  Text(
-                    'Slip Buddy',
-                    style: black35Medium,
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            'Slip',
+                            style: GoogleFonts.poppins(
+                              fontSize: 32,
+                              fontWeight: FontWeight.w700, // Equivalent to Medium
+                              color: Colors.black,
+                            ),
+                          ),
+                          Image.asset(
+                            "assets/images/logo.PNG",
+                            width: 50,height: 50,
+                          ),
+                          Text(
+                            'Buddy',
+                            style: GoogleFonts.poppins(
+                              fontSize: 32,
+                              fontWeight: FontWeight.w700, // Equivalent to Medium
+                              color: Colors.black,
+                            ),
+                          ),
+            ]
+                      ),
+
+                      Text(
+                        'Your Health, Just a Click Away',
+                        style: GoogleFonts.poppins(
+                          fontSize: 14,
+                          color: Colors.black,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
                   ),
                   SizedBox(height: 40.h,),
-                  Text(
-                    'Verify mobile number',
-                    style: GoogleFonts.openSans(
-                      fontSize: 30,
-                      color: Colors.black,
-                      fontWeight: FontWeight.w700,
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                    child: Align(alignment: Alignment.topLeft,
+                      child: Text(
+                        'OTP Verification',
+                        style: GoogleFonts.poppins(
+                          fontSize: 30,
+                          color: Colors.black,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
                     ),
                   ),
-                  SizedBox(height: 10.h,),
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                    padding: const EdgeInsets.symmetric(horizontal: 20.0),
                     child: RichText(
                       text: TextSpan(
                         children: [
                           TextSpan(
-                            text: 'We have sent the OTP to +91 ${widget.phone} ',
-                            style: GoogleFonts.openSans(
-                              fontSize: 14,
+                            text: 'We have sent a 4-digit code to',
+                            style: GoogleFonts.poppins(
+                              fontSize: 12,
                               color: Colors.black,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                          WidgetSpan(
-                            child: Icon(
-                              Icons.edit, // Edit icon
-                              size: 18, // Adjust icon size
-                              color: Colors.black,
+                              fontWeight: FontWeight.w400,
                             ),
                           ),
                           TextSpan(
-                            text: ' Edit',
-                            style: GoogleFonts.openSans(
+                            text: ' +91 ${widget.phone} ',
+                            style: GoogleFonts.poppins(
                               fontSize: 14,
                               color: Colors.black,
-                              fontWeight: FontWeight.w500,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                          TextSpan(
+                            text: 'to verify your number',
+                            style: GoogleFonts.poppins(
+                              fontSize: 14,
+                              color: Colors.black,
+                              fontWeight: FontWeight.w400,
+                            ),
+                          ),
+                          TextSpan(
+                            text: ' Change Number',
+                            style: GoogleFonts.poppins(
+                              fontSize: 14,
+                              color: Colors.black,
+                              fontWeight: FontWeight.w700,
+                              decoration: TextDecoration.underline, // <-- This adds the underline
                             ),
                             // Adding gesture detector to the clickable part
                             recognizer: TapGestureRecognizer()
@@ -256,57 +308,36 @@ class _OtpState extends State<Otp> {
                     ),
                   ),
                   Container(
-                      margin: EdgeInsets.symmetric(horizontal: 50,vertical: 20),
-                      color: Colors.transparent,
-                      child: PinCodeTextField(
-                        appContext: context,
-                        textStyle: MyStyles.black14Light,
-                        length: 4,
-                        controller: _pinPutController,
-                        pinTheme: PinTheme(
-                          shape: PinCodeFieldShape.circle,
-                          borderRadius: BorderRadius.circular(15), // increase this value for more rounded corners
-                          fieldHeight: 40,
-                          fieldWidth: 40,
-                          borderWidth: 0.1,
-                          activeFillColor: Colors.grey,
-                          inactiveColor: Colors.black,
-                          inactiveFillColor: Colors.white,
-                          selectedFillColor: Colors.grey,
-                          selectedColor: AppTheme.bgColor,
-                          activeColor: AppTheme.blackColor,
-                        ),
-                        cursorColor: AppTheme.blackColor,
-                        enableActiveFill: true,
-                        // controller: provider.pinPutController,
-                        keyboardType: TextInputType.number,
-                        onCompleted: (v) {
-                          debugPrint("Completed");
-                        },
-                        // onTap: () {
-                        //   print("Pressed");
-                        // },
-                        onChanged: (value) {
-
-                        },
-                      )),
-                  GestureDetector(
-                    onTap: (){
-                      if(resend){
-                        startTimer();
-                      }else{
-
-                      }
-                    },
-                    child: Padding(
-                      padding: const EdgeInsets.only(bottom: 15.0),
-                      child: Text(
-                        resend == false ?
-                        "${"Resend OTP in "+ formatedTime(timeInSecond: widget.time)} Seconds" : "Resend OTP",
-                        textAlign: TextAlign.center,
-                        style: MyStyles.black16Bold,),
+                    margin: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                    color: Colors.transparent,
+                    child: PinCodeTextField(
+                      appContext: context,
+                      textStyle: MyStyles.black14Light,
+                      length: 4,
+                      controller: _pinPutController,
+                      pinTheme: PinTheme(
+                        shape: PinCodeFieldShape.box,
+                        borderRadius: BorderRadius.circular(5), // square corners
+                        fieldHeight: 50,
+                        fieldWidth: 50, // same as height to make it square
+                        borderWidth: 0.1, // increase slightly if needed for better visibility
+                        activeFillColor: Colors.grey,
+                        inactiveColor: Colors.grey,
+                        inactiveFillColor: Colors.white,
+                        selectedFillColor: Colors.grey,
+                        selectedColor: AppTheme.bgColor,
+                        activeColor: AppTheme.blackColor,
+                      ),
+                      cursorColor: AppTheme.blackColor,
+                      enableActiveFill: true,
+                      keyboardType: TextInputType.number,
+                      onCompleted: (v) {
+                        debugPrint("Completed");
+                      },
+                      onChanged: (value) {},
                     ),
                   ),
+
                   GestureDetector(
                     onTap: (){
                      if(_pinPutController.text.isNotEmpty){
@@ -317,18 +348,45 @@ class _OtpState extends State<Otp> {
                      }
                     },
                     child: Container(
-                      height: 60.h,
+                      height: 50.h,
                       width: MediaQuery.of(context).size.width,
-                      color: AppTheme.statusBar,
-                      child: Center(
-                        child: Text(
-                          'Verify & Login',
-                          style: MyStyles.white22ExtraBold,
-                        ),
+                      margin: EdgeInsets.symmetric(horizontal: 20.0),
+                      padding: EdgeInsets.symmetric(horizontal: 10.0),
+                      decoration: BoxDecoration(
+                          color: AppTheme.statusBar,
+                          borderRadius: BorderRadius.all(Radius.circular(10.0))
+                      ),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            'Verify & Access',
+                            style: MyStyles.black16Medium,
+                          ),
+                          Icon(Icons.arrow_forward)
+                        ],
                       ),
                     ),
                   ),
-                  Padding(
+                  GestureDetector(
+                    onTap: (){
+                      if(resend){
+                        startTimer();
+                      }else{
+
+                      }
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 15.0),
+                      child: Text(
+                        resend == false ?
+                        "${"Resend OTP in "+ formatedTime(timeInSecond: widget.time)} Seconds" : "Resend OTP",
+                        textAlign: TextAlign.center,
+                        style: MyStyles.black14Light,),
+                    ),
+                  ),
+              /*    Padding(
                     padding: const EdgeInsets.symmetric(vertical: 8.0),
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.center,
@@ -415,7 +473,7 @@ class _OtpState extends State<Otp> {
                       'Copyright @ 2024 \n www.silpbuddy.com All Right Reserved',textAlign: TextAlign.center,
                       style: MyStyles.black16Light,
                     ),
-                  ),
+                  ),*/
                 ],
               ),
             ),

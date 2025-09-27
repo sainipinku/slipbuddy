@@ -31,10 +31,11 @@ if (keystorePropertiesFile.exists()) {
 }
 android {
     namespace "com.gs.slipbuddy"
-    compileSdk = flutter.compileSdkVersion
+    compileSdk = 35
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
+        coreLibraryDesugaringEnabled true   // ⭐️ यही मुख्य सेटिंग
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
@@ -54,7 +55,7 @@ android {
         // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-gradle-build-configuration.
         multiDexEnabled true
         minSdk = 23
-        targetSdk = flutter.targetSdkVersion
+        targetSdk = 35
         versionCode = flutter.versionCode
         versionName = flutter.versionName
     }
@@ -71,6 +72,9 @@ android {
         release {
             // TODO: Add your own signing config for the release build.
             // Signing with the debug keys for now, so `flutter run --release` works.
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.release
         }
     }
@@ -80,4 +84,9 @@ flutter {
     source '../..'
 }
 
-dependencies {}
+dependencies {
+    // … बाकी Flutter + app dependencies …
+
+    // ⭐️ यह लाइन ज़रूर जोड़ें (latest stable version)
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.1.4'
+}

@@ -1,4 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:slipbuddy/controller/AppointmentStatus/appointmentstatus_cubit.dart';
 import 'package:slipbuddy/controller/DoctorSchudleDetails/doctor_Schedule_Details_cubit.dart';
 import 'package:slipbuddy/controller/appointment/PatientBloc.dart';
 
@@ -28,6 +29,7 @@ class BlocProviders {
     BlocProvider<SchudleCubit>(create: (context) => SchudleCubit()),
     BlocProvider<UserProfileCubit>(create: (context) => UserProfileCubit()),
     BlocProvider<UpdateUserProfileCubit>(create: (context) => UpdateUserProfileCubit()),
+    BlocProvider<AppointmentStatusCubit>(create: (context) => AppointmentStatusCubit()),
     BlocProvider<DoctorScheduleDetailsCubit>(create: (context) => DoctorScheduleDetailsCubit()),
     BlocProvider<PatientBloc>(create: (context) => PatientBloc()),
     BlocProvider<GlobalSearchCubit>(create: (context) => GlobalSearchCubit()),

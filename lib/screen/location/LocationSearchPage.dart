@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:slipbuddy/constants/app_theme.dart';
 
 class LocationSearchPage extends StatefulWidget {
   @override
@@ -82,7 +83,7 @@ class _LocationSearchPageState extends State<LocationSearchPage> {
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(70),
         child: AppBar(
-          backgroundColor: Colors.indigo[900],
+          backgroundColor: AppTheme.statusappBar,
           leading: IconButton(
             icon: Icon(Icons.close),
             onPressed: () => Navigator.pop(context),
@@ -97,7 +98,7 @@ class _LocationSearchPageState extends State<LocationSearchPage> {
           SizedBox(height: 16),
           _buildSearchField(),
           _buildOptionTile('Use current location', Icons.my_location),
-          _buildOptionTile('Search in entire Jaipur', Icons.search),
+         // _buildOptionTile('Search in entire Jaipur', Icons.search),
           SizedBox(height: 12),
           _buildSectionTitle('Recent Search', showClear: true),
           _buildLocationTile(recentSearches[0], 'Jaipur'),

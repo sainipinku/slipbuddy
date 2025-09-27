@@ -211,7 +211,7 @@ class _GaloblesearchpageState extends State<Galoblesearchpage> {
                   builder: (context, state) {
                     if (state is GlobalSearchLoaded) {
                       // Set the max item count to 6 or less, plus 1 if there are more than 6 items for the 'More' button
-                      int itemCount = state.DoctorList.length;
+                      int itemCount = state.doctorList.length;
 
                       return Expanded(
                         child: ListView.separated(
@@ -219,7 +219,7 @@ class _GaloblesearchpageState extends State<Galoblesearchpage> {
                           separatorBuilder: (context, index) =>
                               Divider(color: Colors.grey[300]),
                           itemBuilder: (context, index) {
-                            final doctor = state.DoctorList[index];
+                            final doctor = state.doctorList[index];
                             return ListTile(
                               leading: Container(
                                 height: 50,

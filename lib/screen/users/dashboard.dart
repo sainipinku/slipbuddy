@@ -36,14 +36,17 @@ class Dashboard extends StatefulWidget {
 class _DashboardState extends State<Dashboard> {
   final TextEditingController search = TextEditingController();
   bool isSearchEmpty = true;
-  String currentLocation = 'Japiur'; // Default city
+  String currentLocation = 'Ajmer'; // Default city
   late DepartmentCubit departmentCubit;
   final PageController _pageController = PageController(initialPage: 0);
   int _currentPage = 0;
   Timer? _timer;
   final GlobalKey<ScaffoldState> _key = GlobalKey(); // Create a key
   List<BannerModel>? bannerImagesList;
-
+  Future<String?> getSavedAddress() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString('saved_address');
+  }
   void _autoScrollPages() async {
     _timer = await Timer.periodic(Duration(seconds: 5), (Timer timer) {
       if (_currentPage < bannerImagesList!.length - 1) {
@@ -100,10 +103,15 @@ class _DashboardState extends State<Dashboard> {
       imageUrl = prefs.getString('user_profile') ?? ''; // Default to an empty string if null
     });
   }
+  void loadAddress() async {
+    currentLocation = (await getSavedAddress())!;
+    setState(() {});
+  }
   @override
   void initState() {
     getData();
     // Add listener to TextField controller
+    loadAddress();
     search.addListener(() {
       setState(() {
         isSearchEmpty = search.text.isEmpty; // Check if the TextField is empty
@@ -186,10 +194,10 @@ class _DashboardState extends State<Dashboard> {
       child: Scaffold(
         key: _key,
         appBar: PreferredSize(
-          preferredSize: Size.fromHeight(150),
+          preferredSize: Size.fromHeight(230),
           child: Container(
             decoration: BoxDecoration(
-              color: AppTheme.statusBar,
+              color: AppTheme.statusappBar,
               borderRadius: BorderRadius.only(
                 bottomLeft: Radius.circular(25),
                 bottomRight: Radius.circular(25),
@@ -198,190 +206,197 @@ class _DashboardState extends State<Dashboard> {
             child: AppBar(
               backgroundColor: Colors.transparent, // Make AppBar transparent so Container shows
               elevation: 0,
-              toolbarHeight: 150, // Increase height for customization
+              toolbarHeight: 230, // Increase height for customization
               automaticallyImplyLeading: false, // Removes default back arrow
-              title: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 15.0),
-                child: Column(
-                  children: [
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              title: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      // Location Icon on the Left Side
+                      GestureDetector(
+                        onTap: () {
+                          _key.currentState!.openDrawer();
+                          print("Menu button clicked");
+                        },
+                        child: Container(
+                          height: 50,
+                          width: 50,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Colors.white,
+                          ),
+                          child: Center(
+                            child: CircleAvatar(
+                              radius: 22, // Adjusted to fit inside the container
+                              backgroundImage: (imageUrl.isNotEmpty)
+                                  ? NetworkImage(imageUrl)
+                                  : AssetImage('assets/images/defult_img.png') as ImageProvider,
+                              backgroundColor: Colors.transparent,
+                            ),
+                          ),
+                        ),
+                      ),
+                      // Dropdown for city selection
+                      GestureDetector(
+                        onTap: (){
+                          _openCitySelector();
+                        },
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.location_on,size: 25,color: Colors.white,),
+                            SizedBox(
+                              child: Text(
+                                currentLocation,maxLines: 1,overflow: TextOverflow.fade,textAlign: TextAlign.center,
+                                style: GoogleFonts.poppins(fontSize: 18, color: Colors.white,fontWeight: FontWeight.w400), // Responsive font size
+                              ),
+                            ),
+                            Icon(Icons.keyboard_arrow_down_rounded,size: 25,color: Colors.white,),
+
+                          ],
+                        ),
+                      ),
+                      // Profile button or any widget on the right side
+                      IconButton(
+                        icon: Icon(Icons.notifications,size: 30,), // Location icon
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            PageTransition(
+                                type: PageTransitionType.rightToLeft,
+                                child: NotificationPage(),
+                                ctx: context),
+                          );
+                          // Action when location icon is clicked
+                          print("Location icon clicked");
+                        },
+                      ),
+
+                    ],
+                  ),
+                  SizedBox(height: 10),
+                  Text(
+                    "Glad you're here",
+                    style: GoogleFonts.poppins(fontSize: 18, color: AppTheme.whiteColor,fontWeight: FontWeight.w400,), // Responsive font size
+                  ),
+                  Text(
+                    "Let's help you find the perfect \ndoctor.",
+                    style: GoogleFonts.poppins(fontSize: 20, color: AppTheme.whiteColor,fontWeight: FontWeight.w700,), // Responsive font size
+                  ),
+                  // Search field below the city dropdown
+                  GestureDetector(
+                    onTap: (){
+                      Navigator.push(
+                        context,
+                        PageTransition(
+                            type: PageTransitionType.rightToLeft,
+                            child: Galoblesearchpage(),
+                            ctx: context),
+                      );
+                    },
+                    child: Stack(
                       children: [
-                        // Location Icon on the Left Side
-                        GestureDetector(
-                          onTap: () {
-                            _key.currentState!.openDrawer();
-                            print("Menu button clicked");
-                          },
-                          child: Container(
-                            height: 50,
-                            width: 50,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: Colors.white,
-                            ),
-                            child: Center(
-                              child: CircleAvatar(
-                                radius: 22, // Adjusted to fit inside the container
-                                backgroundImage: (imageUrl.isNotEmpty)
-                                    ? NetworkImage(imageUrl)
-                                    : AssetImage('assets/images/defult_img.png') as ImageProvider,
-                                backgroundColor: Colors.transparent,
+                        // Search TextField
+                        Container(
+                          margin: EdgeInsets.only(top: 10),
+                          child: TextField(
+                            maxLines: 2,
+                            minLines: 1,
+                            controller: search,
+                            enabled: false,
+                            decoration: InputDecoration(
+                              prefixIcon: Icon(Icons.search),
+                              hintText: '',
+                              hintStyle: GoogleFonts.poppins(
+                                color: Colors.black,
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
                               ),
+                              filled: true,
+                              fillColor: Colors.white,
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10),
+                                borderSide: BorderSide.none,
+                              ),
+                              contentPadding: EdgeInsets.symmetric(vertical: 0),
                             ),
                           ),
                         ),
-                        // Dropdown for city selection
-                        GestureDetector(
-                          onTap: (){
-                            _openCitySelector();
-                          },
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(Icons.location_on,size: 25,color: Colors.white,),
-                              SizedBox(
-                                child: Text(
-                                  currentLocation,maxLines: 1,overflow: TextOverflow.fade,textAlign: TextAlign.center,
-                                  style: TextStyle(fontSize: 18, color: Colors.white,fontWeight: FontWeight.w700), // Responsive font size
-                                ),
+
+                        // Animated text below TextField
+                        if (isSearchEmpty)
+                          Positioned(
+                            top: 25,
+                            left: 48,
+                            child: Container(
+                              width: 300,
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    'Search for ', // Static text
+                                    style: GoogleFonts.poppins(
+                                      fontSize: 12.0,
+                                      color: AppTheme.searchGreyText,fontWeight: FontWeight.w400
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: AnimatedTextKit(
+                                      animatedTexts: [
+                                        TypewriterAnimatedText(
+                                          'hospital and clinics',
+                                          textStyle: GoogleFonts.poppins(
+                                              fontSize: 12.0,
+                                              color: AppTheme.searchGreyText,fontWeight: FontWeight.w400
+                                          ),
+                                          speed: Duration(milliseconds: 100),
+                                        ),
+                                        TypewriterAnimatedText(
+                                          'doctors',
+                                          textStyle: GoogleFonts.poppins(
+                                              fontSize: 12.0,
+                                              color: AppTheme.searchGreyText,fontWeight: FontWeight.w400
+                                          ),
+                                          speed: Duration(milliseconds: 100),
+                                        ),
+                                        TypewriterAnimatedText(
+                                          'City',
+                                          textStyle: GoogleFonts.poppins(
+                                              fontSize: 12.0,
+                                              color: AppTheme.searchGreyText,fontWeight: FontWeight.w400
+                                          ),
+                                          speed: Duration(milliseconds: 100),
+                                        ),
+                                        TypewriterAnimatedText(
+                                          'Specialities',
+                                          textStyle: GoogleFonts.poppins(
+                                              fontSize: 12.0,
+                                              color: AppTheme.searchGreyText,fontWeight: FontWeight.w400
+                                          ),
+                                          speed: Duration(milliseconds: 100),
+                                        ),
+                                      ],
+                                      totalRepeatCount: 20000,
+                                      pause: Duration(milliseconds: 100),
+                                      displayFullTextOnTap: true,
+                                      stopPauseOnTap: true,
+                                      isRepeatingAnimation: true,
+                                    ),
+                                  ),
+                                ],
                               ),
-                              SizedBox()
-
-                            ],
+                            ),
                           ),
-                        ),
-                        // Profile button or any widget on the right side
-                        IconButton(
-                          icon: Icon(Icons.notifications,size: 30,), // Location icon
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              PageTransition(
-                                  type: PageTransitionType.rightToLeft,
-                                  child: NotificationPage(),
-                                  ctx: context),
-                            );
-                            // Action when location icon is clicked
-                            print("Location icon clicked");
-                          },
-                        ),
-
                       ],
                     ),
-                    SizedBox(height: 10),
-                    // Search field below the city dropdown
-                    GestureDetector(
-                      onTap: (){
-                        Navigator.push(
-                          context,
-                          PageTransition(
-                              type: PageTransitionType.rightToLeft,
-                              child: Galoblesearchpage(),
-                              ctx: context),
-                        );
-                      },
-                      child: Stack(
-                        children: [
-                          // Search TextField
-                          Container(
-                            margin: EdgeInsets.only(top: 10),
-                            child: TextField(
-                              maxLines: 2,
-                              minLines: 1,
-                              controller: search,
-                              enabled: false,
-                              decoration: InputDecoration(
-                                prefixIcon: Icon(Icons.search),
-                                hintText: '',
-                                hintStyle: GoogleFonts.poppins(
-                                  color: Colors.black,
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                                filled: true,
-                                fillColor: Colors.white,
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(25),
-                                  borderSide: BorderSide.none,
-                                ),
-                                contentPadding: EdgeInsets.symmetric(vertical: 0),
-                              ),
-                            ),
-                          ),
+                  ),
 
-                          // Animated text below TextField
-                          if (isSearchEmpty)
-                            Positioned(
-                              top: 25,
-                              left: 48,
-                              child: Container(
-                                width: 300,
-                                child: Row(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    Text(
-                                      'Search for ', // Static text
-                                      style: TextStyle(
-                                        fontSize: 16.0,
-                                        color: Colors.grey,
-                                      ),
-                                    ),
-                                    Expanded(
-                                      child: AnimatedTextKit(
-                                        animatedTexts: [
-                                          TypewriterAnimatedText(
-                                            'hospital and clinics',
-                                            textStyle: TextStyle(
-                                              fontSize: 14.0,
-                                              color: Colors.grey,
-                                            ),
-                                            speed: Duration(milliseconds: 100),
-                                          ),
-                                          TypewriterAnimatedText(
-                                            'doctors',
-                                            textStyle: TextStyle(
-                                              fontSize: 14.0,
-                                              color: Colors.grey,
-                                            ),
-                                            speed: Duration(milliseconds: 100),
-                                          ),
-                                          TypewriterAnimatedText(
-                                            'City',
-                                            textStyle: TextStyle(
-                                              fontSize: 14.0,
-                                              color: Colors.grey,
-                                            ),
-                                            speed: Duration(milliseconds: 100),
-                                          ),
-                                          TypewriterAnimatedText(
-                                            'Specialities',
-                                            textStyle: TextStyle(
-                                              fontSize: 14.0,
-                                              color: Colors.grey,
-                                            ),
-                                            speed: Duration(milliseconds: 100),
-                                          ),
-                                        ],
-                                        totalRepeatCount: 20000,
-                                        pause: Duration(milliseconds: 100),
-                                        displayFullTextOnTap: true,
-                                        stopPauseOnTap: true,
-                                        isRepeatingAnimation: true,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                        ],
-                      ),
-                    ),
-
-                  ],
-                ),
+                ],
               ),
             ),
           ),
@@ -412,7 +427,7 @@ class _DashboardState extends State<Dashboard> {
                                 return Container(
                                   margin: EdgeInsets.symmetric(horizontal: 5.0),
                                   decoration: BoxDecoration(
-                                    color: AppTheme.statusBar,
+                                    color: AppTheme.statusappBar,
                                     borderRadius: BorderRadius.circular(10),
                                   ),
                                   child: ClipRRect(
@@ -443,7 +458,7 @@ class _DashboardState extends State<Dashboard> {
                                 dotWidth: 8,
                                 spacing: 6,
                                 dotColor: Colors.grey,
-                                activeDotColor: AppTheme.statusBar,
+                                activeDotColor: AppTheme.statusappBar,
                               ),
                             ),
                           ),
@@ -454,32 +469,32 @@ class _DashboardState extends State<Dashboard> {
                     }
                   },
                 ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 3.0),
-                  child: Divider(
+               Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 3.0)),
+               /*   child: Divider(
                     color: Colors.black26,
                     thickness: 2,
                   ),
-                ),
-                ActionCard(
-                  title: 'Schedule Your In-Clinic Visit',
-                  desc: 'Experience personalized care with ease. Schedule your in-clinic visit now and get expert medical attention when you need it most.',
-                  image: 'assets/images/doctor.jpg', // Use your asset path here
-                ),
+                ),*/
+                //ActionCard(
+                 // title: 'Schedule Your In-Clinic Visit',
+                  //desc: 'Experience personalized care with ease. Schedule your in-clinic visit now and get expert medical attention when you need it most.',
+                  //image: 'assets/images/doctor.jpg', // Use your asset path here
+               // ),
                 Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 3.0),
-                  child: Divider(
+                  padding: const EdgeInsets.symmetric(vertical: 5.0),
+                 /* child: Divider(
                     color: Colors.black26,
                     thickness: 2,
-                  ),
+                  ),*/
                 ), // Responsive spacing
                 Text(
                   "Connect with Top Doctors In Minutes.",
-                  style: TextStyle(fontSize: 18, color: Colors.black,fontWeight: FontWeight.w700), // Responsive font size
+                  style: GoogleFonts.poppins(fontSize: 14.5, color: AppTheme.greyText,fontWeight: FontWeight.w700,), // Responsive font size
                 ),
-                SizedBox(height: MediaQuery.of(context).size.height * 0.02), // Responsive spacing
                 Container(
-            height: MediaQuery.of(context).size.height * 0.25, // Responsive height for the GridView
+            height: MediaQuery.of(context).size.height * 0.25,
+                  margin: EdgeInsets.only(top: 10.0),// Responsive height for the GridView
             child: BlocBuilder<DepartmentCubit, DepartmentState>(
               builder: (context, state) {
                 if (state is MultipleDataLoaded) {
@@ -515,7 +530,7 @@ class _DashboardState extends State<Dashboard> {
                               double textHeight = constraints.maxHeight * 0.2; // Text takes up 20%
 
                               return Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
+                                mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
                                   Container(
                                     height: imageSize, // Responsive image height
@@ -531,9 +546,10 @@ class _DashboardState extends State<Dashboard> {
                                   SizedBox(height: 5), // Space between image and text
                                   Text(
                                     category.deptName!,
-                                    style: TextStyle(
-                                      fontSize: constraints.maxHeight * 0.12, // Responsive font size
-                                      color: Colors.black,
+                                    style: GoogleFonts.poppins(
+                                      fontSize: 11, // Responsive font size
+                                      color: AppTheme.greyText,
+                                        fontWeight: FontWeight.w600,
                                     ),
                                     textAlign: TextAlign.center,
                                   ),
@@ -555,19 +571,21 @@ class _DashboardState extends State<Dashboard> {
                                 width: MediaQuery.of(context).size.width * 0.18,  // Responsive width
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(10),
-                                  color: AppTheme.statusBar,
+                                  color: AppTheme.statusappBar,
                                 ),
                                 child: Center(
                                   child: Text(
                                     '${state.departmentList.length}+',
                                     style: TextStyle(
-                                      fontSize: MediaQuery.of(context).size.height * 0.03, // Responsive font size
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w700,
+                                      fontFamily: 'Arial',// Responsive font size
                                       color: Colors.white,
                                     ),
                                   ),
                                 ),
                               ),
-                              const Text('More'),
+                             // const Text('More'),
                             ],
                           ),
                         );
@@ -583,18 +601,15 @@ class _DashboardState extends State<Dashboard> {
             ),
           ),
                 Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 3.0),
-                  child: Divider(
+                  padding: const EdgeInsets.symmetric(vertical: 15.0),
+                /*  child: Divider(
                     color: Colors.black26,
                     thickness: 2,
-                  ),
+                  ),*/
                 ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                  child: Text(
-                    "Consultation Successfully Completed",
-                    style: TextStyle(fontSize: 16, color: Colors.black,fontWeight: FontWeight.w700), // Responsive font size
-                  ),
+                Text(
+                  "Consultation Successfully Completed",
+                  style: GoogleFonts.poppins(fontSize: 14.5, color: AppTheme.greyText,fontWeight: FontWeight.w700,), // Responsive font size
                 ),
                 SizedBox(height: MediaQuery.of(context).size.height * 0.02), // Responsive spacing
                 BlocBuilder<DepartmentCubit, DepartmentState>(
@@ -623,15 +638,15 @@ class _DashboardState extends State<Dashboard> {
                                   Text(
                                     completedDoctorList[index].drName!,
                                     textAlign: TextAlign.center,
-                                    style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
+                                    style: GoogleFonts.poppins(fontWeight: FontWeight.w600, fontSize: 11,color:AppTheme.greyText ),
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
                                   ),
-                                  Text(
-                                    completedDoctorList[index].department!,
-                                    style: TextStyle(fontSize: 12, color: Colors.grey),
-                                    textAlign: TextAlign.center,
-                                  ),
+                                 // Text(
+                                  //  completedDoctorList[index].department!,
+                                    //style: TextStyle(fontSize: 12, color: Colors.grey),
+                                   // textAlign: TextAlign.center,
+                                 // ),
                                 ],
                               ),
                             );
@@ -711,7 +726,7 @@ class ActionCard extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10),
-        color: AppTheme.statusBar,
+        color: AppTheme.statusappBar,
       ),
       padding: EdgeInsets.all(8),
       child: Row(
