@@ -6,7 +6,12 @@ final class SchudleInitial extends SchudleState {}
 
 final class SchudleLoading extends SchudleState {}
 
-final class SchudleSuccess extends SchudleState {}
+final class SchudleSuccess extends SchudleState {
+
+  final AppointmentRegisterModel appointment;
+
+  SchudleSuccess({required this.appointment});
+}
 
 final class SchudleResendSuccess extends SchudleState {}
 

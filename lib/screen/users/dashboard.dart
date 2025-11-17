@@ -564,7 +564,7 @@ class _DashboardState extends State<Dashboard> {
                             CategoryBottomDilog(context);
                           },
                           child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.start,
                             children: [
                               Container(
                                 height: MediaQuery.of(context).size.height * 0.08, // Responsive height
@@ -575,7 +575,7 @@ class _DashboardState extends State<Dashboard> {
                                 ),
                                 child: Center(
                                   child: Text(
-                                    '${state.departmentList.length}+',
+                                    '${state.departmentList.length}+\nmore',
                                     style: TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.w700,
@@ -585,6 +585,7 @@ class _DashboardState extends State<Dashboard> {
                                   ),
                                 ),
                               ),
+                              SizedBox(height: 25,)
                              // const Text('More'),
                             ],
                           ),

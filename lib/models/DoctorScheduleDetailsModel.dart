@@ -30,6 +30,7 @@ class DoctorScheduleDetailsModel {
   String? safty2;
   String? safty3;
   String? safty4;
+  String? NetFees;
 
   DoctorScheduleDetailsModel(
       {this.id,
@@ -62,7 +63,7 @@ class DoctorScheduleDetailsModel {
         this.safty1,
         this.safty2,
         this.safty3,
-        this.safty4});
+        this.safty4,this.NetFees});
 
   DoctorScheduleDetailsModel.fromJson(Map<String, dynamic> json) {
     id = json['Id'];
@@ -96,6 +97,7 @@ class DoctorScheduleDetailsModel {
     safty2 = json['Safty2'];
     safty3 = json['Safty3'];
     safty4 = json['Safty4'];
+    NetFees = json['NetFees'];
   }
 
   Map<String, dynamic> toJson() {
@@ -131,6 +133,7 @@ class DoctorScheduleDetailsModel {
     data['Safty2'] = this.safty2;
     data['Safty3'] = this.safty3;
     data['Safty4'] = this.safty4;
+    data['NetFees'] = this.NetFees;
     return data;
   }
 }

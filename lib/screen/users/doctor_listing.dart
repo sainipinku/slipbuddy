@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:page_transition/page_transition.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:slipbuddy/Widgets/CommonAppBar.dart';
 import 'package:slipbuddy/Widgets/snack_bar_widget.dart';
 import 'package:slipbuddy/constants/app_theme.dart';
@@ -21,8 +22,10 @@ class DoctorListing extends StatefulWidget {
 
 class _DoctorListingState extends State<DoctorListing> {
   late DoctorCubit doctorCubit;
-  initCubit() {
-    var body = {"categoryid" : widget.catId,"doctorid" : widget.drId};
+  initCubit() async{
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String userToken = prefs.getString('user_id') ?? '';
+    var body = {"categoryid" : widget.catId,"doctorid" : widget.drId, "MsrNo": userToken,};
     doctorCubit = context.read<DoctorCubit>();
     doctorCubit.fetchDoctor(body);
     print("----------------------------------------------------");

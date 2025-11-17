@@ -18,13 +18,16 @@ import 'package:slipbuddy/controller/DoctorSchudleDetails/doctor_Schedule_Detail
 import 'package:slipbuddy/controller/appointment/PatientBloc.dart';
 import 'package:slipbuddy/controller/appointment/PatientEvent.dart';
 import 'package:slipbuddy/controller/appointment/PatientState.dart';
+import 'package:slipbuddy/controller/appointment_promise/promise_cubit.dart';
 import 'package:slipbuddy/controller/schudle/schudle_cubit.dart';
 import 'package:slipbuddy/payment/PaymentFailedScreen.dart';
 import 'package:slipbuddy/payment/PaymentSuccessScreen.dart';
 import 'package:slipbuddy/screen/users/dashboard.dart';
 import 'package:slipbuddy/webviewpage.dart';
+
 String patientName = 'Ramchadra saini';
 String patientAge = '29';
+
 class AppointmentScreen extends StatefulWidget {
   final String date;
   final String time;
@@ -33,12 +36,21 @@ class AppointmentScreen extends StatefulWidget {
   final String profile;
   final String name;
   final String location;
-   AppointmentScreen({super.key,required this.date,required this.time,required this.doctorId,required this.HospitalID,required this.profile,required this.name,required this.location});
+  AppointmentScreen(
+      {super.key,
+      required this.date,
+      required this.time,
+      required this.doctorId,
+      required this.HospitalID,
+      required this.profile,
+      required this.name,
+      required this.location});
   @override
   State<AppointmentScreen> createState() => _AppointmentScreenState();
 }
 
 class _AppointmentScreenState extends State<AppointmentScreen> {
+  String totalAmount = '1';
   final ScrollController _scrollController = ScrollController();
   final GlobalKey _billDetailsKey = GlobalKey();
   bool light = true;
@@ -49,19 +61,24 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
       curve: Curves.easeInOut,
     );
   }
+
   late SchudleCubit otpCubit;
+  late PromiseCubit promiseCubit;
   late DoctorScheduleDetailsCubit doctorScheduleDetailsCubit;
   String _paymentMethod = "clinic";
   final formkey = GlobalKey<FormState>();
   late Razorpay _razorpay;
   late BuildContext buildContext;
   bool isChecked = false;
-  initCubit(){
+  initCubit() {
     otpCubit = context.read<SchudleCubit>();
+    promiseCubit = context.read<PromiseCubit>();
     doctorScheduleDetailsCubit = context.read<DoctorScheduleDetailsCubit>();
     var body = {"doctorid": widget.doctorId.toString()};
     doctorScheduleDetailsCubit.fetchDoctorScheduleDetails(body);
+    promiseCubit.promiseList();
   }
+
   @override
   void initState() {
     // TODO: implement initState
@@ -73,6 +90,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
     _razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET, _handleExternalWallet);
     super.initState();
   }
+
   String name = '';
   String email = '';
   String phone = '';
@@ -81,14 +99,14 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
   Future<void> getData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
-      name = prefs.getString('user_first_name') ?? ''; // Default to an empty string if null
+      name = prefs.getString('user_first_name') ??
+          ''; // Default to an empty string if null
       email = prefs.getString('user_email') ?? '';
       phone = prefs.getString('user_phone') ?? '';
       patientName = name;
       context.read<PatientBloc>().add(UpdatePatientName(name));
     });
   }
-
 
   void _handlePaymentSuccess(PaymentSuccessResponse response) {
     // Handle success
@@ -102,7 +120,9 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
       context,
       PageTransition(
           type: PageTransitionType.rightToLeft,
-          child: PaymentSuccessScreen(paymentId: response.paymentId.toString(),),
+          child: PaymentSuccessScreen(
+            paymentId: response.paymentId.toString(),
+          ),
           ctx: context),
     );
     print("SUCCESS: ${response.paymentId}");
@@ -118,7 +138,9 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
       context,
       PageTransition(
           type: PageTransitionType.rightToLeft,
-          child: PaymentFailedScreen(message: response.message.toString(),),
+          child: PaymentFailedScreen(
+            message: response.message.toString(),
+          ),
           ctx: context),
     );
     // Handle failure
@@ -130,40 +152,43 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
     print("WALLET: ${response.walletName}");
   }
 
-  void openCheckout(String amount) {
+  void openCheckout(String amount, String orderId) {
+    int finalAmount = (num.parse(amount.toString()).round() * 100);
+    print('final amount----------------$finalAmount');
     var options = {
-      'key': 'rzp_live_uRT3rch0UM5OyN',
-      'amount': double.parse(amount) * 100, // in paise = ₹500
-      'name': 'Test Payment',
+      'key': 'rzp_live_tYeGRPBIWI3JSG',
+      'amount': finalAmount, // in paise = ₹500
+      'name': 'Slip Buddy',
+      'currency': 'INR',
       'description': 'Payment for Order',
-      'prefill': {
-        'contact': '9876543210',
-        'email': 'test@razorpay.com'
-      },
+      'order_id': orderId, // ✅ Pass Razorpay order_id here
+      'prefill': {'contact': '7412013030', 'email': 'slipbuddy2022@gmail.com'},
       'external': {
         'wallets': ['paytm']
       }
     };
-
+    print('options------------------>$options');
     try {
       _razorpay.open(options);
     } catch (e) {
       debugPrint('Error: $e');
     }
   }
+
   String generateSixDigitId() {
     final random = Random();
     int id = 100000 + random.nextInt(900000);
     return 'ORD$id'; // e.g., ORD482193
   }
+
   @override
   void dispose() {
     _razorpay.clear(); // Removes event listeners
     super.dispose();
   }
+
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       appBar: AppBar(
         backgroundColor: AppTheme.statusBar,
@@ -182,7 +207,6 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
           },
         ),
       ),
-
       body: SafeArea(
         child: MultiBlocListener(
           listeners: [
@@ -214,19 +238,21 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                       });
                 } else if (state is SchudleSuccess) {
                   Navigator.of(context).pop();
-                  Navigator.push(
-                    context,
-                    PageTransition(
-                        type: PageTransitionType.rightToLeft,
-                        child: Dashboard(),
-                        ctx: context),
-                  );
+                  if (_paymentMethod == "online") {
+                    openCheckout(totalAmount, state.appointment.orderNo!);
+                  } else {
+                    Navigator.push(
+                      context,
+                      PageTransition(
+                          type: PageTransitionType.rightToLeft,
+                          child: Dashboard(),
+                          ctx: context),
+                    );
+                  }
                 } else if (state is SchudleResendSuccess) {
                   Navigator.of(context).pop();
-
                 } else if (state is SchudleFailed) {
                   Navigator.of(context).pop();
-
                 } else if (state is SchudleOnHold) {
                   Navigator.of(context).pop();
                   final _snackBar = snackBar(
@@ -238,22 +264,23 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                 } else if (state is SchudleTimeout) {
                   Navigator.of(context).pop();
                   final _snackBar =
-                  snackBar('Time out exception', Icons.warning, Colors.red);
+                      snackBar('Time out exception', Icons.warning, Colors.red);
 
                   ScaffoldMessenger.of(context).showSnackBar(_snackBar);
                 } else if (state is SchudleInternetError) {
                   Navigator.of(context).pop();
-                  final _snackBar =
-                  snackBar('Internet connection failed.', Icons.wifi, Colors.red);
+                  final _snackBar = snackBar(
+                      'Internet connection failed.', Icons.wifi, Colors.red);
 
                   ScaffoldMessenger.of(context).showSnackBar(_snackBar);
                 }
               },
             ),
-            BlocListener<DoctorScheduleDetailsCubit, DoctorScheduleDetailsState>(
+            BlocListener<DoctorScheduleDetailsCubit,
+                DoctorScheduleDetailsState>(
               listener: (context, state) {
                 if (state is DoctorScheduleDetailsLoading) {
-                /*  showDialog(
+                  /*  showDialog(
                       barrierDismissible: false,
                       context: context,
                       builder: (_ctx) {
@@ -278,14 +305,12 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                       });*/
                 } else if (state is DoctorScheduleDetailsLoaded) {
                   // Navigator.of(context).pop();
-
-
                 } else if (state is DoctorScheduleDetailsFailed) {
                   // Navigator.of(context).pop();
-                              } else if (state is DoctorScheduleDetailsTimeout) {
+                } else if (state is DoctorScheduleDetailsTimeout) {
                   // Navigator.of(context).pop();
                   final _snackBar =
-                  snackBar('Time out exception', Icons.warning, Colors.red);
+                      snackBar('Time out exception', Icons.warning, Colors.red);
 
                   ScaffoldMessenger.of(context).showSnackBar(_snackBar);
                 } else if (state is DoctorScheduleDetailsInternetError) {
@@ -295,17 +320,17 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
 
                   ScaffoldMessenger.of(context).showSnackBar(_snackBar);
                 } else if (state is DoctorScheduleDetailsLogout) {
-                  final _snackBar =
-                  snackBar('Token has been expired', Icons.done, Colors.red);
+                  final _snackBar = snackBar(
+                      'Token has been expired', Icons.done, Colors.red);
                   ScaffoldMessenger.of(context).showSnackBar(_snackBar);
                 }
               },
             ),
           ],
-          child: BlocBuilder<DoctorScheduleDetailsCubit, DoctorScheduleDetailsState>(
+          child: BlocBuilder<DoctorScheduleDetailsCubit,
+              DoctorScheduleDetailsState>(
             builder: (context, state) {
               if (state is DoctorScheduleDetailsLoaded) {
-
                 // Set the max item count to 6 or less, plus 1 if there are more than 6 items for the 'More' button
                 var itemValue = state.DoctorScheduleDetailsList;
 
@@ -323,7 +348,8 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                               children: [
                                 CircleAvatar(
                                   radius: 30,
-                                  backgroundImage: NetworkImage(itemValue[0].profilePic!),
+                                  backgroundImage:
+                                      NetworkImage(itemValue[0].profilePic!),
                                 ),
                                 Container(
                                   height: 25,
@@ -335,7 +361,10 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                                       Expanded(
                                         child: Text(
                                           'In Clinic',
-                                          style:  GoogleFonts.poppins(fontSize: 8, fontWeight: FontWeight.w900,color: Colors.black),
+                                          style: GoogleFonts.poppins(
+                                              fontSize: 8,
+                                              fontWeight: FontWeight.w900,
+                                              color: Colors.black),
                                         ),
                                       ),
                                     ],
@@ -350,27 +379,36 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                                 Text(
                                   itemValue[0].fullName!,
                                   style: GoogleFonts.poppins(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w600,color: Colors.black
-                                  ),
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w600,
+                                      color: Colors.black),
                                 ),
                                 Row(
                                   children: [
                                     Text(
                                       itemValue[0].description!,
-                                      style: GoogleFonts.poppins(color: Colors.black,fontSize: 10,fontWeight: FontWeight.w400),
+                                      style: GoogleFonts.poppins(
+                                          color: Colors.black,
+                                          fontSize: 10,
+                                          fontWeight: FontWeight.w400),
                                     ),
                                     Text(
                                       '| 15 Years Experience',
-                                      style: GoogleFonts.poppins(color: Colors.black,fontSize: 10,fontWeight: FontWeight.w400),
+                                      style: GoogleFonts.poppins(
+                                          color: Colors.black,
+                                          fontSize: 10,
+                                          fontWeight: FontWeight.w400),
                                     ),
                                   ],
                                 ),
                                 Text(
                                   'Murlipura Scheme',
-                                  style: GoogleFonts.poppins(color: Colors.black,fontSize: 10,fontWeight: FontWeight.w400),
+                                  style: GoogleFonts.poppins(
+                                      color: Colors.black,
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.w400),
                                 ),
-                              /*  Row(
+                                /*  Row(
                                   children: [
                                     Icon(Icons.thumb_up, color: Colors.green, size: 16),
                                     Text(itemValue[0].thumsup!,style: GoogleFonts.poppins(color: Colors.black,fontSize: 12,fontWeight: FontWeight.w400)),
@@ -385,19 +423,33 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                         ),
                       ),
 
-                      Divider(height: 5,color: Colors.black12,thickness: 2,),
+                      Divider(
+                        height: 5,
+                        color: Colors.black12,
+                        thickness: 2,
+                      ),
 
                       // Appointment Time Section
                       Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16.0,vertical: 5.0),
-                        child:Column(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 16.0, vertical: 5.0),
+                        child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Row(
                               children: [
-                                Icon(Icons.access_time,size: 15,),
+                                Icon(
+                                  Icons.access_time,
+                                  size: 15,
+                                ),
                                 SizedBox(width: 5),
-                                Text("Appointment time",style: GoogleFonts.poppins(fontSize: 12,fontWeight: FontWeight.w400,color: Colors.black),),
+                                Text(
+                                  "Appointment time",
+                                  style: GoogleFonts.poppins(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w400,
+                                      color: Colors.black),
+                                ),
                               ],
                             ),
                             SizedBox(height: 5),
@@ -408,7 +460,10 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                                   flex: 3,
                                   child: Text(
                                     '${Helpers.dateformat(widget.date)} ${Helpers.formatTime(widget.time)}',
-                                    style:  GoogleFonts.poppins(fontSize: 18, fontWeight: FontWeight.w600,color: Colors.black),
+                                    style: GoogleFonts.poppins(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.w600,
+                                        color: Colors.black),
                                     overflow: TextOverflow.ellipsis,
                                   ),
                                 ),
@@ -416,7 +471,8 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                                   height: 15,
                                   width: 1,
                                   color: Colors.black,
-                                  margin: const EdgeInsets.symmetric(horizontal: 8.0),
+                                  margin: const EdgeInsets.symmetric(
+                                      horizontal: 8.0),
                                 ),
                                 Expanded(
                                   flex: 4,
@@ -432,7 +488,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                                           maxLines: 1,
                                           overflow: TextOverflow.ellipsis,
                                           style: GoogleFonts.poppins(
-                                            fontSize: 12,
+                                            fontSize: 12,color: Colors.grey,
                                             fontWeight: FontWeight.w400,
                                           ),
                                         ),
@@ -440,39 +496,55 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                                     ],
                                   ),
                                 )
-
                               ],
                             )
-
                           ],
                         ),
                       ),
 
-                      Divider(height: 5,color: Colors.black12,thickness: 2,),
+                      Divider(
+                        height: 5,
+                        color: Colors.black12,
+                        thickness: 2,
+                      ),
 
                       // Clinic Details Section
                       Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16.0,vertical: 5.0),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 16.0, vertical: 5.0),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Row(
                               children: [
-                                Icon(Icons.access_time,size: 15,),
+                                Icon(
+                                  Icons.home,
+                                  size: 15,
+                                ),
                                 SizedBox(width: 5),
-                                Text("Clinic Details",style: GoogleFonts.poppins(fontSize: 12,fontWeight: FontWeight.w400),),
+                                Text(
+                                  "Clinic Details",
+                                  style: GoogleFonts.poppins(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w400),
+                                ),
                               ],
                             ),
                             SizedBox(height: 5),
                             Text(
                               widget.location,
-                              style: GoogleFonts.poppins(fontSize: 14,fontWeight: FontWeight.w700),
+                              style: GoogleFonts.poppins(
+                                  fontSize: 14, fontWeight: FontWeight.w700),
                             ),
                             SizedBox(height: 10),
                           ],
                         ),
                       ),
-                      Divider(height: 5,color: Colors.black12,thickness: 4,),
+                      Divider(
+                        height: 5,
+                        color: Colors.black12,
+                        thickness: 4,
+                      ),
                       // Apply Coupon Section
                       Padding(
                         padding: const EdgeInsets.all(10.0),
@@ -492,10 +564,12 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                                   width: 40,
                                   height: 40,
                                   decoration: BoxDecoration(
-                                    color: Colors.white, // ✅ use Colors.white, not Color.white
+                                    color: Colors
+                                        .white, // ✅ use Colors.white, not Color.white
                                     shape: BoxShape.circle,
                                   ),
-                                  padding: EdgeInsets.all(3), // optional padding
+                                  padding:
+                                      EdgeInsets.all(3), // optional padding
                                   child: Image.asset(
                                     'assets/images/copan1.png',
                                   ),
@@ -504,7 +578,8 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                                 // Text Column
                                 Expanded(
                                   child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Text(
                                         "Apply Coupon",
@@ -572,7 +647,8 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                                   ),
                                   SizedBox(height: 10),
                                   Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
                                     children: [
                                       Text("Consultation Fee"),
                                       Text(itemValue[0].fees!),
@@ -580,14 +656,16 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                                   ),
                                   SizedBox(height: 8),
                                   Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
                                     children: [
                                       Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
                                         children: [
-                                          Text("Service Fee & Tax"),
+                                          Text("Discount Applied"),
                                           Text(
-                                            "We care for you & provide a free booking",
+                                            "Instant ₹${itemValue[0].coupenAmount ?? ''} OFF applied via Slip Buddy",
                                             style: GoogleFonts.poppins(
                                               fontSize: 12,
                                               color: Colors.green,
@@ -596,17 +674,29 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                                         ],
                                       ),
                                       Text(
-                                        "₹49 FREE",
-                                        style: GoogleFonts.poppins(color: Colors.green),
-                                      ),
+                                        '₹${itemValue[0].coupenAmount ?? ''}',
+                                        style: GoogleFonts.poppins(
+                                          color: Colors.grey,
+                                          decoration:
+                                              TextDecoration.lineThrough,
+                                          decorationColor: Colors.grey,
+                                          decorationThickness: 2,
+                                        ),
+                                      )
                                     ],
                                   ),
                                   Padding(
-                                    padding: const EdgeInsets.symmetric(vertical: 10.0),
-                                    child: Divider(height: 5,color: Colors.black12,thickness: 2,),
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 10.0),
+                                    child: Divider(
+                                      height: 5,
+                                      color: Colors.black12,
+                                      thickness: 2,
+                                    ),
                                   ),
                                   Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
                                     children: [
                                       Text(
                                         "Total Payable",
@@ -627,25 +717,33 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                                   SizedBox(height: 8),
                                   Container(
                                     decoration: BoxDecoration(
-                                      color: AppTheme.billpayText,
-                                      borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                                      border: Border.all(color: Colors.green)
-                                    ),
+                                        color: AppTheme.billpayText,
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(10.0)),
+                                        border:
+                                            Border.all(color: Colors.green)),
                                     child: Padding(
-                                      padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 10.0),
                                       child: Row(
-                                        crossAxisAlignment: CrossAxisAlignment.center,
-                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
                                         children: [
-
-                                          Text(
-                                            "You have saved ₹49 on this appointment",
-                                            style: GoogleFonts.poppins(color: Colors.black,fontSize: 12,fontWeight: FontWeight.w400),
+                                          Expanded(
+                                            child: Text(
+                                              "You saved ₹${itemValue[0].coupenAmount ?? ''} on this booking with Slip Buddy",
+                                              style: GoogleFonts.poppins(
+                                                  color: Colors.black,
+                                                  fontSize: 11,
+                                                  fontWeight: FontWeight.w400),
+                                            ),
                                           ),
-                                          SizedBox(width: 8),
+                                          SizedBox(width: 2),
                                           Image.asset(
                                             'assets/images/save.png',
-                                            width: 24,  // adjust size as needed
+                                            width: 24, // adjust size as needed
                                             height: 24,
                                           ),
                                         ],
@@ -656,7 +754,6 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                               ),
                             ),
                             SizedBox(height: 16),
-                            // Practo Promise Section
                             Container(
                               decoration: BoxDecoration(
                                 color: Colors.white,
@@ -667,26 +764,38 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Container(
-                                    height : 40,
+                                    height: 40,
                                     width: MediaQuery.of(context).size.width,
                                     decoration: BoxDecoration(
                                       color: AppTheme.statusappBarBg,
                                       borderRadius: BorderRadius.all(Radius.circular(10)),
+                                      border: Border.all(color: AppTheme.statusappBar),
                                     ),
                                     child: Padding(
                                       padding: const EdgeInsets.only(left: 8.0),
                                       child: Row(
                                         children: [
-                                          Container(decoration: BoxDecoration(shape: BoxShape.circle,color: AppTheme.statusappBar),child: Padding(
-                                            padding: const EdgeInsets.all(4.0),
-                                            child: Icon(Icons.check, color: Colors.white,size: 15,),
-                                          )),
+                                          Container(
+                                              decoration: BoxDecoration(
+                                                  shape: BoxShape.circle,
+                                                  color: AppTheme.statusappBar),
+                                              child: Padding(
+                                                padding:
+                                                    const EdgeInsets.all(4.0),
+                                                child: Icon(
+                                                  Icons.check,
+                                                  color: Colors.black,
+                                                  size: 15,
+                                                ),
+                                              )),
                                           Padding(
-                                            padding: const EdgeInsets.only(left: 8.0),
+                                            padding: const EdgeInsets.only(
+                                                left: 8.0),
                                             child: Text(
                                               itemValue[0].promiseHeading!,
-                                              style: GoogleFonts.poppins(fontSize: 18,
-                                                fontWeight: FontWeight.w600,
+                                              style: GoogleFonts.poppins(
+                                                fontSize: 18,
+                                                fontWeight: FontWeight.w700,
                                                 color: AppTheme.blackColor,
                                               ),
                                             ),
@@ -695,73 +804,95 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                                       ),
                                     ),
                                   ),
-                                 Padding(
-                                   padding: const EdgeInsets.all(8.0),
-                                   child: Column(
-                                     children: [
-                                       SizedBox(height: 10),
-                                       Row(
-                                         children: [
-                                           Icon(Icons.check, color: AppTheme.statusappBar),
-                                           SizedBox(width: 8),
-                                           Expanded(
-                                             child: Text(
-                                               itemValue[0].promiseText1!,textAlign: TextAlign.justify,style: GoogleFonts.poppins(fontSize: 14,
-                                               fontWeight: FontWeight.w400,
-                                               color: AppTheme.blackColor,
-                                             ),
-                                             ),
-                                           ),
-                                         ],
-                                       ),
-                                       SizedBox(height: 8),
-                                       Row(
-                                         children: [
-                                           Icon(Icons.check, color: AppTheme.statusappBar),
-                                           SizedBox(width: 8),
-                                           Expanded(
-                                             child: Text(
-                                               itemValue[0].promiseText2!,textAlign: TextAlign.justify,style: GoogleFonts.poppins(fontSize: 14,
-                                               fontWeight: FontWeight.w400,
-                                               color: AppTheme.blackColor,
-                                             ),
-                                             ),
-                                           ),
-                                         ],
-                                       ),
-                                       SizedBox(height: 8),
-                                       Row(
-                                         children: [
-                                           Icon(Icons.check, color: AppTheme.statusappBar),
-                                           SizedBox(width: 8),
-                                           Expanded(
-                                             child: Text(
-                                               itemValue[0].promiseText3!,textAlign: TextAlign.justify,style: GoogleFonts.poppins(fontSize: 14,
-                                               fontWeight: FontWeight.w400,
-                                               color: AppTheme.blackColor,
-                                             ),
-                                             ),
-                                           ),
-                                         ],
-                                       ),
-                                       SizedBox(height: 8),
-                                       Row(
-                                         children: [
-                                           Icon(Icons.check, color: AppTheme.statusappBar),
-                                           SizedBox(width: 8),
-                                           Expanded(
-                                             child: Text(
-                                               itemValue[0].promiseText4!,textAlign: TextAlign.justify,style: GoogleFonts.poppins(fontSize: 14,
-                                               fontWeight: FontWeight.w400,
-                                               color: AppTheme.blackColor,
-                                             ),
-                                             ),
-                                           ),
-                                         ],
-                                       ),
-                                     ],
-                                   ),
-                                 )
+                                  BlocConsumer<PromiseCubit, PromiseState>(
+                                    listener: (context, state) {
+                                      if (state is PromiseTimeout) {
+                                        final _snackBar = snackBar(
+                                            'Time out exception',
+                                            Icons.warning,
+                                            Colors.red);
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(_snackBar);
+                                      } else if (state is PromiseInternetError) {
+                                        final _snackBar = snackBar(
+                                            'Internet connection failed.',
+                                            Icons.wifi,
+                                            Colors.red);
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(_snackBar);
+                                      }
+                                    },
+                                    builder: (context, state) {
+                                      if (state is DoctorScheduleDetailsLoading) {
+                                        return Center(
+                                            child: CircularProgressIndicator());
+                                      } else if (state is PromiseSuccess) {
+                                        final itemValue = state
+                                            .appointmentPromiseList; // assuming your loaded data
+                                        return Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Column(
+                                            children: List.generate(
+                                                itemValue.length, (index) {
+                                              final promise = itemValue[index];
+                                              return Padding(
+                                                padding: const EdgeInsets.only(
+                                                    bottom: 8.0),
+                                                child: Row(
+                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                  mainAxisAlignment: MainAxisAlignment.start,
+                                                  children: [
+                                                    Icon(Icons.check,
+                                                        color:
+                                                        AppTheme.blackColor),
+                                                    SizedBox(width: 8),
+                                                    Expanded(
+                                                      child: Column(
+                                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                                        mainAxisAlignment: MainAxisAlignment.start,
+                                                        children: [
+                                                          Text(
+                                                            promise.heading ?? '',
+                                                            textAlign:
+                                                            TextAlign.justify,
+                                                            style: GoogleFonts.poppins(
+                                                              fontSize: 14,
+                                                              fontWeight:
+                                                              FontWeight.w700,
+                                                              color:
+                                                              AppTheme.blackColor,
+                                                            ),
+                                                          ),
+                                                          Text(
+                                                            promise.description ?? '',
+                                                            textAlign:
+                                                            TextAlign.justify,
+                                                            style: GoogleFonts.poppins(
+                                                              fontSize: 12,
+                                                              fontWeight:
+                                                              FontWeight.w500,
+                                                              color:
+                                                              AppTheme.blackColor,
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              );
+                                            }),
+                                          ),
+                                        );
+                                      } else if (state
+                                      is DoctorScheduleDetailsFailed) {
+                                        return Center(
+                                            child: Text('Failed to load promises'));
+                                      } else {
+                                        return SizedBox();
+                                      }
+                                    },
+                                  )
                                 ],
                               ),
                             ),
@@ -777,19 +908,27 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Container(
-                                    padding: EdgeInsets.symmetric(vertical: 5.0),
+                                    padding:
+                                        EdgeInsets.symmetric(vertical: 5.0),
                                     decoration: BoxDecoration(
                                       color: AppTheme.whiteColor,
-                                      borderRadius: BorderRadius.all(Radius.circular(10)),
+                                      borderRadius:
+                                          BorderRadius.all(Radius.circular(10)),
                                     ),
                                     child: Row(
-                                      mainAxisSize: MainAxisSize.min, // important to shrink-wrap content
+                                      mainAxisSize: MainAxisSize
+                                          .min, // important to shrink-wrap content
                                       children: [
-                                        Icon(Icons.verified_user, color: AppTheme.statusappBar,size: 15,),
+                                        Icon(
+                                          Icons.verified_user,
+                                          color: AppTheme.statusappBar,
+                                          size: 15,
+                                        ),
                                         SizedBox(width: 4),
                                         Text(
                                           "Safe VISIT",
-                                          style: GoogleFonts.poppins(fontSize: 12,
+                                          style: GoogleFonts.poppins(
+                                            fontSize: 12,
                                             fontWeight: FontWeight.bold,
                                             color: AppTheme.blackColor,
                                           ),
@@ -797,42 +936,88 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                                       ],
                                     ),
                                   ),
-                                  Text("Safety measures followed by Clinic:",style: GoogleFonts.poppins(fontSize: 14,fontWeight: FontWeight.w700,color: Colors.black),),
+                                  Text(
+                                    "Safety measures followed by Clinic:",
+                                    style: GoogleFonts.poppins(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w700,
+                                        color: Colors.black),
+                                  ),
                                   SizedBox(height: 8),
                                   Row(
                                     children: [
-                                      Icon(Icons.fiber_manual_record, color: Colors.black,size: 10,),
-                                      Text(itemValue[0].safty1!,textAlign: TextAlign.justify,style: GoogleFonts.poppins(fontSize: 12,fontWeight: FontWeight.w400,color: Colors.black)),
+                                      Icon(
+                                        Icons.fiber_manual_record,
+                                        color: Colors.black,
+                                        size: 10,
+                                      ),
+                                      Text(itemValue[0].safty1!,
+                                          textAlign: TextAlign.justify,
+                                          style: GoogleFonts.poppins(
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.w400,
+                                              color: Colors.black)),
                                     ],
                                   ),
                                   SizedBox(height: 4),
                                   Row(
                                     children: [
-                                      Icon(Icons.fiber_manual_record, color: Colors.black,size: 10,),
-                                      Text(itemValue[0].safty2!,textAlign: TextAlign.justify,style: GoogleFonts.poppins(fontSize: 12,fontWeight: FontWeight.w400,color: Colors.black)),
+                                      Icon(
+                                        Icons.fiber_manual_record,
+                                        color: Colors.black,
+                                        size: 10,
+                                      ),
+                                      Text(itemValue[0].safty2!,
+                                          textAlign: TextAlign.justify,
+                                          style: GoogleFonts.poppins(
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.w400,
+                                              color: Colors.black)),
                                     ],
                                   ),
                                   SizedBox(height: 4),
                                   Row(
                                     children: [
-                                      Icon(Icons.fiber_manual_record, color: Colors.black,size: 10,),
-                                      Text(itemValue[0].safty3!,textAlign: TextAlign.justify,style: GoogleFonts.poppins(fontSize: 12,fontWeight: FontWeight.w400,color: Colors.black)),
+                                      Icon(
+                                        Icons.fiber_manual_record,
+                                        color: Colors.black,
+                                        size: 10,
+                                      ),
+                                      Text(itemValue[0].safty3!,
+                                          textAlign: TextAlign.justify,
+                                          style: GoogleFonts.poppins(
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.w400,
+                                              color: Colors.black)),
                                     ],
                                   ),
                                   SizedBox(height: 4),
                                   Row(
                                     children: [
-                                      Icon(Icons.fiber_manual_record, color: Colors.black,size: 10,),
-
-                                      Text(itemValue[0].safty4!,textAlign: TextAlign.justify,style: GoogleFonts.poppins(fontSize: 12,fontWeight: FontWeight.w400,color: Colors.black)),
+                                      Icon(
+                                        Icons.fiber_manual_record,
+                                        color: Colors.black,
+                                        size: 10,
+                                      ),
+                                      Text(itemValue[0].safty4!,
+                                          textAlign: TextAlign.justify,
+                                          style: GoogleFonts.poppins(
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.w400,
+                                              color: Colors.black)),
                                     ],
                                   ),
                                 ],
                               ),
                             ),
                             Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 15.0),
-                              child: Divider(height: 5,color: Colors.black12,thickness: 2,),
+                              padding:
+                                  const EdgeInsets.symmetric(vertical: 15.0),
+                              child: Divider(
+                                height: 5,
+                                color: Colors.black12,
+                                thickness: 2,
+                              ),
                             ),
                             // WhatsApp Notification Section
                             Row(
@@ -842,7 +1027,9 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                                   children: [
                                     Row(
                                       children: [
-                                        SizedBox(height: 20,width: 20,
+                                        SizedBox(
+                                          height: 20,
+                                          width: 20,
                                           child: Checkbox(
                                             value: isChecked,
                                             onChanged: (value) {
@@ -858,16 +1045,18 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                                         ),
                                       ],
                                     ),
-                                    SizedBox(height: 10,),
+                                    SizedBox(
+                                      height: 10,
+                                    ),
                                     Text(
                                       "* Updates will be sent to $phone",
-                                      style: GoogleFonts.poppins(fontSize: 12, color: Colors.grey),
+                                      style: GoogleFonts.poppins(
+                                          fontSize: 12, color: Colors.grey),
                                     ),
                                   ],
                                 ),
                               ],
                             )
-
                           ],
                         ),
                       ),
@@ -879,15 +1068,21 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                           children: [
                             Text(
                               "Note",
-                              style: GoogleFonts.poppins(fontSize: 16, color: Colors.black,fontWeight: FontWeight.w500),
+                              style: GoogleFonts.poppins(
+                                  fontSize: 16,
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.w500),
                             ),
                             RichText(
                               text: TextSpan(
-                                text: 'By booking the appointment,you agree to Slip Buddy ', // सामान्य टेक्स्ट
-                                style: GoogleFonts.poppins(color: Colors.black, fontSize: 12),
+                                text:
+                                    'By booking the appointment,you agree to Slip Buddy ', // सामान्य टेक्स्ट
+                                style: GoogleFonts.poppins(
+                                    color: Colors.black, fontSize: 12),
                                 children: <TextSpan>[
                                   TextSpan(
-                                    text: 'Terms and Conditions', // क्लिकेबल टेक्स्ट
+                                    text:
+                                        'Terms and Conditions', // क्लिकेबल टेक्स्ट
                                     style: GoogleFonts.poppins(
                                       color: Colors.blue,
                                       fontWeight: FontWeight.bold,
@@ -898,22 +1093,33 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                                         Navigator.push(
                                           context,
                                           PageTransition(
-                                              type: PageTransitionType.rightToLeft,
-                                              child: WebViewPage(url: 'https://slipbuddy.com/policy',),
+                                              type: PageTransitionType
+                                                  .rightToLeft,
+                                              child: WebViewPage(
+                                                url:
+                                                    'https://slipbuddy.com/policy',
+                                              ),
                                               ctx: context),
                                         );
                                       },
                                   ),
                                   TextSpan(
-                                    text: ' You can also Pre-pay for this appointment by selecting Pay online option ',
-                                    style: GoogleFonts.poppins(color: Colors.black),
+                                    text:
+                                        ' You can also Pre-pay for this appointment by selecting Pay online option ',
+                                    style: GoogleFonts.poppins(
+                                        color: Colors.black),
                                   ),
                                 ],
                               ),
                             ),
                             Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 15.0),
-                              child: Divider(height: 5,color: Colors.black12,thickness: 2,),
+                              padding:
+                                  const EdgeInsets.symmetric(vertical: 15.0),
+                              child: Divider(
+                                height: 5,
+                                color: Colors.black12,
+                                thickness: 2,
+                              ),
                             ),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -921,33 +1127,46 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                                 Row(
                                   children: [
                                     Container(
-                                      width: 50.0, // Set the width (same as height for a perfect circle)
+                                      width:
+                                          50.0, // Set the width (same as height for a perfect circle)
                                       height: 50.0, // Set the height
                                       margin: EdgeInsets.only(right: 5.0),
                                       decoration: BoxDecoration(
-                                        color: AppTheme.statusBar, // Background color of the circle
-                                        shape: BoxShape.circle, // Makes the container a circle
+                                        color: AppTheme
+                                            .statusBar, // Background color of the circle
+                                        shape: BoxShape
+                                            .circle, // Makes the container a circle
                                       ),
                                       child: Center(
                                         child: Text(
                                           "A", // Optional content inside the circle
-                                          style: GoogleFonts.poppins(color: Colors.white, fontWeight: FontWeight.bold),
+                                          style: GoogleFonts.poppins(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.bold),
                                         ),
                                       ),
                                     ),
                                     Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
-                                        Text("In-Clinic Appointment for",style: GoogleFonts.poppins(fontWeight: FontWeight.w300,fontSize: 10),),
+                                        Text(
+                                          "In-Clinic Appointment for",
+                                          style: GoogleFonts.poppins(
+                                              fontWeight: FontWeight.w300,
+                                              fontSize: 10),
+                                        ),
                                         BlocBuilder<PatientBloc, PatientState>(
                                           builder: (context, state) {
                                             return Text(
                                               state.patientName,
-                                              style: GoogleFonts.poppins(fontWeight: FontWeight.w500,fontSize: 16,),
+                                              style: GoogleFonts.poppins(
+                                                fontWeight: FontWeight.w500,
+                                                fontSize: 16,
+                                              ),
                                             );
                                           },
                                         )
-
                                       ],
                                     )
                                   ],
@@ -955,21 +1174,26 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                                 TextButton(
                                   onPressed: () {
                                     // Handle view bill
-                                    showSelectPatientBottomSheet(context,name,phone);
+                                    showSelectPatientBottomSheet(
+                                        context, name, phone);
                                   },
                                   style: TextButton.styleFrom(
-                                    padding: EdgeInsets.zero, // Removes extra padding
-                                    minimumSize: Size(0, 0), // Ensures no minimum size constraints
-                                    tapTargetSize: MaterialTapTargetSize.shrinkWrap, // Reduces tap target size
+                                    padding: EdgeInsets
+                                        .zero, // Removes extra padding
+                                    minimumSize: Size(0,
+                                        0), // Ensures no minimum size constraints
+                                    tapTargetSize: MaterialTapTargetSize
+                                        .shrinkWrap, // Reduces tap target size
                                   ),
                                   child: Text(
                                     "CHANGE",
-                                    style: GoogleFonts.poppins(color: AppTheme.statusBar, fontWeight: FontWeight.w500),
+                                    style: GoogleFonts.poppins(
+                                        color: AppTheme.statusBar,
+                                        fontWeight: FontWeight.w500),
                                   ),
                                 ),
                               ],
                             ),
-
                           ],
                         ),
                       ),
@@ -1016,10 +1240,15 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                       ),
                       Padding(
                         padding: const EdgeInsets.symmetric(vertical: 5.0),
-                        child: Divider(height: 5,color: Colors.black12,thickness: 5,),
+                        child: Divider(
+                          height: 5,
+                          color: Colors.black12,
+                          thickness: 5,
+                        ),
                       ),
                       Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 10.0, vertical: 10.0),
                         child: Row(
                           children: [
                             // Price Section with 20% width
@@ -1028,27 +1257,34 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
-                                  Text(itemValue[0].fees!,style: GoogleFonts.poppins(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.bold,
-                                  )),
+                                  Text(itemValue[0].NetFees!,
+                                      style: GoogleFonts.poppins(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.bold,
+                                      )),
                                   TextButton(
                                     onPressed: _scrollToBillDetails,
                                     style: TextButton.styleFrom(
-                                      padding: EdgeInsets.zero, // Removes extra padding
-                                      minimumSize: Size(0, 0), // Ensures no minimum size constraints
-                                      tapTargetSize: MaterialTapTargetSize.shrinkWrap, // Reduces tap target size
+                                      padding: EdgeInsets
+                                          .zero, // Removes extra padding
+                                      minimumSize: Size(0,
+                                          0), // Ensures no minimum size constraints
+                                      tapTargetSize: MaterialTapTargetSize
+                                          .shrinkWrap, // Reduces tap target size
                                     ),
                                     child: Text(
                                       "View Bill",
-                                      style: GoogleFonts.poppins(color: AppTheme.statusBar, fontWeight: FontWeight.w500),
+                                      style: GoogleFonts.poppins(
+                                          color: AppTheme.statusBar,
+                                          fontWeight: FontWeight.w500),
                                     ),
                                   ),
-
                                 ],
                               ),
                             ),
-                            SizedBox(width: 10), // Add some spacing between the two sections
+                            SizedBox(
+                                width:
+                                    10), // Add some spacing between the two sections
                             // Confirm Clinic Visit Button with 80% width
                             Expanded(
                               flex: 7, // 80% of total width
@@ -1056,13 +1292,16 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                                 color: AppTheme.statusBar,
                                 text: 'Confirm Appointment',
                                 button: () async {
-                                  SharedPreferences prefs = await SharedPreferences.getInstance();
-                                  String userToken = prefs.getString('user_id') ?? '';
+                                  SharedPreferences prefs =
+                                      await SharedPreferences.getInstance();
+                                  String userToken =
+                                      prefs.getString('user_id') ?? '';
                                   map = {
                                     "Id": "0",
                                     "RegistrationNumber": "123456",
                                     "HospitalId": widget.HospitalID,
-                                    "AppointmentDate": Helpers.dateformat1(widget.date),
+                                    "AppointmentDate":
+                                        Helpers.dateformat1(widget.date),
                                     "Pname": patientName,
                                     "Age": patientAge,
                                     "DOB": "2024-09-17",
@@ -1079,29 +1318,29 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                                     "CityId": "0",
                                     "CityName": "Jaipur",
                                     "Zip": "302018",
-                                    "PaymentMode": _paymentMethod == "clinic" ? "0":"1",
+                                    "PaymentMode":
+                                        _paymentMethod == "clinic" ? "0" : "1",
                                     "MsrNo": userToken,
                                     "IsOnline": "1",
                                     "TimeSlot": widget.time,
                                     "OrderID": generateSixDigitId(),
                                   };
-                                  if(_paymentMethod == "online"){
-                                    openCheckout(itemValue[0].fees!.replaceAll("Rs.", ""));
-                                  }else {
-                                    otpCubit.verifyOtp(map!);
-                                  }
+                                  otpCubit.verifyOtp(map!);
+                                  setState(() {
+                                    totalAmount = itemValue[0].NetFees!;
+                                  });
                                 },
                                 borderRadius: 5.0,
                               ),
                             ),
-
                           ],
                         ),
                       ),
-                      SizedBox(width: 10), // Add some spacing between the two sections
+                      SizedBox(
+                          width:
+                              10), // Add some spacing between the two sections
 
                       // Confirm Clinic Visit Button
-
                     ],
                   ),
                 );
@@ -1111,8 +1350,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
             },
           ),
         ),
-      )
-      ,
+      ),
     );
   }
 
@@ -1147,13 +1385,15 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
       return "Invalid time";
     }
   }
-
 }
-void showPatientDetailsBottomSheet(BuildContext context,String name,String phone,String type) {
+
+void showPatientDetailsBottomSheet(
+    BuildContext context, String name, String phone, String type) {
   TextEditingController nametextEditingController = TextEditingController();
   TextEditingController phonetextEditingController = TextEditingController();
   TextEditingController emailtextEditingController = TextEditingController();
-  TextEditingController patientPhonetextEditingController = TextEditingController();
+  TextEditingController patientPhonetextEditingController =
+      TextEditingController();
   nametextEditingController.text = name;
   phonetextEditingController.text = phone;
   showModalBottomSheet(
@@ -1164,72 +1404,70 @@ void showPatientDetailsBottomSheet(BuildContext context,String name,String phone
     ),
     builder: (context) {
       return StatefulBuilder(
-        builder:  (BuildContext context, StateSetter setState) {
-          var genderValue;
-          return Padding(
-            padding: EdgeInsets.only(
-              bottom: MediaQuery.of(context).viewInsets.bottom,
-              top: 20,
-              left: 20,
-              right: 20,
-            ),
-            child: SingleChildScrollView(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Row(
-                    children: [
-                      Spacer(),
-                      Text("Add Patient Details",
-                          style: GoogleFonts.poppins(
-                              fontWeight: FontWeight.bold, fontSize: 18)),
-                      Spacer(),
-                      IconButton(
-                        icon: Icon(Icons.close),
-                        onPressed: () => Navigator.pop(context),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 10),
-                  TextField(
-                    controller: nametextEditingController,
-                    decoration: InputDecoration(
-                      labelText: "Patient's Full Name*",
-                      border: OutlineInputBorder(),
+          builder: (BuildContext context, StateSetter setState) {
+        var genderValue;
+        return Padding(
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.of(context).viewInsets.bottom,
+            top: 20,
+            left: 20,
+            right: 20,
+          ),
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Row(
+                  children: [
+                    Spacer(),
+                    Text("Add Patient Details",
+                        style: GoogleFonts.poppins(
+                            fontWeight: FontWeight.bold, fontSize: 18)),
+                    Spacer(),
+                    IconButton(
+                      icon: Icon(Icons.close),
+                      onPressed: () => Navigator.pop(context),
                     ),
+                  ],
+                ),
+                SizedBox(height: 10),
+                TextField(
+                  controller: nametextEditingController,
+                  decoration: InputDecoration(
+                    labelText: "Patient's Full Name*",
+                    border: OutlineInputBorder(),
                   ),
-                  SizedBox(height: 10),
-                  TextField(
-                    controller: emailtextEditingController,
-                    keyboardType: TextInputType.phone,
-                    decoration: InputDecoration(
-                      labelText: "Patient's Age",
-                      border: OutlineInputBorder(),
-                    ),
+                ),
+                SizedBox(height: 10),
+                TextField(
+                  controller: emailtextEditingController,
+                  keyboardType: TextInputType.phone,
+                  decoration: InputDecoration(
+                    labelText: "Patient's Age",
+                    border: OutlineInputBorder(),
                   ),
-                  SizedBox(height: 10),
-                  DropdownButtonFormField<String>(
-                    decoration: InputDecoration(
-                      labelText: "Patient's Gender*",
-                      border: OutlineInputBorder(),
-                    ),
-                    value: genderValue,
-                    items: ["Male", "Female", "Other"].map((String gender) {
-                      return DropdownMenuItem<String>(
-                        value: gender,
-                        child: Text(gender),
-                      );
-                    }).toList(),
-                    onChanged: (String? newValue) {
-                      setState(() {
-                        genderValue = newValue!;
-                      });
-                    },
+                ),
+                SizedBox(height: 10),
+                DropdownButtonFormField<String>(
+                  decoration: InputDecoration(
+                    labelText: "Patient's Gender*",
+                    border: OutlineInputBorder(),
                   ),
-
-                  if(type == 'new')
-                  SizedBox(height: 10),
-                  if(type == 'new')
+                  value: genderValue,
+                  items: ["Male", "Female", "Other"].map((String gender) {
+                    return DropdownMenuItem<String>(
+                      value: gender,
+                      child: Text(gender),
+                    );
+                  }).toList(),
+                  onChanged: (String? newValue) {
+                    setState(() {
+                      genderValue = newValue!;
+                    });
+                  },
+                ),
+                if (type == 'new') SizedBox(height: 10),
+                if (type == 'new')
                   TextField(
                     controller: phonetextEditingController,
                     keyboardType: TextInputType.phone,
@@ -1249,35 +1487,36 @@ void showPatientDetailsBottomSheet(BuildContext context,String name,String phone
                     ),
                   ),*/
 
-                  SizedBox(height: 20),
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      minimumSize: Size(double.infinity, 50),
-                      backgroundColor: AppTheme.statusBar,
-                    ),
-                    onPressed: () {
-
-                      setState((){
-                        patientName = nametextEditingController.text;
-                        patientAge = emailtextEditingController.text;
-                      });
-                      Navigator.pop(context); // Or perform submit logic
-                      context.read<PatientBloc>().add(UpdatePatientName(nametextEditingController.text));
-                    },
-                    child: Text("Confirm"),
+                SizedBox(height: 20),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    minimumSize: Size(double.infinity, 50),
+                    backgroundColor: AppTheme.statusBar,
                   ),
-                  SizedBox(height: 20),
-                ],
-              ),
+                  onPressed: () {
+                    setState(() {
+                      patientName = nametextEditingController.text;
+                      patientAge = emailtextEditingController.text;
+                    });
+                    Navigator.pop(context); // Or perform submit logic
+                    context
+                        .read<PatientBloc>()
+                        .add(UpdatePatientName(nametextEditingController.text));
+                  },
+                  child: Text("Confirm"),
+                ),
+                SizedBox(height: 20),
+              ],
             ),
-          );
-        }
-      );
+          ),
+        );
+      });
     },
   );
 }
 
-void showSelectPatientBottomSheet(BuildContext context,String name,String phone) {
+void showSelectPatientBottomSheet(
+    BuildContext context, String name, String phone) {
   showModalBottomSheet(
     context: context,
     isScrollControlled: true,
@@ -1295,7 +1534,8 @@ void showSelectPatientBottomSheet(BuildContext context,String name,String phone)
             children: [
               Text(
                 "Select a Patient",
-                style: GoogleFonts.poppins(fontSize: 18, fontWeight: FontWeight.bold),
+                style: GoogleFonts.poppins(
+                    fontSize: 18, fontWeight: FontWeight.bold),
               ),
               IconButton(
                 icon: Icon(Icons.close),
@@ -1328,7 +1568,11 @@ void showSelectPatientBottomSheet(BuildContext context,String name,String phone)
                     ],
                   ),
                 ),
-                Divider(height: 5,color: Colors.black12,thickness: 2,),
+                Divider(
+                  height: 5,
+                  color: Colors.black12,
+                  thickness: 2,
+                ),
                 Row(
                   children: [
                     Expanded(
@@ -1336,8 +1580,8 @@ void showSelectPatientBottomSheet(BuildContext context,String name,String phone)
                         onPressed: () {
                           // Edit logic here
                           Navigator.pop(context); // Or perform submit logic
-                          showPatientDetailsBottomSheet(context,name,phone,'edit');
-
+                          showPatientDetailsBottomSheet(
+                              context, name, phone, 'edit');
                         },
                         child: Text("EDIT"),
                       ),
@@ -1365,7 +1609,7 @@ void showSelectPatientBottomSheet(BuildContext context,String name,String phone)
             onPressed: () {
               // Add new patient logic here
               Navigator.pop(context); // Or perform submit logic
-              showPatientDetailsBottomSheet(context,name,phone,'new');
+              showPatientDetailsBottomSheet(context, name, phone, 'new');
             },
             child: Text("+ Add New Patient"),
             style: OutlinedButton.styleFrom(

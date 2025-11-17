@@ -74,12 +74,14 @@ class _ClinicVisitScreenState extends State<ClinicVisitScreen> {
             ),
 
             SizedBox(width: 10),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(widget.name, style: GoogleFonts.poppins(fontSize: 14,fontWeight: FontWeight.w600)),
-                Text(widget.location, style: GoogleFonts.poppins(fontSize: 14,fontWeight: FontWeight.w600)),
-              ],
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(widget.name, style: GoogleFonts.poppins(fontSize: 14,fontWeight: FontWeight.w600)),
+                  Text(widget.location,maxLines: 1, style: GoogleFonts.poppins(fontSize: 14,fontWeight: FontWeight.w600)),
+                ],
+              ),
             ),
           ],
         ),

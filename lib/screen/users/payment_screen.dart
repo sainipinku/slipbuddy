@@ -104,19 +104,21 @@ class _PaymentScreenState extends State<PaymentScreen> {
               if (state is AppointmentLoaded) {
                 int itemCount = state.appointmentList.length;
                 String formattedDateTime = '';
-                return itemCount != 0 ? Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Payment History',
-                      style: GoogleFonts.poppins(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w700,color: Colors.black
+                return itemCount != 0 ? SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Payment History',
+                        style: GoogleFonts.poppins(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w700,color: Colors.black
+                        ),
                       ),
-                    ),
-                    SizedBox(height: 20),
-                    ...state.appointmentList.map((payment) => PaymentCard(payment)).toList(),
-                  ],
+                      SizedBox(height: 20),
+                      ...state.appointmentList.map((payment) => PaymentCard(payment)).toList(),
+                    ],
+                  ),
                 ) : Center(child: Text('No Record Found'));
               } else {
                 return const Center(child: Text('Loading......'));

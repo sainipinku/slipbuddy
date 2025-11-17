@@ -20,4 +20,9 @@ class Routes {
     static String profileupdate = "Profile_Update";
     static String searchbytext = "searchbytext";
     static String ProfileDelete = "Profile_Delete";
+    static String getLocation = "get_useraddress";
+    static String getRecentsSearches = "get_recentsSearches";
+    static String AddUserAdress = "AddUser_Adress";
+    static String addrecentsearch = "addrecentsearch";
+    static String promiseList = "promise_list";
 }

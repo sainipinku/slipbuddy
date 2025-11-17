@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:page_transition/page_transition.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:slipbuddy/Widgets/snack_bar_widget.dart';
 import 'package:slipbuddy/constants/app_theme.dart';
 import 'package:slipbuddy/controller/global_search/global_search_cubit.dart';
@@ -17,9 +18,17 @@ class Galoblesearchpage extends StatefulWidget {
 class _GaloblesearchpageState extends State<Galoblesearchpage> {
   TextEditingController searchController = TextEditingController();
   String currentLocation = 'Japiur'; // Default city
-
+  Future<String?> getSavedAddress() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString('saved_address');
+  }
+  void loadAddress() async {
+    currentLocation = (await getSavedAddress())!;
+    setState(() {});
+  }
   @override
   void initState() {
+    loadAddress();
     super.initState();
     initCubit();
   }
@@ -44,8 +53,11 @@ class _GaloblesearchpageState extends State<Galoblesearchpage> {
       });
     }
   }
-  void filterList(String query) {
-    var body = {"searchtext" : query};
+  void filterList(String query) async{
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String userToken = prefs.getString('user_id') ?? '';
+    var body = {
+      "searchtext" : query, "MsrNo": userToken,};
     globalSearchCubit.fetchGlobalSearch(body);
   }
   @override

@@ -4,13 +4,16 @@ import 'package:slipbuddy/controller/DoctorSchudleDetails/doctor_Schedule_Detail
 import 'package:slipbuddy/controller/appointment/PatientBloc.dart';
 
 import 'package:slipbuddy/controller/appointment/appointment_cubit.dart';
+import 'package:slipbuddy/controller/appointment_promise/promise_cubit.dart';
 import 'package:slipbuddy/controller/department/department_cubit.dart';
 import 'package:slipbuddy/controller/doctor/doctor_cubit.dart';
 import 'package:slipbuddy/controller/global_search/global_search_cubit.dart';
 import 'package:slipbuddy/controller/home/doctor_cubit.dart';
+import 'package:slipbuddy/controller/location/location_cubit.dart';
 import 'package:slipbuddy/controller/login_auth/login_cubit.dart';
 import 'package:slipbuddy/controller/otp_auth/otp_cubit.dart';
 import 'package:slipbuddy/controller/schudle/schudle_cubit.dart';
+import 'package:slipbuddy/controller/search_location/search_location_cubit.dart';
 import 'package:slipbuddy/controller/slots/date_cubit.dart';
 import 'package:slipbuddy/controller/slots/slots_cubit.dart';
 import 'package:slipbuddy/controller/user_profile/updateuserprofile_cubit.dart';
@@ -32,6 +35,9 @@ class BlocProviders {
     BlocProvider<AppointmentStatusCubit>(create: (context) => AppointmentStatusCubit()),
     BlocProvider<DoctorScheduleDetailsCubit>(create: (context) => DoctorScheduleDetailsCubit()),
     BlocProvider<PatientBloc>(create: (context) => PatientBloc()),
+    BlocProvider<LocationCubit>(create: (context) => LocationCubit()),
+    BlocProvider<SearchLocationCubit>(create: (context) => SearchLocationCubit()),
     BlocProvider<GlobalSearchCubit>(create: (context) => GlobalSearchCubit()),
+    BlocProvider<PromiseCubit>(create: (context) => PromiseCubit()),
   ];
 }
