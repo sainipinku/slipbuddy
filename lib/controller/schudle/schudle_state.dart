@@ -12,6 +12,18 @@ final class SchudleSuccess extends SchudleState {
 
   SchudleSuccess({required this.appointment});
 }
+final class PaymentSuccess extends SchudleState {
+
+  final AppointmentRegisterModel appointment;
+
+  PaymentSuccess({required this.appointment});
+}
+final class PaymentFail extends SchudleState {
+
+  final AppointmentRegisterModel appointment;
+
+  PaymentFail({required this.appointment});
+}
 
 final class SchudleResendSuccess extends SchudleState {}
 

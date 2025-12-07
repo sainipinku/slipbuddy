@@ -115,7 +115,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
       "TranstionID": "${response.paymentId}",
       "OrderStatus": "Success",
     });
-    otpCubit.verifyOtp(map!);
+    otpCubit.verifyOtp(map!,'success');
     Navigator.push(
       context,
       PageTransition(
@@ -133,7 +133,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
       "TranstionID": "",
       "OrderStatus": "Fail",
     });
-    otpCubit.verifyOtp(map!);
+    otpCubit.verifyOtp(map!,'fail');
     Navigator.push(
       context,
       PageTransition(
@@ -251,7 +251,12 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                   }
                 } else if (state is SchudleResendSuccess) {
                   Navigator.of(context).pop();
-                } else if (state is SchudleFailed) {
+                } else if (state is PaymentSuccess) {
+                  Navigator.of(context).pop();
+                }else if (state is PaymentFail) {
+                  Navigator.of(context).pop();
+                }
+                else if (state is SchudleFailed) {
                   Navigator.of(context).pop();
                 } else if (state is SchudleOnHold) {
                   Navigator.of(context).pop();
@@ -373,51 +378,53 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                               ],
                             ),
                             SizedBox(width: 10),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  itemValue[0].fullName!,
-                                  style: GoogleFonts.poppins(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w600,
-                                      color: Colors.black),
-                                ),
-                                Row(
-                                  children: [
-                                    Text(
-                                      itemValue[0].description!,
-                                      style: GoogleFonts.poppins(
-                                          color: Colors.black,
-                                          fontSize: 10,
-                                          fontWeight: FontWeight.w400),
-                                    ),
-                                    Text(
-                                      '| 15 Years Experience',
-                                      style: GoogleFonts.poppins(
-                                          color: Colors.black,
-                                          fontSize: 10,
-                                          fontWeight: FontWeight.w400),
-                                    ),
-                                  ],
-                                ),
-                                Text(
-                                  'Murlipura Scheme',
-                                  style: GoogleFonts.poppins(
-                                      color: Colors.black,
-                                      fontSize: 10,
-                                      fontWeight: FontWeight.w400),
-                                ),
-                                /*  Row(
-                                  children: [
-                                    Icon(Icons.thumb_up, color: Colors.green, size: 16),
-                                    Text(itemValue[0].thumsup!,style: GoogleFonts.poppins(color: Colors.black,fontSize: 12,fontWeight: FontWeight.w400)),
-                                    SizedBox(width: 10),
-                                    Icon(Icons.comment, color: Colors.green, size: 16),
-                                    Text(itemValue[0].noOfStories!,style: GoogleFonts.poppins(color: Colors.black,fontSize: 12,fontWeight: FontWeight.w400)),
-                                  ],
-                                ),*/
-                              ],
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    itemValue[0].fullName!,
+                                    style: GoogleFonts.poppins(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w600,
+                                        color: Colors.black),
+                                  ),
+                                  Row(
+                                    children: [
+                                      Text(
+                                        itemValue[0].description!,
+                                        style: GoogleFonts.poppins(
+                                            color: Colors.black,
+                                            fontSize: 10,
+                                            fontWeight: FontWeight.w400),
+                                      ),
+                                      Text(
+                                        '| ${itemValue[0].experience!} Years Experience',
+                                        style: GoogleFonts.poppins(
+                                            color: Colors.black,
+                                            fontSize: 10,
+                                            fontWeight: FontWeight.w400),
+                                      ),
+                                    ],
+                                  ),
+                                  Text(
+                                    itemValue[0].location!,
+                                    style: GoogleFonts.poppins(
+                                        color: Colors.black,
+                                        fontSize: 10,
+                                        fontWeight: FontWeight.w400),
+                                  ),
+                                  /*  Row(
+                                    children: [
+                                      Icon(Icons.thumb_up, color: Colors.green, size: 16),
+                                      Text(itemValue[0].thumsup!,style: GoogleFonts.poppins(color: Colors.black,fontSize: 12,fontWeight: FontWeight.w400)),
+                                      SizedBox(width: 10),
+                                      Icon(Icons.comment, color: Colors.green, size: 16),
+                                      Text(itemValue[0].noOfStories!,style: GoogleFonts.poppins(color: Colors.black,fontSize: 12,fontWeight: FontWeight.w400)),
+                                    ],
+                                  ),*/
+                                ],
+                              ),
                             ),
                           ],
                         ),
@@ -461,7 +468,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                                   child: Text(
                                     '${Helpers.dateformat(widget.date)} ${Helpers.formatTime(widget.time)}',
                                     style: GoogleFonts.poppins(
-                                        fontSize: 18,
+                                        fontSize: 14,
                                         fontWeight: FontWeight.w600,
                                         color: Colors.black),
                                     overflow: TextOverflow.ellipsis,
@@ -706,7 +713,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                                         ),
                                       ),
                                       Text(
-                                        itemValue[0].fees!,
+                                        itemValue[0].NetFees!,
                                         style: GoogleFonts.poppins(
                                           fontWeight: FontWeight.w600,
                                           fontSize: 14,
@@ -1325,7 +1332,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                                     "TimeSlot": widget.time,
                                     "OrderID": generateSixDigitId(),
                                   };
-                                  otpCubit.verifyOtp(map!);
+                                  otpCubit.verifyOtp(map!,'payment');
                                   setState(() {
                                     totalAmount = itemValue[0].NetFees!;
                                   });

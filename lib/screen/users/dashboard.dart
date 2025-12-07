@@ -601,13 +601,7 @@ class _DashboardState extends State<Dashboard> {
               },
             ),
           ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 15.0),
-                /*  child: Divider(
-                    color: Colors.black26,
-                    thickness: 2,
-                  ),*/
-                ),
+
                 Text(
                   "Consultation Successfully Completed",
                   style: GoogleFonts.poppins(fontSize: 14.5, color: AppTheme.greyText,fontWeight: FontWeight.w700,), // Responsive font size

@@ -15,7 +15,7 @@ class SchudleCubit extends Cubit<SchudleState> {
 
   ApiManager apiManager = ApiManager();
 
-  verifyOtp(Map map) async {
+  verifyOtp(Map map,String type) async {
     emit(SchudleLoading());
     try {
       var response = await apiManager.postRequest(
@@ -25,9 +25,15 @@ class SchudleCubit extends Cubit<SchudleState> {
         var jsonBody = jsonDecode(response.body);
 
         AppointmentRegisterModel appointment = AppointmentRegisterModel.fromJson(jsonBody);
-
+        if(type == 'success'){
+          emit(PaymentSuccess(appointment: appointment));
+        }else if(type == 'fail'){
+          emit(PaymentFail(appointment: appointment));
+        }else {
+          emit(SchudleSuccess(appointment: appointment));
+        }
         print("Parsed Appointment: ${appointment.toJson()}");
-        emit(SchudleSuccess(appointment: appointment));
+
       } else if (response.statusCode == 403) {
         emit(SchudleOnHold());
       } else {
