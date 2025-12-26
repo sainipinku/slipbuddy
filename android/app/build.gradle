@@ -78,6 +78,7 @@ android {
             signingConfig signingConfigs.release
         }
     }
+    ndkVersion "29.0.14206865" // latest stable NDK
 }
 
 flutter {
