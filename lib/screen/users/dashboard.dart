@@ -124,6 +124,8 @@ class _DashboardState extends State<Dashboard> {
   }
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+    final isTablet = size.width >= 600;
     return MultiBlocListener(
       listeners: [
         BlocListener<DepartmentCubit, DepartmentState>(
@@ -402,14 +404,14 @@ class _DashboardState extends State<Dashboard> {
           ),
         ),
         drawer: GlobalDrawer(),
-        body:
-        Padding(
+        body: Padding(
           padding: const EdgeInsets.all(16.0),
           child: SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.start,
               children: [
+
+                /// ------------------ BANNER ------------------
                 BlocBuilder<DepartmentCubit, DepartmentState>(
                   builder: (context, state) {
                     if (state is MultipleDataLoaded) {
@@ -419,37 +421,37 @@ class _DashboardState extends State<Dashboard> {
                         alignment: Alignment.bottomCenter,
                         children: [
                           SizedBox(
-                            height: MediaQuery.of(context).size.height * 0.18,
+                            height: isTablet ? 360 : 160,
                             child: PageView.builder(
                               controller: _pageController,
                               itemCount: bannerImagesList!.length,
                               itemBuilder: (context, index) {
                                 return Container(
-                                  margin: EdgeInsets.symmetric(horizontal: 5.0),
+                                  margin: const EdgeInsets.symmetric(horizontal: 6),
                                   decoration: BoxDecoration(
                                     color: AppTheme.statusappBar,
-                                    borderRadius: BorderRadius.circular(10),
+                                    borderRadius: BorderRadius.circular(12),
                                   ),
                                   child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(10),
+                                    borderRadius: BorderRadius.circular(12),
                                     child: CachedNetworkImage(
                                       imageUrl: bannerImagesList![index].path!,
-                                      fit: BoxFit.cover,
-                                      placeholder: (context, url) => Center(child: CircularProgressIndicator()),
-                                      errorWidget: (context, url, error) => Icon(Icons.error),
+                                      fit: BoxFit.fill,
+                                      placeholder: (_, __) =>
+                                      const Center(child: CircularProgressIndicator()),
+                                      errorWidget: (_, __, ___) =>
+                                      const Icon(Icons.error),
                                     ),
                                   ),
                                 );
                               },
                               onPageChanged: (index) {
-                                setState(() {
-                                  _currentPage = index;
-                                });
+                                setState(() => _currentPage = index);
                               },
                             ),
                           ),
                           Positioned(
-                            bottom: 5,
+                            bottom: 8,
                             child: SmoothPageIndicator(
                               controller: _pageController,
                               count: bannerImagesList!.length,
@@ -457,7 +459,7 @@ class _DashboardState extends State<Dashboard> {
                                 dotHeight: 8,
                                 dotWidth: 8,
                                 spacing: 6,
-                                dotColor: Colors.grey,
+                                dotColor: Colors.grey.shade400,
                                 activeDotColor: AppTheme.statusappBar,
                               ),
                             ),
@@ -469,187 +471,187 @@ class _DashboardState extends State<Dashboard> {
                     }
                   },
                 ),
-               Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 3.0)),
-               /*   child: Divider(
-                    color: Colors.black26,
-                    thickness: 2,
-                  ),
-                ),*/
-                //ActionCard(
-                 // title: 'Schedule Your In-Clinic Visit',
-                  //desc: 'Experience personalized care with ease. Schedule your in-clinic visit now and get expert medical attention when you need it most.',
-                  //image: 'assets/images/doctor.jpg', // Use your asset path here
-               // ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 5.0),
-                 /* child: Divider(
-                    color: Colors.black26,
-                    thickness: 2,
-                  ),*/
-                ), // Responsive spacing
+
+                const SizedBox(height: 16),
+
+                /// ------------------ TITLE ------------------
                 Text(
                   "Connect with Top Doctors In Minutes.",
-                  style: GoogleFonts.poppins(fontSize: 14.5, color: AppTheme.greyText,fontWeight: FontWeight.w700,), // Responsive font size
+                  style: GoogleFonts.poppins(
+                    fontSize: isTablet ? 18 : 14.5,
+                    color: AppTheme.greyText,
+                    fontWeight: FontWeight.w700,
+                  ),
                 ),
-                Container(
-            height: MediaQuery.of(context).size.height * 0.25,
-                  margin: EdgeInsets.only(top: 10.0),// Responsive height for the GridView
-            child: BlocBuilder<DepartmentCubit, DepartmentState>(
-              builder: (context, state) {
-                if (state is MultipleDataLoaded) {
-                  int itemCount = state.departmentList.length > 8 ? 8 : state.departmentList.length;
 
-                  return GridView.builder(
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 4, // Number of columns
-                      mainAxisSpacing: 8.0, // Spacing between rows
-                      crossAxisSpacing: 8.0, // Spacing between columns
-                      childAspectRatio: 0.8, // Adjust this ratio for image-text size balance
-                    ),
-                    itemCount: state.departmentList.length > 8 ? 8 : itemCount,
-                    physics: NeverScrollableScrollPhysics(),
-                    itemBuilder: (context, index) {
-                      if (index < 7 && index < state.departmentList.length) {
-                        final category = state.departmentList[index];
+                const SizedBox(height: 12),
 
-                        return GestureDetector(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => DoctorListing(
-                                  catId: category.iD.toString(),drId: "0",
-                                ),
-                              ),
-                            );
-                          },
-                          child: LayoutBuilder( // Use LayoutBuilder to calculate item size
-                            builder: (context, constraints) {
-                              double imageSize = constraints.maxHeight * 0.6; // Image takes up 60% of item height
-                              double textHeight = constraints.maxHeight * 0.2; // Text takes up 20%
-
-                              return Column(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  Container(
-                                    height: imageSize, // Responsive image height
-                                    width: imageSize, // Responsive image width
-                                    decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      image: DecorationImage(
-                                        image: NetworkImage(category.icon!),
-                                        fit: BoxFit.cover,
-                                      ),
-                                    ),
-                                  ),
-                                  SizedBox(height: 5), // Space between image and text
-                                  Text(
-                                    category.deptName!,
-                                    style: GoogleFonts.poppins(
-                                      fontSize: 11, // Responsive font size
-                                      color: AppTheme.greyText,
-                                        fontWeight: FontWeight.w600,
-                                    ),
-                                    textAlign: TextAlign.center,
-                                  ),
-                                ],
-                              );
-                            },
-                          ),
-                        );
-                      } else if (index == 7 && state.departmentList.length > 8) {
-                        return GestureDetector(
-                          onTap: () {
-                            CategoryBottomDilog(context);
-                          },
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              Container(
-                                height: MediaQuery.of(context).size.height * 0.08, // Responsive height
-                                width: MediaQuery.of(context).size.width * 0.18,  // Responsive width
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(10),
-                                  color: AppTheme.statusappBar,
-                                ),
-                                child: Center(
-                                  child: Text(
-                                    '${state.departmentList.length}+\nmore',
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w700,
-                                      fontFamily: 'Arial',// Responsive font size
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              SizedBox(height: 25,)
-                             // const Text('More'),
-                            ],
-                          ),
-                        );
-                      } else {
-                        return Container(); // Return an empty container as a fallback
-                      }
-                    },
-                  );
-                } else {
-                  return const Center(child: Text('No Announcement Found'));
-                }
-              },
-            ),
-          ),
-
-                Text(
-                  "Consultation Successfully Completed",
-                  style: GoogleFonts.poppins(fontSize: 14.5, color: AppTheme.greyText,fontWeight: FontWeight.w700,), // Responsive font size
-                ),
-                SizedBox(height: MediaQuery.of(context).size.height * 0.02), // Responsive spacing
+                /// ------------------ CATEGORY GRID ------------------
                 BlocBuilder<DepartmentCubit, DepartmentState>(
                   builder: (context, state) {
                     if (state is MultipleDataLoaded) {
-                      List<CompletedDoctorListModel> completedDoctorList = state.completedDoctorList;
+                      final list = state.departmentList;
+                      final itemCount = list.length > 8 ? 8 : list.length;
 
-                      return Container(
-                        height: 150, // Set the height for horizontal scroll
-                        padding: EdgeInsets.symmetric(horizontal: 10),
-                        child: completedDoctorList.isNotEmpty ? ListView.builder(
+                      return GridView.builder(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: isTablet ? 4 : 4,
+                          mainAxisSpacing: 12,
+                          crossAxisSpacing: 12,
+                          childAspectRatio: 0.78,
+                        ),
+                        itemCount: itemCount,
+                        itemBuilder: (context, index) {
+
+                          /// ---- MORE BUTTON ----
+                          if (index == 7 && list.length > 8) {
+                            return GestureDetector(
+                              onTap: () => CategoryBottomDilog(context),
+                              child: Column(
+                                children: [
+                                  Expanded(
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(14),
+                                        color: AppTheme.statusappBar,
+                                      ),
+                                      child: Center(
+                                        child: Text(
+                                          '${list.length}+\nMore',
+                                          textAlign: TextAlign.center,
+                                          style: const TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w700,
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 10),
+                                ],
+                              ),
+                            );
+                          }
+
+                          final category = list[index];
+
+                          /// ---- NORMAL ITEM ----
+                          return GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => DoctorListing(
+                                    catId: category.iD.toString(),
+                                    drId: "0",
+                                  ),
+                                ),
+                              );
+                            },
+                            child: Column(
+                              children: [
+                                Expanded(
+                                  flex: 6,
+                                  child: AspectRatio(
+                                    aspectRatio: 1,
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        image: DecorationImage(
+                                          image: NetworkImage(category.icon!),
+                                          fit: BoxFit.cover,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(height: 6),
+                                Expanded(
+                                  flex: 3,
+                                  child: Text(
+                                    category.deptName!,
+                                    textAlign: TextAlign.center,
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: GoogleFonts.poppins(
+                                      fontSize: isTablet ? 12 : 11,
+                                      fontWeight: FontWeight.w600,
+                                      color: AppTheme.greyText,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                      );
+                    } else {
+                      return const Center(child: Text('No Department Found'));
+                    }
+                  },
+                ),
+                
+
+                /// ------------------ COMPLETED TITLE ------------------
+                Text(
+                  "Consultation Successfully Completed",
+                  style: GoogleFonts.poppins(
+                    fontSize: isTablet ? 18 : 14.5,
+                    color: AppTheme.greyText,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+
+                const SizedBox(height: 12),
+
+                /// ------------------ COMPLETED DOCTORS ------------------
+                BlocBuilder<DepartmentCubit, DepartmentState>(
+                  builder: (context, state) {
+                    if (state is MultipleDataLoaded) {
+                      final completedDoctorList = state.completedDoctorList;
+
+                      return SizedBox(
+                        height: isTablet ? 170 : 100,
+                        child: completedDoctorList.isNotEmpty
+                            ? ListView.builder(
                           scrollDirection: Axis.horizontal,
                           itemCount: completedDoctorList.length,
                           itemBuilder: (context, index) {
-
+                            final doctor = completedDoctorList[index];
                             return Container(
-                              width: 100,
-                              margin: EdgeInsets.symmetric(horizontal: 8),
+                              width: isTablet ? 130 : 100,
+                              margin: const EdgeInsets.symmetric(horizontal: 8),
                               child: Column(
                                 children: [
                                   CircleAvatar(
-                                      radius: 35,
-                                      backgroundImage: NetworkImage(completedDoctorList[index].drPic!),
+                                    radius: isTablet ? 45 : 35,
+                                    backgroundImage:
+                                    NetworkImage(doctor.drPic!),
                                   ),
-                                  SizedBox(height: 5),
+                                  const SizedBox(height: 6),
                                   Text(
-                                    completedDoctorList[index].drName!,
-                                    textAlign: TextAlign.center,
-                                    style: GoogleFonts.poppins(fontWeight: FontWeight.w600, fontSize: 11,color:AppTheme.greyText ),
+                                    doctor.drName!,
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
+                                    textAlign: TextAlign.center,
+                                    style: GoogleFonts.poppins(
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: isTablet ? 13 : 11,
+                                      color: AppTheme.greyText,
+                                    ),
                                   ),
-                                 // Text(
-                                  //  completedDoctorList[index].department!,
-                                    //style: TextStyle(fontSize: 12, color: Colors.grey),
-                                   // textAlign: TextAlign.center,
-                                 // ),
                                 ],
                               ),
                             );
                           },
-                        ) : Center(child: Text('No Record Found')),
+                        )
+                            : const Center(child: Text('No Record Found')),
                       );
                     } else {
-                      return const Center(child: Text('No Announcement Found'));
+                      return const Center(child: Text('No Record Found'));
                     }
                   },
                 ),
