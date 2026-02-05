@@ -263,26 +263,10 @@ class _AppointmentsTabState extends State<AppointmentsTab> {
                             ),),
 
                             // Appointment type and specialist
-                            RichText(
-                              text: TextSpan(
-                                text: item.department!,
-                                style: GoogleFonts.poppins(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w600,
-                                    color: Colors.black
-                                ),
-                                children: [
-                                  TextSpan(
-                                    text: item.department!,
-                                    style: GoogleFonts.poppins(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w400,
-                                        color: Colors.black
-                                    ),
-                                  )
-                                ],
-                              ),
-                            ),
+                            Text(item.department!, style: GoogleFonts.poppins(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w400, color: Colors.black
+                            ),),
 
                             // Location
                             Text(item.hospitalAddress!, style: GoogleFonts.poppins(

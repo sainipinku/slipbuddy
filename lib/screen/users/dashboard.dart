@@ -8,6 +8,8 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:geocoding/geocoding.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -47,6 +49,68 @@ class _DashboardState extends State<Dashboard> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     return prefs.getString('saved_address');
   }
+  Future<bool> _handleLocationPermission() async {
+    bool serviceEnabled;
+    LocationPermission permission;
+
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) return false;
+
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) return false;
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      return false;
+    }
+
+    return true;
+  }
+  Future<String?> _getCurrentCity() async {
+    final hasPermission = await _handleLocationPermission();
+    if (!hasPermission) return null;
+
+    Position position = await Geolocator.getCurrentPosition(
+      desiredAccuracy: LocationAccuracy.high,
+    );
+
+    List<Placemark> placemarks =
+    await placemarkFromCoordinates(position.latitude, position.longitude);
+
+    if (placemarks.isNotEmpty) {
+      return placemarks.first.locality; // City name
+    }
+    return null;
+  }
+  Future<void> _saveLocation(String city) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('saved_address', city);
+  }
+
+  Future<void> loadAddress() async {
+    print('cityname11-----');
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? savedCity = prefs.getString('saved_address');
+    print('cityname11-----');
+    if (savedCity != null && savedCity.isNotEmpty) {
+      setState(() {
+        currentLocation = savedCity;
+      });
+    } else {
+      // First time → fetch current location
+      String? city = await _getCurrentCity();
+      print('cityname-----$city');
+      if (city != null) {
+        await _saveLocation(city);
+        setState(() {
+          currentLocation = city;
+        });
+      }
+    }
+  }
+
   void _autoScrollPages() async {
     _timer = await Timer.periodic(Duration(seconds: 5), (Timer timer) {
       if (_currentPage < bannerImagesList!.length - 1) {
@@ -103,15 +167,13 @@ class _DashboardState extends State<Dashboard> {
       imageUrl = prefs.getString('user_profile') ?? ''; // Default to an empty string if null
     });
   }
-  void loadAddress() async {
-    currentLocation = (await getSavedAddress())!;
-    setState(() {});
-  }
+
   @override
   void initState() {
     getData();
     // Add listener to TextField controller
     loadAddress();
+    print('cityname11-----');
     search.addListener(() {
       setState(() {
         isSearchEmpty = search.text.isEmpty; // Check if the TextField is empty
